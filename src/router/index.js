@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-
+import Agv from '@/components/Agv'
 import LoginPage from '@/components/LoginPage'
 import Management from '@/components/Management'
 
@@ -24,6 +24,11 @@ export default new Router({
       path: '/login',
       name: 'Login',
       component: LoginPage
+    },
+	{
+      path: '/',
+      name: 'Agv',
+      component: Agv
     },
     {
       path: '/manage',
