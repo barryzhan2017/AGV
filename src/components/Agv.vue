@@ -33,28 +33,28 @@
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-md-2">
-				<div  style="position: relative; top: 10px; left: 20px">
+				<div  style="position: relative; top: 10px">
 					<div  style="height: 10px;"></div>
 					<p>初始化网格：</p>
 					<table class="table table-striped"  style="white-space: nowrap;">
 						<tr>
 							<td><p>WIDTH:</p></td>
-							<td><input id="mapwidth" v-model="mapwidth" type="text" style="width: 95px;" placeholder="地图实际长度"></td>
+							<td><input id="mapwidth" v-model="mapwidth" type="text" style="width: 100px;" placeholder="地图实际长度"></td>
 							<td><p>m</p></td>
 						</tr>
 						<tr>
 							<td><p>HIGHT:</p></td>
-							<td><input id="maphight" v-model="maphight" type="text" style="width: 95px;" placeholder="地图实际宽度"></td>
+							<td><input id="maphight" v-model="maphight" type="text" style="width: 100px;" placeholder="地图实际宽度"></td>
 							<td><p>m</p></td>
 						</tr>
 						<tr>
 							<td><p>精度:</p></td>
-							<td><input id="minlength" v-model="minlength" type="text" style="width: 95px;" placeholder="路径最大公约数"></td>
+							<td><input id="minlength" v-model="minlength" type="text" style="width: 100px;" placeholder="网格每格几米"></td>
 							<td><p>m</p></td>
 						</tr>
 						<tr>
 							<td><p>速度:</p></td>
-							<td><input id="v" v-model="v" type="text" style="width: 95px;" placeholder="AGV实际速度"></td>
+							<td><input id="v" v-model="v" type="text" style="width: 100px;" placeholder="AGV实际速度"></td>
 							<td><p>m/s</p></td>
 						</tr>
 					</table>
@@ -71,9 +71,9 @@
 
 				</div>
 			</div>
-			<div class="col-md-10">
-				<canvas id="myCanvas" @click="getpos(event)" width="1600px" height="800px"  style="position: absolute; left: 90; top: 0; z-index: 1; border: 2px dashed black;"></canvas>
-				<canvas id="myCanvas2" width="1600px" height="800px" style="position: absolute; left: 90; top: 0; z-index: 0; border: 2px dashed black;"></canvas>
+			<div class="col-md-10" style="left:37px">
+				<canvas id="myCanvas" @click="getpos(event)" :width="canvaswidth" :height="canvasheight"  style="position: absolute; left: 90; top: 0; z-index: 1; border: 2px dashed black;"></canvas>
+				<canvas id="myCanvas2" :width="canvaswidth" :height="canvasheight" style="position: absolute; left: 90; top: 0; z-index: 0; border: 2px dashed black;"></canvas>
 			</div>
 		</div>
 	</div>
@@ -108,69 +108,37 @@ export default {
 	 tagimport:0
     }
   },
+  computed:{
+	canvasheight:function(){return this.maphight*10+10;},//1m 10像素
+	canvaswidth:function(){return this.mapwidth*10+10},//1m 10像素
+	length:function(){return this.minlength*10}//每格多少像素
+  },
   methods: {
 	init(){//地图初始化
-			var division1 = 0;
-			var division2 = 0;
-			var ratio = 0;
-			var ttttt = 0;
 			var canvas2 = document.getElementById("myCanvas2");
 			var ctx2 = canvas2.getContext("2d");
-			division1 = parseInt(this.mapwidth / this.minlength);
-			division2 = parseInt(this.maphight / this.minlength);
-			if ((division1 * 100 <= 1400) && (division2 * 100 <= 600)) {
-				this.accuracy = 100;
-				ratio = parseInt(this.accuracy / this.minlength);
-			} else {
-				if ((division1 * 80 <= 1440) && (division2 * 80 <= 640)) {
-					this.accuracy = 80;
-					ratio = parseInt(this.accuracy / this.minlength);
-				} else {
-					if ((division1 * 50 <= 1500) && (division2 * 50 <= 700)) {
-						this.accuracy = 50;
-						ratio = parseInt(this.accuracy / this.minlength);
-					} else {
-						if ((division1 * 40 <= 1520) && (division2 * 40 <= 720)) {
-							this.accuracy = 40;
-							ratio = parseInt(this.accuracy / this.minlength);
-						} else {
-							alert("您输入的长度、宽度过大或者精度过小，请重新考量！");
-							ttttt = 1;
-						}
-					}
-				}
-			}
-
-			this.pxv = ratio * v.value;
-
-			if (ttttt == 0) {
-				var tabhtml = "<tr><td>每格代表长度为 " + minlength.value
-						+ " m</td></tr><tr><td>每格像素长度为 " + this.accuracy
-						+ " px</td></tr>";
-				$('#inittable').append(tabhtml);
-			}
-
+			this.pxv = 10 * this.v;
 			//设置直线参数
 			ctx2.globalAlpha = 0.3;
 			ctx2.lineWidth = 3;
 			ctx2.lineCap = "round"; //设置端点样式:butt(默认),round,square
 			ctx2.lineJoin = "miter"; //设置连接样式:miter(默认),bevel,round
 			//开始绘制直线
-			for (var i = 0; i < 800 / this.accuracy; i++) {
+			for (var i = 0; i < this.maphight / this.minlength; i++) {
 				ctx2.beginPath();
-				ctx2.moveTo(20, this.accuracy * (i + 1));
-				ctx2.lineTo(1580, this.accuracy * (i + 1));
+				ctx2.moveTo(1, this.length * (i + 1));
+				ctx2.lineTo(this.canvaswidth-1, this.length * (i + 1));
 				ctx2.stroke();
 				ctx2.closePath();
-				this.ally[i] = this.accuracy * (i + 1);
+				this.ally[i] = this.length * (i + 1);
 			}
-			for (var j = 0; j < 1600 / this.accuracy; j++) {
+			for (var j = 0; j < this.mapwidth / this.minlength; j++) {
 				ctx2.beginPath();
-				ctx2.moveTo(this.accuracy * (j + 1), 20);
-				ctx2.lineTo(this.accuracy * (j + 1), 780);
+				ctx2.moveTo(this.length * (j + 1), 1);
+				ctx2.lineTo(this.length * (j + 1), this.canvasheight-1);
 				ctx2.stroke();
 				ctx2.closePath();
-				this.allx[j] = this.accuracy * (j + 1);
+				this.allx[j] = this.length * (j + 1);
 			}
 			//console.dir(allx);
 			//.dir(ally);
@@ -179,11 +147,11 @@ export default {
 			ctx2.font = "bold 20px";
 			ctx2.fillStyle = "#FF0000";
 			//开始绘制文字
-			for (i = 0; i < 800 / this.accuracy - 1; i++) {
-				ctx2.fillText(i + 1, 10, this.accuracy * (i + 1));
+			for (i = 0; i <this.maphight / this.minlength; i++) {
+				ctx2.fillText(i + 1, 0, this.length * (i + 1));
 			}
-			for (j = 0; j < 1600 / this.accuracy - 1; j++) {
-				ctx2.fillText(j + 1, this.accuracy * (j + 1), 10);
+			for (j = 0; j < this.mapwidth / this.minlength; j++) {
+				ctx2.fillText(j + 1, this.length * (j + 1)-12, 10);
 			}	
 	
 	},
@@ -211,8 +179,8 @@ export default {
 				}
 			}
 			if (xtag == 1 && ytag == 1) {
-				var px = parseInt((factx + 6) / this.accuracy) * this.accuracy;
-				var py = parseInt((facty + 6) / this.accuracy) * this.accuracy;
+				var px = parseInt((factx + 6) / this.length) * this.length;
+				var py = parseInt((facty + 6) / this.length) * this.length;
 				//alert("横坐标为：" + px + " " + "纵坐标为：" + py + " " + xtag + " " + ytag);
 				var numxx = px;
 				var numyy = py;
@@ -266,7 +234,7 @@ export default {
 					this.y[this.nodenum] = numyy;
 					this.nodename[this.nodenum] = this.nodenum + 1;
 					this.indexnode[this.nodenum] = 1;
-					this.nodenum = this.nodenum + 1;console.log(this.nodenum);
+					this.nodenum = this.nodenum + 1;
 				}
 			} else if (xtag == 1 && ytag != 1) {
 				var tag1 = 0;
@@ -279,11 +247,11 @@ export default {
 				var disdel1;
 				factytemp1 = facty;
 				factytemp2 = facty;
-				startx = parseInt((factx + 6) / this.accuracy) * this.accuracy;
-				endx = parseInt((factx + 6) / this.accuracy) * this.accuracy;
+				startx = parseInt((factx + 6) / this.length) * this.length;
+				endx = parseInt((factx + 6) / this.length) * this.length;
 				while (starty > 0) {
-					starty = parseInt(factytemp1 / this.accuracy) *this.accuracy;
-					factytemp1 = factytemp1 - this.accuracy;
+					starty = parseInt(factytemp1 / this.length) *this.length;
+					factytemp1 = factytemp1 - this.length;
 					//alert(starty);
 					for (var i = 0; i < this.y.length; i++) {
 						if (starty == this.y[i] && startx == this.x[i]
@@ -298,8 +266,8 @@ export default {
 					}
 				}
 				while (endy < 800) {
-					factytemp2 = factytemp2 + parseInt(this.accuracy);
-					endy = parseInt(factytemp2 / this.accuracy) * this.accuracy;
+					factytemp2 = factytemp2 + parseInt(this.length);
+					endy = parseInt(factytemp2 / this.length) * this.length;
 					//alert(endy);
 					for (var i = 0; i < this.y.length; i++) {
 						if (endy == this.y[i] && endx == this.x[i] && this.indexnode[i] == 1) {
@@ -344,7 +312,7 @@ export default {
 						this.indexpath[this.tag] = 1;
 						this.tag++;
 					}
-				} else {console.log(tag1+" "+tag2);
+				} else {
 					alert("请勿点击无效区域！");
 				}
 			} else if (xtag != 1 && ytag == 1) {
@@ -358,11 +326,11 @@ export default {
 				var disdel2;
 				factxtemp1 = factx;
 				factxtemp2 = factx;
-				starty = parseInt((facty + 6) / this.accuracy) * this.accuracy;
-				endy = parseInt((facty + 6) / this.accuracy) * this.accuracy;
+				starty = parseInt((facty + 6) / this.length) * this.length;
+				endy = parseInt((facty + 6) / this.length) * this.length;
 				while (startx > 0) {
-					startx = parseInt(factxtemp1 / this.accuracy) * this.accuracy;
-					factxtemp1 = factxtemp1 - this.accuracy;
+					startx = parseInt(factxtemp1 / this.length) * this.length;
+					factxtemp1 = factxtemp1 - this.length;
 					//alert(startx);
 					for (var i = 0; i < this.y.length; i++) {
 						if (startx == this.x[i] && starty == this.y[i]
@@ -377,8 +345,8 @@ export default {
 					}
 				}
 				while (endx < 1500) {
-					factxtemp2 = factxtemp2 + parseInt(this.accuracy);
-					endx = parseInt(factxtemp2 / this.accuracy) * this.accuracy;
+					factxtemp2 = factxtemp2 + parseInt(this.length);
+					endx = parseInt(factxtemp2 / this.length) * this.length;
 					//alert(endx);
 					for (var i = 0; i < this.y.length; i++) {
 						if (endx == this.x[i] && endy == this.y[i] && this.indexnode[i] == 1) {
