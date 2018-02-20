@@ -92,7 +92,6 @@ export default {
 	 v:null,
 	 allx:[],
 	 ally:[],
-	 accuracy:null,
 	 pxv:null,
 	 nodenum:0,
 	 x:[],
@@ -105,20 +104,38 @@ export default {
 	 indexpath:[],
 	 tag:0,
 	 strimport:null,
-	 tagimport:0
+	 tagimport:0,
+	 flag:0//用来判断画布是否已经初始化
     }
   },
   computed:{
-	canvasheight:function(){return this.maphight*10+10;},//1m 10像素
-	canvaswidth:function(){return this.mapwidth*10+10},//1m 10像素
-	length:function(){return this.minlength*10}//每格多少像素
+	canvasheight:function(){return this.maphight*20+10;},//1m 20像素
+	canvaswidth:function(){return this.mapwidth*20+10},//1m 20像素
+	length:function(){return this.minlength*20}//每格多少像素
   },
   methods: {
 	init(){//地图初始化
 			var canvas2 = document.getElementById("myCanvas2");
 			var ctx2 = canvas2.getContext("2d");
-			this.pxv = 10 * this.v;
+			this.pxv = 20 * this.v;
 			//设置直线参数
+			if(this.flag==1){
+				ctx2.clearRect(0,0,this.canvaswidth,this.canvasheight);
+				this.allx=[];
+				this.ally=[];
+				this.pxv=null;
+				this.nodenum=0;
+				this.x=[];this.y=[];
+				this.nodename=[];
+				this.indexnode=[];
+				this.pathstart=[];
+				this.pathend=[];
+				this.pathdis=[];
+				this.indexpath=[];
+				this.tag=0;
+				this.strimport=null;
+				this.tagimport=0;
+				}
 			ctx2.globalAlpha = 0.3;
 			ctx2.lineWidth = 3;
 			ctx2.lineCap = "round"; //设置端点样式:butt(默认),round,square
@@ -153,7 +170,7 @@ export default {
 			for (j = 0; j < this.mapwidth / this.minlength; j++) {
 				ctx2.fillText(j + 1, this.length * (j + 1)-12, 10);
 			}	
-	
+			this.flag=1;
 	},
 	getpos(e){
 			e = e || event;
@@ -215,8 +232,8 @@ export default {
 						numxx = numxx - 5;
 						numyy = numyy - 5;
 						ctx.clearRect(numxx, numyy, 10, 10);
-						numxx = numxx - 15;
-						numyy = numyy - 15;
+						numxx = numxx - 5;
+						numyy = numyy - 8;
 						ctx.clearRect(numxx, numyy, 20, 20);
 						this.indexnode[thisi] = 0;
 					}
@@ -227,8 +244,8 @@ export default {
 					ctx.fill();
 					//设置文字参数
 					ctx.font = "bold 20px";
-					var numxxx = numxx - 20;
-					var numyyy = numyy - 10;
+					var numxxx = numxx - 10;
+					var numyyy = numyy - 5;
 					ctx.fillText(this.nodenum + 1, numxxx, numyyy);
 					this.x[this.nodenum] = numxx;
 					this.y[this.nodenum] = numyy;
