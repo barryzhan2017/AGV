@@ -6,10 +6,12 @@
 
 <script>
 import Agv from './components/Agv'
+import Job from './components/Job'
 export default {
    name: 'app',
    components: {
-  Agv
+  Agv,
+  Job
 }
  }
 </script>

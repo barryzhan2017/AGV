@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import Agv from '@/components/Agv'
 import LoginPage from '@/components/LoginPage'
 import Management from '@/components/Management'
-
+import Job from '@/components/Job'
 // Management
 import EmptyPage from '@/components/manage/EmptyPage'
 import SanitaryStatus from '@/components/manage/SanitaryStatus'
@@ -30,6 +30,11 @@ export default new Router({
       name: 'Agv',
       component: Agv
     },
+	{
+	  path: '/',
+      name: 'Job',
+      component: Job
+	},
     {
       path: '/manage',
       component: Management,
