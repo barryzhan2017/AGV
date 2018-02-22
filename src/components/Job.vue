@@ -107,8 +107,8 @@
 
         </div>
         <div class="col-xs-10" style="text-align: right;">
-          <canvas id="myCanvas" width="800px" height="500px" style="position: absolute; left: 90px; top: 0; z-index: 1; border: 2px dashed black;"></canvas>
-          <canvas id="Canvas" width="800px" height="500px" style="position: absolute; left: 90px; top: 0; z-index: 0; border: 2px dashed black;"></canvas>
+          <canvas id="myCanvas" width="800px" height="500px" style="position: absolute; left: 330px; top: 0; z-index: 1; border: 2px dashed black;"></canvas>
+          <canvas id="Canvas" width="800px" height="500px" style="position: absolute; left: 330px; top: 0; z-index: 0; border: 2px dashed black;"></canvas>
         </div>
       </div>
     </div>
@@ -126,5 +126,5 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
+@import '../css/bootstrap.min.css'
 </style>
