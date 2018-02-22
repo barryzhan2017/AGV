@@ -1,14 +1,19 @@
 <template>
   <div id="app">
-    <router-view></router-view>
+     <Agv/>
   </div>
 </template>
 
 <script>
-  export default {
-    name: 'App',
-
-  }
+import Agv from './components/Agv'
+import Job from './components/Job'
+export default {
+   name: 'app',
+   components: {
+  Agv,
+  Job
+}
+ }
 </script>
 
 <style>
