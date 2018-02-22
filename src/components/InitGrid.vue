@@ -63,11 +63,11 @@
 					<button id="initbtn" class="btn btn-primary" @click="init">生成网格</button>
 					<div style="height: 10px;"></div>
 					<button id="savebtn2" class="btn" @click="exportmap">导出map文件</button>
-					
+
 					<div style="height: 280px;"></div>
 					<input type="file" @change="importmap" id ="files"/>
 					<div style="height: 20px;"></div>
-					<button id="savebtn" class="btn btn-success">保存地图</button>
+					<button id="savebtn" class="btn btn-success" @click="Save">保存地图</button>
 
 				</div>
 			</div>
@@ -86,35 +86,44 @@ export default {
   name: 'Agv',
   data () {
     return {
-     mapwidth:null,
-	 maphight:null,
-	 minlength:null,
-	 v:null,
-	 allx:[],
-	 ally:[],
-	 pxv:null,
-	 nodenum:0,
-	 x:[],
-	 y:[],
-	 nodename:[],
-	 indexnode:[],
-	 pathstart:[],
-	 pathend:[],
-	 pathdis:[],
-	 indexpath:[],
-	 tag:0,
-	 strimport:null,
-	 tagimport:0,
-	 flag:0//用来判断画布是否已经初始化
+      mapwidth:null,
+	    maphight:null,
+	    minlength:null,
+	    v:null,
+
+      allx:[],
+	    ally:[],
+	    pxv:null,
+	    nodenum:0,
+	    x:[],
+	    y:[],
+
+      nodename:[],
+	    indexnode:[],
+	    pathstart:[],
+	    pathend:[],
+	    pathdis:[],
+	    indexpath:[],
+	    tag:0,
+
+      strimport:null,
+	    tagimport:0,
+	    flag:0//用来判断画布是否已经初始化
     }
   },
   computed:{
-	canvasheight:function(){return this.maphight*20+10;},//1m 20像素
-	canvaswidth:function(){return this.mapwidth*20+10},//1m 20像素
-	length:function(){return this.minlength*20}//每格多少像素
+	  canvasheight(){
+      return this.maphight*20+10;
+    },//1m 20像素
+	  canvaswidth(){
+      return this.mapwidth*20+10;
+    },//1m 20像素
+	  length(){
+      return this.minlength*20;
+    }//每格多少像素
   },
   methods: {
-	init(){//地图初始化
+	  init:function(){//地图初始化
 			var canvas2 = document.getElementById("myCanvas2");
 			var ctx2 = canvas2.getContext("2d");
 			this.pxv = 20 * this.v;
@@ -169,10 +178,10 @@ export default {
 			}
 			for (j = 0; j < this.mapwidth / this.minlength; j++) {
 				ctx2.fillText(j + 1, this.length * (j + 1)-12, 10);
-			}	
+			}
 			this.flag=1;
 	},
-	getpos(e){
+	  getpos:function(e){
 			e = e || event;
 			var canvas = document.getElementById("myCanvas");
 			var ctx = canvas.getContext("2d");
@@ -415,10 +424,10 @@ export default {
 			} else {
 				alert("请勿点击空白区域！");
 			}
-	
-	
+
+
 	},
-	exportmap(){//导出map文件
+	  exportmap:function(){//导出map文件
 			var arrpathstart = [];
 			for (var i = 0; i < this.pathstart.length; i++) {
 				var jsonobj1 = {};
@@ -490,13 +499,13 @@ export default {
 				"indexnodeset" : arrindexnode
 
 			};
-			
+
 			var arr = JSON.stringify(arrxx);
-			
+
 			var file = new File([arr], "FileName.txt", {type: "text/plain;charset=utf-8"});
 			saveAs(file);
 	},
-	importmap(){//读取地图文件
+	  importmap:function(){//读取地图文件
 			var selectedFile = document.getElementById("files").files[0];//获取读取的File对象
 		    var reader = new FileReader();//这里是核心！！！读取操作就是由它完成的。
 		    reader.readAsText(selectedFile);//读取文件的内容
@@ -506,11 +515,13 @@ export default {
 		        this.tagimport = 1;
 		        alert("读取完毕，保存地图即可！");
 		    };
-	
-	
-	}
-  
-  
+
+
+	},
+    Save:function(){
+      this.$router.push({ path: '/Job' })
+    }
+
   }
 }
 </script>
