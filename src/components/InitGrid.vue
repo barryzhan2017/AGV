@@ -130,6 +130,9 @@ export default {
 			//设置直线参数
 			if(this.flag==1){
 				ctx2.clearRect(0,0,this.canvaswidth,this.canvasheight);
+				var canvas = document.getElementById("myCanvas");
+				var ctx = canvas.getContext("2d");
+				ctx.clearRect(0,0,this.canvaswidth,this.canvasheight);
 				this.allx=[];
 				this.ally=[];
 				this.pxv=null;
