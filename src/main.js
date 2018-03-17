@@ -7,10 +7,9 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import App from './App'
 import router from './router'
-import VueKonva from 'vue-konva'
 import qs from 'qs'
 import $ from 'jquery'
-vue.use(VueKonva)
+import VueKonva from 'konva'
 //import '../node_modules/_bootstrap@4.0.0@bootstrap/dist/css/bootstrap.min.css'
 //import '../node_modules/_bootstrap@4.0.0@bootstrap/dist/js/bootstrap.min.js'
 //import '../node_modules/_datatables-bootstrap3-plugin@0.5.0@datatables-bootstrap3-plugin/example/css/datatables-bootstrap3.css'
@@ -19,7 +18,7 @@ Vue.config.productionTip = false
 
 Vue.use(ElementUI)
 Vue.use(Vuex)
-
+Vue.use(VueKonva)
 Vue.prototype.$axios = axios.create({
   baseURL: 'http://localhost:8080/',
   withCredentials: true
