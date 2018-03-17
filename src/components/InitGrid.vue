@@ -8,7 +8,7 @@
 				</button>
 				<a href="#" class="navbar-brand">agv小车调度系统</a>
 			</div>
-			<div class="navbar-collapse collapse">
+			<div class="navbar-collapse collapse" id="test">
 				<div class="navbar-user navbar-right">
 					<ul class="nav navbar-nav">
 						<li class="active"><a href="#" class="dropdown-toggle" data-toggle="dropdown"> <span class="glyphicon glyphicon-user"></span> 管理员<span
@@ -28,6 +28,13 @@
 		<ol class="breadcrumb">
 			<li>主页</li>
 			<li class="active">初始化地图</li>
+			<template>
+        <v-stage :config="configKonva">
+          <v-layer>
+            <v-circle :config="configCircle"></v-circle>
+          </v-layer>
+        </v-stage>
+      </template>
 		</ol>
 	</div>
 	<div class="container-fluid">
@@ -80,12 +87,25 @@
 </div>
 </template>
 
+
 <script>
+
 import {saveAs}from '../js/FileSaver.js'
 export default {
   name: 'Agv',
   data () {
-    return {
+    return {configKonva: {
+                               width: 200,
+                               height: 200
+                             },
+                             configCircle: {
+                               x: 100,
+                               y: 100,
+                               radius: 70,
+                               fill: "red",
+                               stroke: "black",
+                               strokeWidth: 4
+                             },
       mapwidth:null,
 	    maphight:null,
 	    minlength:null,
@@ -124,6 +144,9 @@ export default {
   },
   methods: {
 	  init:function(){//地图初始化
+	    var test = $('#test');
+
+
 			var canvas2 = document.getElementById("myCanvas2");
 			var ctx2 = canvas2.getContext("2d");
 			this.pxv = 20 * this.v;
