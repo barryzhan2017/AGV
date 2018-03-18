@@ -103,10 +103,10 @@
 			stage:null,
 			layer:null,
 			rects:[],//指代小车的矩形集合
-			path:[[2,3,4,7],[5,6],[3,4,7,8]],
+			path:[[2,3,4,7,-1],[5,1,2,3,4,-1],[3,4,7,8,-1]],//小车路径集合，-1代表结束
 			nodename:[1,2,3,4,5,6,7,8],
-			x:[280,560,560,360,280,440,360,280],
-			y:[120,120,280,280,200,200,240,240],
+			x:[280,560,560,360,280,440,360,280],//结点横坐标
+			y:[120,120,280,280,200,200,240,240],//结点纵坐标
 			startset:[1,2,4,1,5,7,8],
 			endset:[2,3,3,5,6,4,7],
 			indexpathset:[1,1,1,1,1,1,1],
@@ -115,8 +115,12 @@
 			jobEnd:null,
 			jobStartset:[],
 			jobEndset:[],
-			jobnum:0//任务数量
-			
+			jobnum:0,//任务数量
+			pxv:80,//每秒移动多少像素
+			T:[],//存储小车从上个点开始运行多久，若闲置，则为-1，系统开始时全部置为0
+			flag[],//后台传新的路径过来时将对应的flag[i]由0变为1
+			Isbegin:false,//系统是否已经启动
+			num:[]//存储小车运行到路径数组中的第几个点，3->4则记录到3,-1代表还未到达路径的第0个点
 		}
 	},
 	computed:{
@@ -137,6 +141,8 @@
 		for (var i = 0; i < this.indexnodeset.length; i++) {
 			if(this.indexnodeset[i]==0)
 				continue;
+			if(this.indexnodeset[i]==2||this.indexnodeset[i]==3)
+				break;
 			var xx = this.x[i];
 			var yy = this.y[i];
 			//开始绘制节点
@@ -154,6 +160,8 @@
 		for (var i = 0; i < this.indexpathset.length; i++) {
 			if(this.indexpathset[i]==0)
 				continue;
+			if(this.indexpathset[i]==2)
+				break;
 			var startx = this.x[this.startset[i]-1];
 			var starty = this.y[this.startset[i]-1];
 			var endx = this.x[this.endset[i]-1];
@@ -194,6 +202,8 @@
 			this.stage.add(this.layer);
 			this.rects[this.agvnum-1]=rect;
 			this.carposition=null;
+			this.T[this.agvnum-1]=0;//初始化T数组
+			this.num[this.agvnum-1]=-1;//初始化num数组
 		},
 		addjob:function(){
 			if(thi.jobStart==null||this.jobEnd==null)
@@ -203,20 +213,70 @@
 			this.jobEndset[this.jobnum-1]=this.jobEnd;
 			this.jobStart=null;
 			this.jobEnd=null;
+			if(this.Isbegin){
+				let datapath=new Array();//传给志诚所写的后端的当前路径
+				datapath=this.path;
+				for(let i=0;i<this.agvnum;i++){
+					if(this.T[i]==-1)
+						continue;
+					let time=0;
+					if(this.rects[i].getAbsolutePosition().x==this.x[this.path[i][j]-1]-10)
+						time=Math.abs((this.y[this.path[i][this.num[i]]]-10-this.rects[i].getAbsolutePosition().y))/this.pxv;
+					else
+						time=Math.abs((this.x[this.path[i][this.num[i]]]-10-this.rects[i].getAbsolutePosition().x))/this.pxv;
+					this.T[i]=time;
+				}
+				for(let i=0;i<this.agvnum;i++){
+					let dpath;
+					if(datapath[i].length==-1)//该小车没有指派任务
+						continue;
+					for(let j=this.num[i],m=0;j<datapath[i].length;j++,m++){	
+						dpath=new Array();
+						dpath[m]=datapath[j];
+					}
+					datapath[i]=dpath;
+				}
+			    
+				//AJAX
+				
+				
+				for(let i=0;i<this.agvnum;i++){
+					if(this.T[i]==-1)
+						this.move(i,0);
+				}
+			
+			}
 		},
 		move:function(i,j){
+			if(this.path[i][j]==-1){
+				this.T[i]=-1;
+				return;
+			}
+			let time=0;//小车从当前位置运行到下个点所需时间
+			if(this.rects[i].getAbsolutePosition().x==this.x[this.path[i][j]-1]-10)
+				time=Math.abs((this.y[this.path[i][j]-1]-10-this.rects[i].getAbsolutePosition().y))/this.pxv;
+			else
+				time=Math.abs((this.x[this.path[i][j]-1]-10-this.rects[i].getAbsolutePosition().x))/this.pxv;
+			console.log(time);
 			this.rects[i].to({
 				x:this.x[this.path[i][j]-1]-10,
 				y:this.y[this.path[i][j]-1]-10,
-				duration:1.5,
+				duration:time,
 				onFinish:()=> {
-						if(j<this.path[i].length-1)
+						if(j<this.path[i].length-1){
+							this.num[i]=j;
+							if(this.flag[i]==1){
+								this.flag[i]=0;
+								this.move(i,1);
+							}
 							this.move(i,j+1);
+						}
 				}
 			
 			});
 		},
 		star:function(){
+			this.Isbegin=true;
 			for(let i=0;i<this.rects.length;i++)
 				this.move(i,0);
 		
