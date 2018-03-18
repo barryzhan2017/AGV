@@ -8,7 +8,7 @@
 				</button>
 				<a href="#" class="navbar-brand">agv小车调度系统</a>
 			</div>
-			<div class="navbar-collapse collapse" id="test">
+			<div class="navbar-collapse collapse">
 				<div class="navbar-user navbar-right">
 					<ul class="nav navbar-nav">
 						<li class="active"><a href="#" class="dropdown-toggle" data-toggle="dropdown"> <span class="glyphicon glyphicon-user"></span> 管理员<span
@@ -28,13 +28,6 @@
 		<ol class="breadcrumb">
 			<li>主页</li>
 			<li class="active">初始化地图</li>
-			<template>
-        <v-stage :config="configKonva">
-          <v-layer>
-            <v-circle :config="configCircle"></v-circle>
-          </v-layer>
-        </v-stage>
-      </template>
 		</ol>
 	</div>
 	<div class="container-fluid">
@@ -86,49 +79,40 @@
 	</div>
 </div>
 </template>
-
-
+//重新生成网格时画好的图没有擦去 305行和388行ENDX ENDY需要改，改成画布的范围
 <script>
-
 import {saveAs}from '../js/FileSaver.js'
 export default {
   name: 'Agv',
   data () {
-    return {configKonva: {
-                               width: 200,
-                               height: 200
-                             },
-                             configCircle: {
-                               x: 100,
-                               y: 100,
-                               radius: 70,
-                               fill: "red",
-                               stroke: "black",
-                               strokeWidth: 4
-                             },
-      mapwidth:null,
-	    maphight:null,
-	    minlength:null,
-	    v:null,
+    return {
+      mapwidth:null,  //地图总宽度
+	    maphight:null,  //地图总高度
+	    minlength:null, //精度即一个网格的边长
+	    v:null,  //AGV小车的速度
 
-      allx:[],
-	    ally:[],
+      allx:[], //网格每个点的横坐标
+	    ally:[], //网格每个点的纵坐标
 	    pxv:null,
-	    nodenum:0,
+	    nodenum:0, //点击过的节点数量
+      nodenum_real:0,//删去多余节点后的节点总数
 	    x:[],
 	    y:[],
 
-      nodename:[],
-	    indexnode:[],
-	    pathstart:[],
-	    pathend:[],
-	    pathdis:[],
-	    indexpath:[],
-	    tag:0,
+      nodename:[], //存有所有点击过的点被点击时的次序（作为第几个被点击的点）
+	    indexnode:[], //被点击过的点是否有效
+	    pathstart:[], //起点被点击的序号
+	    pathend:[],//终点被点击的序号
+	    pathdis:[],//路径长度
+	    indexpath:[], //路线是否有效的标志
+
+      tag:0, //变数的计数器
 
       strimport:null,
 	    tagimport:0,
 	    flag:0//用来判断画布是否已经初始化
+
+
     }
   },
   computed:{
@@ -143,39 +127,42 @@ export default {
     }//每格多少像素
   },
   methods: {
-	  init:function(){//地图初始化
-	    var test = $('#test');
-
-
+	  init:function(){    //地图初始化
 			var canvas2 = document.getElementById("myCanvas2");
 			var ctx2 = canvas2.getContext("2d");
 			this.pxv = 20 * this.v;
-			//设置直线参数
-			if(this.flag==1){
+
+			if(this.flag==1){       //如果网格已经构建过一次，那么重新建立网格时应该初始化所有的存储变量
 				ctx2.clearRect(0,0,this.canvaswidth,this.canvasheight);
-				var canvas = document.getElementById("myCanvas");
-				var ctx = canvas.getContext("2d");
-				ctx.clearRect(0,0,this.canvaswidth,this.canvasheight);
-				this.allx=[];
+
+        this.allx=[];
 				this.ally=[];
 				this.pxv=null;
 				this.nodenum=0;
-				this.x=[];this.y=[];
-				this.nodename=[];
+        this.nodenum_real = 0;
+				this.x=[];
+        this.y=[];
+
+        this.nodename=[];
 				this.indexnode=[];
 				this.pathstart=[];
 				this.pathend=[];
 				this.pathdis=[];
 				this.indexpath=[];
-				this.tag=0;
+
+        this.tag=0;
 				this.strimport=null;
 				this.tagimport=0;
+
 				}
-			ctx2.globalAlpha = 0.3;
+
+      //设置直线参数
+      ctx2.globalAlpha = 0.3;
 			ctx2.lineWidth = 3;
 			ctx2.lineCap = "round"; //设置端点样式:butt(默认),round,square
 			ctx2.lineJoin = "miter"; //设置连接样式:miter(默认),bevel,round
-			//开始绘制直线
+
+      //开始绘制网格
 			for (var i = 0; i < this.maphight / this.minlength; i++) {
 				ctx2.beginPath();
 				ctx2.moveTo(1, this.length * (i + 1));
@@ -192,13 +179,13 @@ export default {
 				ctx2.closePath();
 				this.allx[j] = this.length * (j + 1);
 			}
-			//console.dir(allx);
-			//.dir(ally);
-			//设置文字参数
+
+			//设置文字（网格边上长度）参数
 			ctx2.globalAlpha = 1;
 			ctx2.font = "bold 20px";
 			ctx2.fillStyle = "#FF0000";
-			//开始绘制文字
+
+      //开始绘制文字
 			for (i = 0; i <this.maphight / this.minlength; i++) {
 				ctx2.fillText(i + 1, 0, this.length * (i + 1));
 			}
@@ -207,19 +194,17 @@ export default {
 			}
 			this.flag=1;
 	},
-	  getpos:function(e){
+	  getpos:function(e){       //选取AGV小车活动范围的函数
 			e = e || event;
 			var canvas = document.getElementById("myCanvas");
 			var ctx = canvas.getContext("2d");
-			var factx = e.clientX - canvas.getBoundingClientRect().left;
-			var facty = e.clientY - canvas.getBoundingClientRect().top;
+			var factx = e.clientX - canvas.getBoundingClientRect().left;  //鼠标点击位置相对于画布边框的横坐标
+			var facty = e.clientY - canvas.getBoundingClientRect().top;   //鼠标点击位置相对于画布边框的纵坐标
 
-			//var aaa = e.offsetX; //相对坐标
-			//var bbb = e.offsetY;
-			//alert(aaa+" "+bbb);
-
+      //记录点击位置是否与网格节点匹配
 			var xtag = 0;
 			var ytag = 0;
+
 			for (var i = 0; i < this.allx.length; i++) {
 				if (factx >= this.allx[i] - 5 && factx <= this.allx[i] + 5) {
 					xtag = 1;
@@ -231,16 +216,19 @@ export default {
 				}
 			}
 			if (xtag == 1 && ytag == 1) {
-				var px = parseInt((factx + 6) / this.length) * this.length;
+				//将点击位置转化到网格节点
+        var px = parseInt((factx + 6) / this.length) * this.length;
 				var py = parseInt((facty + 6) / this.length) * this.length;
-				//alert("横坐标为：" + px + " " + "纵坐标为：" + py + " " + xtag + " " + ytag);
+
 				var numxx = px;
 				var numyy = py;
-				var thisnodename;
-				var thisi;
+				var thisnodename = -1;
+				var thisi = -1;
+        var tag5 = 0;
 
-				var tag5 = 0;
+
 				for (var i = 0; i < this.nodename.length; i++) {
+          //如果这个点已经出现在储存的点集中，再次点击就删除
 					if (numxx == this.x[i] && numyy == this.y[i] && this.indexnode[i] == 1) {
 						tag5 = 1;
 						thisi = i;
@@ -250,7 +238,8 @@ export default {
 				}
 
 				if (tag5 == 1) { //删除节点
-					var tt1 = 0, tt2 = 0;
+					var tt1 = 0; //用于记录该点是否是起点
+          var tt2 = 0; // 用于记录该店是否是终点
 					for (var i = 0; i < this.pathstart.length; i++) {
 						if (thisnodename == this.pathstart[i] && this.indexpath[i] == 1) {
 							tt1 = 1;
@@ -272,7 +261,8 @@ export default {
 						ctx.clearRect(numxx, numyy, 20, 20);
 						this.indexnode[thisi] = 0;
 					}
-				} else { //绘制节点
+				}
+        else { //绘制节点
 					ctx.beginPath();
 					ctx.arc(numxx, numyy, 5, 0, Math.PI * 2, true);
 					ctx.fillStyle = "#6495ED";
@@ -302,7 +292,7 @@ export default {
 				startx = parseInt((factx + 6) / this.length) * this.length;
 				endx = parseInt((factx + 6) / this.length) * this.length;
 				while (starty > 0) {
-					starty = parseInt(factytemp1 / this.length) *this.length;
+					starty = parseInt(factytemp1 / this.length) *this.length; //起点的纵坐标等于当前点击位置上面的节点纵坐标
 					factytemp1 = factytemp1 - this.length;
 					//alert(starty);
 					for (var i = 0; i < this.y.length; i++) {
@@ -334,8 +324,9 @@ export default {
 				}
 				//alert(startx+" "+starty+" "+endx+" "+endy+" "+tag1+" "+tag2);
 				if (tag1 == 1 && tag2 == 1) {
+          //地图上竖线上已经有两个点
 					var tag12 = 0;
-					for (var i = 0; i < this.indexpath.length; i++) {
+					for (var i = 0; i < this.indexpath.length; i++) {  //点击在线上删除线
 						if (startname1 == this.pathstart[i]
 								&& endname1 == this.pathend[i] && this.indexpath[i] == 1) {
 							this.indexpath[i] = 0;
@@ -345,7 +336,8 @@ export default {
 					}
 					if (tag12 == 1) {
 						ctx.clearRect(startx - 2, starty + 5, 4, disdel1);
-					} else {
+					}
+          else {
 						//设置直线参数
 						ctx.lineWidth = 4;
 						ctx.lineCap = "round"; //设置端点样式:butt(默认),round,square
@@ -364,10 +356,12 @@ export default {
 						this.indexpath[this.tag] = 1;
 						this.tag++;
 					}
-				} else {
+				}
+        else {
 					alert("请勿点击无效区域！");
 				}
-			} else if (xtag != 1 && ytag == 1) {
+			}
+      else if (xtag != 1 && ytag == 1) {
 				var tag3 = 0;
 				var tag4 = 0;
 				var startx = 1, starty, endx = 1, endy;
@@ -455,12 +449,99 @@ export default {
 	},
 	  exportmap:function(){//导出map文件
 			var arrpathstart = [];
-			for (var i = 0; i < this.pathstart.length; i++) {
-				var jsonobj1 = {};
-				jsonobj1["this.pathstart"] = this.pathstart[i];
-				arrpathstart[i] = jsonobj1;
+      var finallength = this.pathstart.length;
+
+      //分离产生的非交点的indexnode为3 交点为2  新产生的线indexpath 为2
+      //将超过1格的边分离
+			for (var i = 0; i < finallength; i++) {
+
+        if(this.indexpath[i] == 1){
+          var n = 1;
+          var flag_devide = 0;
+          var next ; //记录当前循环中线段的终点
+          var last = this.pathstart[i]; //记录上层循环中线段的终点
+
+          while (this.pathdis[i] > n*this.length){
+            flag_devide = 1;
+            var flag_insert = 1;
+            var k; //若要新加入的点已经存在于删除点后的存储列表中则 获得该点序号
+
+            if(this.x[this.pathstart[i]-1] == this.x[this.pathend[i]-1]){ //竖线的情况，查看该分点是否已被存（交点）
+              for(k = 0; k < this.x.length;++k)
+              {
+                if(this.indexnode[k] == 3 && (this.y[this.pathstart[i]-1] + n*this.length) == this.y[k] && this.x[k] == this.x[this.pathstart[i]-1]){
+                  flag_insert = 0;
+                  next = this.nodename[k];
+                  this.indexnode[k] = 2;
+                  break;
+                }
+
+              }
+
+              if(k == this.x.length){
+
+                this.x[k] = this.x[this.pathstart[i]-1] ;
+                this.y[k] = this.y[this.pathstart[i]-1]+ n*this.length;
+                this.indexnode[k] = 3;
+              }
+            }
+            else if(this.y[this.pathstart[i]-1] == this.y[this.pathend[i]-1]){  //横线的情况
+              for(k = 0; k < this.y.length;++k)
+              {
+
+                if(this.indexnode[k] == 1 && (this.x[this.pathstart[i]-1] + n*this.length) == this.x[k] && this.y[k] == this.y[this.pathstart[i]-1] ){
+                  flag_insert = 0;
+                  next = this.nodename[k];
+                  this.indexnode[k] = 2;
+                  break;
+                }
+
+
+
+
+              }
+              if(k == this.y.length) {
+                this.x[k] = this.x[this.pathstart[i]-1] + n*this.length;
+                this.y[k] = this.y[this.pathstart[i]-1];
+                this.indexnode[k] = 3;
+              }
+            }
+
+            if(flag_insert == 1){
+              this.nodename[this.nodenum] = this.nodenum+1;
+              ++this.nodenum;
+              next = this.nodenum;
+            }
+
+
+
+            this.pathstart[this.pathstart.length] = last;
+            this.pathend[this.pathend.length] = next;
+            this.pathdis[this.pathdis.length] = this.length;
+            this.indexpath[this.indexpath.length] = 2;
+
+            n++;
+            last = next;
+          }
+
+          if (flag_devide) {
+            this.pathstart[this.pathstart.length] = last;
+            this.pathend[this.pathend.length] = this.pathend[i];
+            this.pathdis[this.pathdis.length] = this.length;
+            this.indexpath[this.indexpath.length] = 2;
+          }
+        }
+
+
 			}
 
+
+      for(var i = 0; i < this.pathstart.length; i++)
+      {
+        var jsonobj1 = {};
+        jsonobj1["this.pathstart"] = this.pathstart[i];
+        arrpathstart[i] = jsonobj1;
+      }
 			var arrpathend = [];
 			for (var i = 0; i < this.pathend.length; i++) {
 				var jsonobj2 = {};
@@ -504,26 +585,32 @@ export default {
 			}
 
 			var arrindexnode = [];
-			for (var i = 0; i < this.indexnode.length; i++) {
-				var jsonobj8 = {};
+      for (var i = 0; i < this.indexnode.length; i++) {
+        if(this.indexnode[i] == 1)
+          this.nodenum_real++;
+        var jsonobj8 = {};
 				jsonobj8["this.indexnode"] = this.indexnode[i];
 				arrindexnode[i] = jsonobj8;
 			}
 
+      var arrnodenum = [] ;
+      var jsonobj9 = {} ;
+      jsonobj9["this.nodenum"] = this.nodenum_real;
+      arrnodenum[0] = jsonobj9;
 			//console.dir(arrpathstart);
 			//console.dir(arrpathend);
 			//console.dir(arrpathdis);
 			//alert(arr1);
 			var arrxx = {
-				"stratset" : arrpathstart,
-				"endset" : arrpathend,
-				"disset" : arrpathdis,
-				"indexpathset" : arrindexpath,
-				"nodeset" : arrnodename,
-				"xset" : arrx,
-				"yset" : arry,
-				"indexnodeset" : arrindexnode
-
+				"Startorder" : arrpathstart,
+				"Endorder" : arrpathend,
+				"Distance" : arrpathdis,
+				"Pathkind" : arrindexpath,
+				"Nodeorder" : arrnodename,
+				"Xpos" : arrx,
+				"Ypos" : arry,
+				"Nodekind" : arrindexnode,
+        "Nodenumclicked" : arrnodenum
 			};
 
 			var arr = JSON.stringify(arrxx);
