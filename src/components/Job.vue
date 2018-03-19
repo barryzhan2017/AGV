@@ -1,14 +1,14 @@
 <template>
   <div>
-  
+
     <div class="nav-crumb">
       <ol class="breadcrumb">
         <li>主页</li>
         <li class="active">添加任务</li>
       </ol>
     </div>
-   
-      
+
+
         <div class="col-md-2">
           <div style="position: relative; top: 10px; left: 20px">
             <table id="agvtable" class="table table-striped" style="white-space: nowrap;">
@@ -20,9 +20,9 @@
 								<label>AGV数量：{{agvnum}}</label>
 							</tr>
 						</table>
-        
-             
-            
+
+
+
             <table style="display: none" id="cartable" class="table table-striped table-condensed table-hover compact text-center">
               <thead>
               <tr>
@@ -82,14 +82,14 @@
             </table>
           </div>
 		  <div id="container" style="position:absolute;left:320px;top:40px;">
-       
+
           </div>
 		  <canvas id="Canvas" width="800px" height="400px" style="position: absolute; left:320px; top:40px; z-index: 0;"></canvas>
-		  
+
         </div>
-        
-   
-   
+
+
+
   </div>
 </template>
 <script>
@@ -116,11 +116,11 @@
 			jobStartset:[],
 			jobEndset:[],
 			jobnum:0//任务数量
-			
+
 		}
 	},
 	computed:{
-		
+
 	},
 	mounted:function(){
 		var width = window.innerWidth;
@@ -131,7 +131,7 @@
 				height: height
 			});
 		this.layer = new Konva.Layer();
-		
+
 		var canvas = document.getElementById("Canvas");
 		var ctx = canvas.getContext("2d");
 		for (var i = 0; i < this.indexnodeset.length; i++) {
@@ -171,7 +171,7 @@
 			ctx.stroke();
 			ctx.closePath();
 		}
-	
+
 	},
 	methods:{
 		addcar:function(){
@@ -205,6 +205,10 @@
 			this.jobEnd=null;
 		},
 		move:function(i,j){
+		  if (path[i] == -1) {
+		  t[i] = -1
+		  return
+		  }
 			this.rects[i].to({
 				x:this.x[this.path[i][j]-1]-10,
 				y:this.y[this.path[i][j]-1]-10,
@@ -212,18 +216,21 @@
 				onFinish:()=> {
 						if(j<this.path[i].length-1)
 							this.move(i,j+1);
+						if (flag) {
+						this.move(i,1)
+						}
 				}
-			
+
 			});
 		},
 		star:function(){
 			for(let i=0;i<this.rects.length;i++)
 				this.move(i,0);
-		
-		
+
+
 		}
-	
-	
+
+
 	}
 
 
