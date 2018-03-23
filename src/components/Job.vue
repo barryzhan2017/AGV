@@ -134,6 +134,7 @@
         'Nodename', //存有所有点击过的点被点击时的次序（作为第几个被点击的点）
         'Indexnode', //被点击过的点是否有效
         'Pathend',//终点被点击的序号
+		'Pathstart',//起点被点击的序号
         'Pathdis',//路径长度
         'Indexpath' //路线是否有效的标
       ])
@@ -151,13 +152,13 @@
 
     var canvas = document.getElementById("Canvas");
     var ctx = canvas.getContext("2d");
-    for (var i = 0; i < this.indexnodeset.length; i++) {
-      if(this.indexnodeset[i]==0)
+    for (var i = 0; i < this.Indexnode.length; i++) {
+      if(this.Indexnode[i]==0)
         continue;
-      if(this.indexnodeset[i]==2||this.indexnodeset[i]==3)
+      if(this.Indexnode[i]==2||this.Indexnode[i]==3)
         break;
-      var xx = this.x[i];
-      var yy = this.y[i];
+      var xx = this.X[i];
+      var yy = this.Y[i];
       //开始绘制节点
       ctx.beginPath();
       ctx.arc(xx, yy, 5, 0, Math.PI * 2, true);
@@ -165,20 +166,20 @@
       ctx.fill();
       //设置文字参数
       ctx.font = "30px";
-      var numx = this.x[i] - 10;
-      var numy = this.y[i] - 5;
-      var numname = this.nodename[i];
+      var numx = this.X[i] - 10;
+      var numy = this.Y[i] - 5;
+      var numname = this.Nodename[i];
       ctx.fillText(numname, numx, numy);
     }
-    for (var i = 0; i < this.indexpathset.length; i++) {
-      if(this.indexpathset[i]==0)
+    for (var i = 0; i < this.Indexpath.length; i++) {
+      if(this.Indexpath[i]==0)
         continue;
-      if(this.indexpathset[i]==2)
+      if(this.Indexpath[i]==2)
         break;
-      var startx = this.x[this.startset[i]-1];
-      var starty = this.y[this.startset[i]-1];
-      var endx = this.x[this.endset[i]-1];
-      var endy = this.y[this.endset[i]-1];
+      var startx = this.X[this.Pathstart[i]-1];
+      var starty = this.Y[this.Pathstart[i]-1];
+      var endx = this.X[this.Pathend[i]-1];
+      var endy = this.Y[this.Pathend[i]-1];
       //设置直线参数
       ctx.globalAlpha = 0.2;
       ctx.lineWidth = 4;
@@ -197,7 +198,7 @@
   methods:{
 
     addcar:function(){
-      alert(this.mapwidth);
+
       if(this.carposition==null)
         return;
       this.agvnum++;
@@ -236,9 +237,9 @@
             continue;
           let time=0;
           if(this.rects[i].getAbsolutePosition().x==this.x[this.path[i][j]-1]-10)
-            time=Math.abs((this.y[this.path[i][this.num[i]]]-10-this.rects[i].getAbsolutePosition().y))/this.pxv;
+            time=Math.abs((this.y[this.path[i][this.num[i]]]-10-this.rects[i].getAbsolutePosition().y))/(this.V*20);
           else
-            time=Math.abs((this.x[this.path[i][this.num[i]]]-10-this.rects[i].getAbsolutePosition().x))/this.pxv;
+            time=Math.abs((this.x[this.path[i][this.num[i]]]-10-this.rects[i].getAbsolutePosition().x))/(this.V*20);
           this.T[i]=time;
         }
         for(let i=0;i<this.agvnum;i++){
@@ -269,9 +270,9 @@
       }
       let time=0;//小车从当前位置运行到下个点所需时间
       if(this.rects[i].getAbsolutePosition().x==this.x[this.path[i][j]-1]-10)
-        time=Math.abs((this.y[this.path[i][j]-1]-10-this.rects[i].getAbsolutePosition().y))/this.pxv;
+        time=Math.abs((this.y[this.path[i][j]-1]-10-this.rects[i].getAbsolutePosition().y))/(this.V*20);
       else
-        time=Math.abs((this.x[this.path[i][j]-1]-10-this.rects[i].getAbsolutePosition().x))/this.pxv;
+        time=Math.abs((this.x[this.path[i][j]-1]-10-this.rects[i].getAbsolutePosition().x))/(this.V*20);
       console.log(time);
       this.rects[i].to({
           x:this.x[this.path[i][j]-1]-10,
