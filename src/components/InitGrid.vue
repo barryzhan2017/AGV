@@ -3,9 +3,7 @@
 	<div class="navbar navbar-inverse" role="navigation">
 		<div class="container-fluid">
 			<div class="navbar-header">
-				<button class="navbar-toggle collapsed" data-toggle="collapsed" data-target=".navbar-collapse">
-					<span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
-				</button>
+				
 				<a href="#" class="navbar-brand">agv小车调度系统</a>
 			</div>
 			<div class="navbar-collapse collapse">

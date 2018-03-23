@@ -13,7 +13,7 @@
       <div style="position: relative; top: 10px; left: 20px">
         <table id="agvtable" class="table table-striped" style="white-space: nowrap;">
           <tr>
-            <td><button id="button2" style="position: absolute;"  @click="addcar">添加 </button></td>
+            <td><button id="button2" style="position: absolute;"  @click="addcar" class="btn btn-primary">添加 </button></td>
             <td><input id="agvpos" type="text" v-model="carposition" style="width: 150px;" placeholder="请输入AGV位置编号"></td>
           </tr>
           <tr>
@@ -49,7 +49,7 @@
         <form id="form1" name="form1" >
           <table class="table table-striped" style="white-space: nowrap;">
             <tr>
-              <td><button id="button" @click="addjob">添加</button></td>
+              <td><button id="button" @click="addjob" class="btn btn-primary">添加</button></td>
               <td><input id="jstart" type="text" v-model="jobStart" style="width: 150px;" placeholder="请输入任务起点"></td>
             </tr>
             <tr>
@@ -76,7 +76,7 @@
         <div style="height: 200px;"></div>
         <table class="table table-striped" style="white-space: nowrap;">
           <tr>
-            <td><input type="submit" id="buttonrun" value="启动系统" @click="star" ></td>
+            <td><input type="submit" id="buttonrun" value="启动系统" @click="star" class="btn btn-success"></td>
             <td><input type="submit" id="buttonupdate" value="修改地图" class="btn btn-danger"></td>
           </tr>
         </table>
@@ -102,24 +102,17 @@
         stage:null,
         layer:null,
         rects:[],//指代小车的矩形集合
-        path:[[2,3,4,7,-1],[5,1,2,3,4,-1],[3,4,7,8,-1]],//小车路径集合，-1代表结束
-        nodename:[1,2,3,4,5,6,7,8],
-        x:[280,560,560,360,280,440,360,280],//结点横坐标
-        y:[120,120,280,280,200,200,240,240],//结点纵坐标
-        startset:[1,2,4,1,5,7,8],
-        endset:[2,3,3,5,6,4,7],
-        indexpathset:[1,1,1,1,1,1,1],
-        indexnodeset:[1,1,1,1,1,1,1,1],
+        path:[[8,9,10,11,-1],[3,4,5,6,7,-1],[6,5,4,3,-1]],//小车路径集合，-1代表结束
         jobStart:null,
         jobEnd:null,
         jobStartset:[],
         jobEndset:[],
         jobnum:0,//任务数量
-        pxv:80,//每秒移动多少像素
         T:[],//存储小车从上个点开始运行多久，若闲置，则为-1，系统开始时全部置为0
         flag:[],//后台传新的路径过来时将对应的flag[i]由0变为1
         Isbegin:false,//系统是否已经启动
-        num:[]//存储小车运行到路径数组中的第几个点，3->4则记录到3,-1代表还未到达路径的第0个点
+        num:[],//存储小车运行到路径数组中的第几个点，3->4则记录到3,-1代表还未到达路径的第0个点
+		rectgroup:[]//存储矩形小车和对应小车序号的组
       }
     },
     computed:{
@@ -203,10 +196,17 @@
         return;
       this.agvnum++;
       this.carsposition[this.agvnum-1]=this.carposition;
-
+	  var rectnumber = new Konva.Text({
+      x: 0,
+      y: -20,
+      text: this.agvnum,
+      fontSize: 30,
+      fontFamily: 'Calibri',
+      fill: 'brown'
+	  });
       var rect = new Konva.Rect({
-        x: this.x[this.carposition-1]-10,
-        y: this.y[this.carposition-1]-10,
+        x: 0,
+        y: 0,
         width: 20,
         height: 20,
         fillPriority:2,
@@ -214,8 +214,14 @@
         stroke: 'red'
         //strokeWidth: 4
       });
-      this.layer.add(rect);
-      this.stage.add(this.layer);
+      var group = new Konva.Group({x:this.X[this.carposition-1]-10,y:this.Y[this.carposition-1]-10});
+	  group.add(rect);
+	  group.add(rectnumber);
+	  //this.layer.add(rectnumber);
+	  //this.layer.add(rect);
+      this.layer.add(group);
+	  this.stage.add(this.layer);
+	  this.rectgroup[this.agvnum-1]=group;
       this.rects[this.agvnum-1]=rect;
       this.carposition=null;
       this.T[this.agvnum-1]=0;//初始化T数组
@@ -236,10 +242,10 @@
           if(this.T[i]==-1)
             continue;
           let time=0;
-          if(this.rects[i].getAbsolutePosition().x==this.x[this.path[i][j]-1]-10)
-            time=Math.abs((this.y[this.path[i][this.num[i]]]-10-this.rects[i].getAbsolutePosition().y))/(this.V*20);
+          if(this.rects[i].getAbsolutePosition().x==this.X[this.path[i][j]-1]-10)
+            time=Math.abs((this.Y[this.path[i][this.num[i]]]-10-this.rects[i].getAbsolutePosition().y))/(this.V*20);
           else
-            time=Math.abs((this.x[this.path[i][this.num[i]]]-10-this.rects[i].getAbsolutePosition().x))/(this.V*20);
+            time=Math.abs((this.X[this.path[i][this.num[i]]]-10-this.rects[i].getAbsolutePosition().x))/(this.V*20);
           this.T[i]=time;
         }
         for(let i=0;i<this.agvnum;i++){
@@ -269,14 +275,14 @@
         return;
       }
       let time=0;//小车从当前位置运行到下个点所需时间
-      if(this.rects[i].getAbsolutePosition().x==this.x[this.path[i][j]-1]-10)
-        time=Math.abs((this.y[this.path[i][j]-1]-10-this.rects[i].getAbsolutePosition().y))/(this.V*20);
+      if(this.rects[i].getAbsolutePosition().x==this.X[this.path[i][j]-1]-10)
+        time=Math.abs((this.Y[this.path[i][j]-1]-10-this.rects[i].getAbsolutePosition().y))/(this.V*20);
       else
-        time=Math.abs((this.x[this.path[i][j]-1]-10-this.rects[i].getAbsolutePosition().x))/(this.V*20);
+        time=Math.abs((this.X[this.path[i][j]-1]-10-this.rects[i].getAbsolutePosition().x))/(this.V*20);
       console.log(time);
-      this.rects[i].to({
-          x:this.x[this.path[i][j]-1]-10,
-          y:this.y[this.path[i][j]-1]-10,
+      this.rectgroup[i].to({
+          x:this.X[this.path[i][j]-1]-10,
+          y:this.Y[this.path[i][j]-1]-10,
           duration:time,
           onFinish:()=> {
           if(j<this.path[i].length-1){
