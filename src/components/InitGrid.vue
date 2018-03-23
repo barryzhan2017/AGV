@@ -137,6 +137,7 @@ export default {
       this.$store.dispatch('MinlChange', this.minlength);
       this.$store.dispatch('VChange', this.v);
       this.$store.dispatch('numNodeChange', this.nodenum_real);
+      this.$store.dispatch('NodenumChange', this.nodename);
       this.$store.dispatch('XChange', this.x);
       this.$store.dispatch('YChange', this.y);
       this.$store.dispatch('nodeIndexChange', this.indexnode);

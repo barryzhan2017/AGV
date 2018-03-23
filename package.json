@@ -18,7 +18,7 @@
     "datatables-bootstrap3-plugin": "^0.5.0",
     "element-ui": "^2.0.3",
     "popper.js": "^1.12.9",
-	"konva": "^1.7.6",
+    "konva": "^1.7.6",
     "qs": "^6.5.1",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",

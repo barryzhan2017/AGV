@@ -15,6 +15,9 @@ export default{
   VChange({commit},V){
     commit('VChange',V);
   },
+  NodenameChange({commit},nodename){
+    commit('NodenameChange',nodename);
+  },
   numNodeChange({commit},nodenum_real){
     commit('numNodeChange',nodenum_real);
   },

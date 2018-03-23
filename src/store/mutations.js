@@ -17,6 +17,9 @@ export default{
   numNodeChange(state,nodenum_real){
     state.Nodenum_real = nodenum_real;
   },
+  NodenameChange(state,nodename){
+    state.Nodename = nodename;
+  },
   XChange(state,x){
     state.X = x;
   },

@@ -134,7 +134,7 @@
         'Nodename', //存有所有点击过的点被点击时的次序（作为第几个被点击的点）
         'Indexnode', //被点击过的点是否有效
         'Pathend',//终点被点击的序号
-		'Pathstart',//起点被点击的序号
+		    'Pathstart',//起点被点击的序号
         'Pathdis',//路径长度
         'Indexpath' //路线是否有效的标
       ])
