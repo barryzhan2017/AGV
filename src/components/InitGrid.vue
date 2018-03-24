@@ -3,9 +3,7 @@
 	<div class="navbar navbar-inverse" role="navigation">
 		<div class="container-fluid">
 			<div class="navbar-header">
-				<button class="navbar-toggle collapsed" data-toggle="collapsed" data-target=".navbar-collapse">
-					<span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
-				</button>
+				
 				<a href="#" class="navbar-brand">agv小车调度系统</a>
 			</div>
 			<div class="navbar-collapse collapse">
@@ -137,7 +135,7 @@ export default {
       this.$store.dispatch('MinlChange', this.minlength);
       this.$store.dispatch('VChange', this.v);
       this.$store.dispatch('numNodeChange', this.nodenum_real);
-      this.$store.dispatch('NodenumChange', this.nodename);
+      this.$store.dispatch('NodenameChange', this.nodename);
       this.$store.dispatch('XChange', this.x);
       this.$store.dispatch('YChange', this.y);
       this.$store.dispatch('nodeIndexChange', this.indexnode);
