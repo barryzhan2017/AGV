@@ -46,38 +46,35 @@
             </select></td>
           </tr>
         </table>
-        <form id="form1" name="form1" >
-          <table class="table table-striped" style="white-space: nowrap;">
+          <table  class="table table-striped" style="white-space: nowrap;">
             <tr>
               <td><button id="button" @click="addjob" class="btn btn-primary">添加</button></td>
-              <td><input id="jstart" type="text" v-model="jobStart" style="width: 150px;" placeholder="请输入任务起点"></td>
+              <td><input  type="text" v-model="jobStart" style="width: 150px;" placeholder="请输入任务起点"></td>
             </tr>
             <tr>
-              <td><input type="submit" style="display: none"></td>
-              <td><input id="jend" type="text" v-model="jobEnd" style="width: 150px;" placeholder="请输入任务终点"></td>
+              <td></td>
+			  <td><input type="text" v-model="jobEnd" style="width: 150px;" placeholder="请输入任务终点"></td>
+            </tr>
+			<tr>
+              <td></td>
+			  <td><input type="text" v-model="jobnumber" style="width: 150px;" placeholder="请输入任务次数"></td>
             </tr>
           </table>
-        </form>
-        <p>[双击删除任务]</p>
-        <table id="jobtable" style="white-space: nowrap;" class="table table-striped table-condensed table-hover compact text-center">
-          <thead>
-          <tr>
-            <td style="font-weight: bold;">编号</td>
-            <td style="font-weight: bold;">起点</td>
-            <td style="font-weight: bold;">终点</td>
-            <td style="font-weight: bold;">状态</td>
-            <td style="font-weight: bold;">AGV</td>
-          </tr>
-          </thead>
-          <tbody>
 
-          </tbody>
-        </table>
+        <v-table
+            is-horizontal-resize
+            style="width:120%"
+            :columns="columns"
+            :table-data="tableData"
+            row-hover-color="#eee"
+            row-click-color="#edf7ff"
+		></v-table>
+		<v-pagination @page-change="pageChange":page-size="pagesize" :total="pagetotal" :layout="['total', 'prev', 'pager', 'next', 'jumper']"></v-pagination>
         <div style="height: 200px;"></div>
         <table class="table table-striped" style="white-space: nowrap;">
           <tr>
-            <td><input type="submit" id="buttonrun" value="启动系统" @click="star" class="btn btn-success"></td>
-            <td><input type="submit" id="buttonupdate" value="修改地图" class="btn btn-danger"></td>
+            <td><button id="buttonrun" @click="start" class="btn btn-success">启动系统</button></td>
+            <td><button class="btn btn-danger">修改地图</button></td>
           </tr>
         </table>
       </div>
@@ -96,7 +93,9 @@
     name: 'JOB',
     data(){
       return{
-        agvnum:0,//小车数目
+        index:1,//表格页码
+		jobnumber:null,//任务次数
+		agvnum:0,//小车数目
         carposition:null,//小车初始位置
         carsposition:[],//小车初始位置集合
         stage:null,
@@ -112,7 +111,18 @@
         flag:[],//后台传新的路径过来时将对应的flag[i]由0变为1
         Isbegin:false,//系统是否已经启动
         num:[],//存储小车运行到路径数组中的第几个点，3->4则记录到3,-1代表还未到达路径的第0个点
-		rectgroup:[]//存储矩形小车和对应小车序号的组
+		rectgroup:[],//存储矩形小车和对应小车序号的组
+		pagesize:7,
+		//tableDatas:[],//二维数组存储表格单页元组
+		tableData:[],//存储表格当前页面元组
+		data: [],		//存储表格所有元组  
+        columns: [
+                    {field: 'number', title: '序号', width: 40, titleAlign: 'center', columnAlign: 'center',isResize:true},
+                    {field: 'start', title: '起点', width: 40, titleAlign: 'center', columnAlign: 'center',isResize:true},
+                    {field: 'end', title: '终点', width: 40, titleAlign: 'center', columnAlign: 'center',isResize:true},
+                    {field: 'remain', title: '剩余次数', width: 40, titleAlign: 'center', columnAlign: 'center',isResize:true},
+					{field: 'car', title: '小车', width: 150, titleAlign: 'left', columnAlign: 'left',isResize:true},
+                ]
       }
     },
     computed:{
@@ -130,7 +140,23 @@
 		    'Pathstart',//起点被点击的序号
         'Pathdis',//路径长度
         'Indexpath' //路线是否有效的标
-      ])
+      ]),
+	  pagetotal(){ //表格元组总个数
+		return this.data.length
+	  },
+	  tableDatas(){
+		let currentdata=new Array();
+		for(let j=0;j<this.pagetotal/this.pagesize;j++)
+			currentdata[j]=new Array();
+		for(let i=0,j=0;i<this.pagetotal;i++){
+			currentdata[j].push(this.data[i]);
+				if((i!=0&&((i+1)%this.pagesize)==0)||i==this.pagetotal-1){
+					j++;
+				}
+			}
+		
+		return currentdata;
+	  }
 
   },
     mounted:function(){
@@ -228,12 +254,15 @@
       this.num[this.agvnum-1]=-1;//初始化num数组
     },
     addjob:function(){
-      if(thi.jobStart==null||this.jobEnd==null)
+      if(this.jobStart==null||this.jobEnd==null)
         return;
       this.jobnum++;
       this.jobStartset[this.jobnum-1]=this.jobStart;
       this.jobEndset[this.jobnum-1]=this.jobEnd;
-      this.jobStart=null;
+	  this.data.push({"number":this.pagetotal+1,"start":this.jobStart,"end":this.jobEnd,"remain":this.jobnumber,"car":"1,3"});
+      this.tableData=this.tableDatas[this.index-1];
+	  this.jobnumber=null;
+	  this.jobStart=null;
       this.jobEnd=null;
       if(this.Isbegin){
         let datapath=new Array();//传给志诚所写的后端的当前路径
@@ -297,15 +326,18 @@
 
     });
     },
-    star:function(){
+    start:function(){
       this.Isbegin=true;
       for(let i=0;i<this.rects.length;i++)
         this.move(i,0);
 
 
-    }
-
-
+    },
+	pageChange:function(pageIndex){console.log(pageIndex);
+		this.index=pageIndex;
+		this.tableData=this.tableDatas[pageIndex-1];console.log(tableData);	
+	}
+	
   }
 
 
