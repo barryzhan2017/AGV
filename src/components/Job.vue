@@ -135,11 +135,21 @@
         'X',
         'Y',
         'Nodename', //存有所有点击过的点被点击时的次序（作为第几个被点击的点）
-        'Indexnode', //被点击过的点是否有效
+        'Indexnode',
         'Pathend',//终点被点击的序号
 		    'Pathstart',//起点被点击的序号
         'Pathdis',//路径长度
-        'Indexpath' //路线是否有效的标
+        'Indexpath', //路线是否有效的标
+
+        'Nodenum_realbuffer',
+        'X_buffer',
+        'Y_buffer',
+        'Nodename_buffer', //存有所有点击过的点被点击时的次序（作为第几个被点击的点）
+        'Indexnode_buffer',
+        'Pathend_buffer',//终点被点击的序号
+        'Pathstart_buffer',//起点被点击的序号
+        'Pathdis_buffer',//路径长度
+        'Indexpath_buffer' //路线是否有效的标
       ]),
 	  pagetotal(){ //表格元组总个数
 		return this.data.length
@@ -205,6 +215,43 @@
       ctx.lineCap = "round"; //设置端点样式:butt(默认),round,square
       ctx.lineJoin = "miter"; //设置连接样式:miter(默认),bevel,round
       ctx.strokeStyle = '#000000'; // 设置线的颜色
+      //开始绘制直线
+      ctx.beginPath();
+      ctx.moveTo(startx, starty);
+      ctx.lineTo(endx, endy);
+      ctx.stroke();
+      ctx.closePath();
+    }
+	for (var i = 0; i < this.Indexnode_buffer.length; i++) {
+      if(this.Indexnode_buffer[i]==0)
+        continue;
+      var xx = this.X_buffer[i];
+      var yy = this.Y_buffer[i];
+      //开始绘制节点
+      ctx.beginPath();
+      ctx.arc(xx, yy, 5, 0, Math.PI * 2, true);
+      ctx.fillStyle = "#121212";
+      ctx.fill();
+      //设置文字参数
+      ctx.font = "30px";
+      var numx = this.X_buffer[i] - 10;
+      var numy = this.Y_buffer[i] - 5;
+      var numname = this.Nodename_buffer[i];
+      ctx.fillText(numname, numx, numy);
+    }
+	for (var i = 0; i < this.Indexpath_buffer.length; i++) {
+      if(this.Indexpath_buffer[i]==0)
+        continue;
+      var startx = this.X_buffer[this.Pathstart_buffer[i]-1];
+      var starty = this.Y_buffer[this.Pathstart_buffer[i]-1];
+      var endx = this.X_buffer[this.Pathend_buffer[i]-1];
+      var endy = this.Y_buffer[this.Pathend_buffer[i]-1];
+      //设置直线参数
+      ctx.globalAlpha = 0.2;
+      ctx.lineWidth = 4;
+      ctx.lineCap = "round"; //设置端点样式:butt(默认),round,square
+      ctx.lineJoin = "miter"; //设置连接样式:miter(默认),bevel,round
+      ctx.strokeStyle = '8B0A50'; // 设置线的颜色
       //开始绘制直线
       ctx.beginPath();
       ctx.moveTo(startx, starty);
