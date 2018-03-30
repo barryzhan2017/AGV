@@ -76,7 +76,7 @@
         <div style="height: 200px;"></div>
         <table class="table table-striped" style="white-space: nowrap;">
           <tr>
-            <td><input type="submit" id="buttonrun" value="启动系统" @click="star" class="btn btn-success"></td>
+            <td><input type="submit" id="buttonrun" value="启动系统" @click="start" class="btn btn-success"></td>
             <td><input type="submit" id="buttonupdate" value="修改地图" class="btn btn-danger"></td>
           </tr>
         </table>
@@ -297,7 +297,19 @@
 
     });
     },
-    star:function(){
+    start:function(){
+      // Send a POST request
+      this.$axios.post('/api/genetic', {
+                test: 'test!!',
+              }).then(response => {
+                if (response.data.result === 'good') {
+                 alert('good');
+                } else {
+                 alert('nogood');
+                }
+              })
+
+
       this.Isbegin=true;
       for(let i=0;i<this.rects.length;i++)
         this.move(i,0);
