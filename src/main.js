@@ -11,7 +11,8 @@ import router from './router'
 import qs from 'qs'
 import $ from 'jquery'
 import VueKonva from 'konva'
-
+import 'vue-easytable/libs/themes-base/index.css'
+import {VTable,VPagination} from 'vue-easytable'
 //import '../node_modules/_bootstrap@4.0.0@bootstrap/dist/css/bootstrap.min.css'
 //import '../node_modules/_bootstrap@4.0.0@bootstrap/dist/js/bootstrap.min.js'
 //import '../node_modules/_datatables-bootstrap3-plugin@0.5.0@datatables-bootstrap3-plugin/example/css/datatables-bootstrap3.css'
@@ -20,7 +21,8 @@ Vue.config.productionTip = false
 
 Vue.use(ElementUI)
 Vue.use(VueKonva)
-
+Vue.component(VTable.name, VTable)
+Vue.component(VPagination.name, VPagination)
 Vue.prototype.$axios = axios.create({
   baseURL: 'http://localhost:9090/',
   withCredentials: false

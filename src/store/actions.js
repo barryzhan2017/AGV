@@ -15,6 +15,8 @@ export default{
   VChange({commit},V){
     commit('VChange',V);
   },
+
+  //action of road
   NodenameChange({commit},nodename){
     commit('NodenameChange',nodename);
   },
@@ -41,6 +43,36 @@ export default{
   },
   pathIndexChange({commit},indexpath){
     commit('pathIndexChange',indexpath);
+  },
+
+
+  //action of buffer
+  NodenameChange_buffer({commit},nodename_buffer){
+    commit('NodenameChange_buffer',nodename_buffer);
+  },
+  numNodeChange_buffer({commit},nodenum_realbuffer){
+    commit('numNodeChange_buffer',nodenum_realbuffer);
+  },
+  XChange_buffer({commit},x_buffer){
+    commit('XChange_buffer',x_buffer);
+  },
+  YChange_buffer({commit},y_buffer){
+    commit('YChange_buffer',y_buffer);
+  },
+  nodeIndexChange_buffer({commit},indexnode_buffer){
+    commit('nodeIndexChange_buffer',indexnode_buffer);
+  },
+  StartChange_buffer({commit},pathstart_buffer){
+    commit('StartChange_buffer',pathstart_buffer);
+  },
+  EndChange_buffer({commit},pathend_buffer){
+    commit('EndChange_buffer',pathend_buffer);
+  },
+  DisChange_buffer({commit},pathdis_buffer){
+    commit('DisChange_buffer',pathdis_buffer);
+  },
+  pathIndexChange_buffer({commit},indexpath_buffer){
+    commit('pathIndexChange_buffer',indexpath_buffer);
   }
 }
 
