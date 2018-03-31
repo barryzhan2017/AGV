@@ -852,13 +852,13 @@ export default {
       var arrpathstart = [];
       for (var i = 0; i < this.pathstart.length; i++) {
         var jsonobj1 = {};
-        jsonobj1["this.pathstart"] = this.pathstart[i];
+        jsonobj1["pathstart"] = this.pathstart[i];
         arrpathstart[i] = jsonobj1;
       }
       var arrpathend = [];
       for (var i = 0; i < this.pathend.length; i++) {
         var jsonobj2 = {};
-        jsonobj2["this.pathend"] = this.pathend[i];
+        jsonobj2["pathend"] = this.pathend[i];
         arrpathend[i] = jsonobj2;
       }
 
@@ -872,28 +872,28 @@ export default {
       var arrindexpath = [];
       for (var i = 0; i < this.indexpath.length; i++) {
         var jsonobj7 = {};
-        jsonobj7["this.indexpath"] = this.indexpath[i];
+        jsonobj7["indexpath"] = this.indexpath[i];
         arrindexpath[i] = jsonobj7;
       }
 
       var arrnodename = [];
       for (var i = 0; i < this.nodename.length; i++) {
         var jsonobj4 = {};
-        jsonobj4["this.nodename"] = this.nodename[i];
+        jsonobj4["nodename"] = this.nodename[i];
         arrnodename[i] = jsonobj4;
       }
 
       var arrx = [];
       for (var i = 0; i < this.x.length; i++) {
         var jsonobj5 = {};
-        jsonobj5["this.x"] = this.x[i];
+        jsonobj5["x"] = this.x[i];
         arrx[i] = jsonobj5;
       }
 
       var arry = [];
       for (var i = 0; i < this.y.length; i++) {
         var jsonobj6 = {};
-        jsonobj6["this.y"] = this.y[i];
+        jsonobj6["y"] = this.y[i];
         arry[i] = jsonobj6;
       }
 
@@ -902,13 +902,13 @@ export default {
         if (this.indexnode[i] == 1)
           this.nodenum_real++;
         var jsonobj8 = {};
-        jsonobj8["this.indexnode"] = this.indexnode[i];
+        jsonobj8["indexnode"] = this.indexnode[i];
         arrindexnode[i] = jsonobj8;
       }
 
       var arrnodenum = [];
       var jsonobj9 = {};
-      jsonobj9["this.nodenum"] = this.nodenum_real;
+      jsonobj9["nodenum"] = this.nodenum_real;
       arrnodenum[0] = jsonobj9;
 
 
@@ -916,48 +916,48 @@ export default {
       var arrpathstart_buffer = [];
       for (var i = 0; i < this.pathstart_buffer.length; i++) {
         var jsonobj1_buffer = {};
-        jsonobj1_buffer["this.pathstart_buffer"] = this.pathstart_buffer[i];
+        jsonobj1_buffer["pathstart_buffer"] = this.pathstart_buffer[i];
         arrpathstart_buffer[i] = jsonobj1_buffer;
       }
       var arrpathend_buffer = [];
       for (var i = 0; i < this.pathend_buffer.length; i++) {
         var jsonobj2_buffer = {};
-        jsonobj2_buffer["this.pathend_buffer"] = this.pathend_buffer[i];
+        jsonobj2_buffer["pathend_buffer"] = this.pathend_buffer[i];
         arrpathend_buffer[i] = jsonobj2_buffer;
       }
 
       var arrpathdis_buffer = [];
       for (var i = 0; i < this.pathdis_buffer.length; i++) {
         var jsonobj3_buffer = {};
-        jsonobj3_buffer["this.distance_buffer"] = this.pathdis_buffer[i];
+        jsonobj3_buffer["distance_buffer"] = this.pathdis_buffer[i];
         arrpathdis_buffer[i] = jsonobj3_buffer;
       }
 
       var arrindexpath_buffer = [];
       for (var i = 0; i < this.indexpath_buffer.length; i++) {
         var jsonobj7_buffer = {};
-        jsonobj7_buffer["this.indexpath_buffer"] = this.indexpath_buffer[i];
+        jsonobj7_buffer["indexpath_buffer"] = this.indexpath_buffer[i];
         arrindexpath_buffer[i] = jsonobj7_buffer;
       }
 
       var arrnodename_buffer = [];
       for (var i = 0; i < this.nodename_buffer.length; i++) {
         var jsonobj4_buffer = {};
-        jsonobj4_buffer["this.nodename_buffer"] = this.nodename_buffer[i];
+        jsonobj4_buffer["nodename_buffer"] = this.nodename_buffer[i];
         arrnodename_buffer[i] = jsonobj4_buffer;
       }
 
       var arrx_buffer = [];
       for (var i = 0; i < this.x_buffer.length; i++) {
         var jsonobj5_buffer = {};
-        jsonobj5_buffer["this.x_buffer"] = this.x_buffer[i];
+        jsonobj5_buffer["x_buffer"] = this.x_buffer[i];
         arrx_buffer[i] = jsonobj5_buffer;
       }
 
       var arry_buffer = [];
       for (var i = 0; i < this.y_buffer.length; i++) {
         var jsonobj6_buffer = {};
-        jsonobj6_buffer["this.y_buffer"] = this.y_buffer[i];
+        jsonobj6_buffer["y_buffer"] = this.y_buffer[i];
         arry_buffer[i] = jsonobj6_buffer;
       }
 
@@ -966,13 +966,13 @@ export default {
         if (this.indexnode_buffer[i] == 1)
           this.nodenum_realbuffer++;
         var jsonobj8_buffer = {};
-        jsonobj8_buffer["this.indexnode"] = this.indexnode_buffer[i];
+        jsonobj8_buffer["indexnode"] = this.indexnode_buffer[i];
         arrindexnode_buffer[i] = jsonobj8_buffer;
       }
 
       var arrnodenum_buffer = [];
       var jsonobj9_buffer = {};
-      jsonobj9_buffer["this.nodenum_buffer"] = this.nodenum_realbuffer;
+      jsonobj9_buffer["nodenum_buffer"] = this.nodenum_realbuffer;
       arrnodenum_buffer[0] = jsonobj9_buffer;
       //console.dir(arrpathstart);
       //console.dir(arrpathend);
@@ -1014,8 +1014,64 @@ export default {
         console.log(this.result);
         this.strimport = this.result;
         this.tagimport = 1;
+		let m=JSON.parse(this.strimport);
+		for(let i=0;i<m.Distance.length;i++){
+			this.pathdis[i]=m.Distance[i].distance;
+		}
+		for(let i=0;i<m.Startorder.length;i++){
+			this.pathstart[i]=m.Startorder[i].pathstart;
+		}
+		for(let i=0;i<m.Endorder.length;i++){
+			this.pathend[i]=m.Endorder[i].pathend;
+		}
+		for(let i=0;i<m.Pathkind.length;i++){
+			this.indexpath[i]=m.Pathkind[i].indexpath;
+		}
+		for(let i=0;i<m.Nodeorder.length;i++){
+			this.nodename[i]=m.Nodeorder[i].nodename;
+		}
+		for(let i=0;i<m.Xpos.length;i++){
+			this.x[i]=m.Xpos[i].x;
+		}
+		for(let i=0;i<m.Ypos.length;i++){
+			this.y[i]=m.Ypos[i].y;
+		}
+		for(let i=0;i<m.Nodekind.length;i++){
+			this.indexnode[i]=m.Nodekind[i].indexnode;
+		}
+		for(let i=0;i<m.Nodenumclicked.length;i++){
+			this.nodenum=m.Nodenumclicked[i].nodenum;
+		}
+		for(let i=0;i<m.Startorder_buffer.length;i++){
+			this.pathstart_buffer[i]=m.Startorder_buffer[i].pathstart_buffer;
+		}
+		for(let i=0;i<m.Endorder_buffer.length;i++){
+			this.pathend_buffer[i]=m.Endorder_buffer[i].pathend_buffer;
+		}
+		for(let i=0;i<m.Distance_buffer.length;i++){
+			this.pathdis_buffer[i]=m.Distance_buffer[i].distance_buffer;
+		}
+		for(let i=0;i<m.Pathkind_buffer.length;i++){
+			this.indexpath_buffer[i]=m.Pathkind_buffer[i].indexpath_buffer;
+		}
+		for(let i=0;i<m.Nodeorder_buffer.length;i++){
+			this.nodename_buffer[i]=m.Nodeorder_buffer[i].nodename_buffer;
+		}
+		for(let i=0;i<m.Xpos_buffer.length;i++){
+			this.x_buffer[i]=m.Xpos_buffer[i].x_buffer;
+		}
+		for(let i=0;i<m.Ypos_buffer.length;i++){
+			this.y_buffer[i]=m.Ypos_buffer[i].y_buffer;
+		}
+		for(let i=0;m<Nodekind_buffer.length;i++){
+			this.indexnode_buffer[i]=m.Nodekind_buffer[i].indexnode;
+		}
+		for(let i=0;i<m.Nodenumclicked_buffer.length;i++){
+			this.nodenum_realbuffer=m.Nodenumclicked_buffer[i].nodenum_buffer;
+		}
         alert("读取完毕，保存地图即可！");
       };
+	  this.MapChange();
 
 
     },
