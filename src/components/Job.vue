@@ -95,19 +95,20 @@
       return{
         index:1,//表格页码
 		jobnumber:null,//任务次数
+		jobnumberset:[],//任务次数集合
 		agvnum:0,//小车数目
         carposition:null,//小车初始位置
         carsposition:[],//小车初始位置集合
         stage:null,
         layer:null,
         rects:[],//指代小车的矩形集合
-        path:[[8,9,10,11,-1],[3,4,5,6,7,-1],[6,5,4,3,-1]],//小车路径集合，-1代表结束
+        path:[],//小车路径集合，-1代表结束
         jobStart:null,
         jobEnd:null,
         jobStartset:[],
         jobEndset:[],
         jobnum:0,//任务数量
-        T:[],//存储小车从上个点开始运行多久，若闲置，则为-1，系统开始时全部置为0
+        T:[],//存储小车从上个点开始运行多久，若闲置，则为-1
         flag:[],//后台传新的路径过来时将对应的flag[i]由0变为1
         Isbegin:false,//系统是否已经启动
         num:[],//存储小车运行到路径数组中的第几个点，3->4则记录到3,-1代表还未到达路径的第0个点
@@ -269,6 +270,8 @@
         return;
       this.agvnum++;
       this.carsposition[this.agvnum-1]=this.carposition;
+	  this.path[this.agvnum-1]=new Array();
+	  this.path[this.agvnum-1][0]=this.carposition;
 	  var rectnumber = new Konva.Text({
       x: 0,
       y: -20,
@@ -297,7 +300,7 @@
 	  this.rectgroup[this.agvnum-1]=group;
       this.rects[this.agvnum-1]=rect;
       this.carposition=null;
-      this.T[this.agvnum-1]=0;//初始化T数组
+      this.T[this.agvnum-1]=-1;//初始化T数组
       this.num[this.agvnum-1]=-1;//初始化num数组
     },
     addjob:function(){
@@ -308,6 +311,7 @@
       this.jobEndset[this.jobnum-1]=this.jobEnd;
 	  this.data.push({"number":this.pagetotal+1,"start":this.jobStart,"end":this.jobEnd,"remain":this.jobnumber,"car":"1,3"});
       this.tableData=this.tableDatas[this.index-1];
+	  this.jobnumberset[this.jobnum-1]=this.jobnumber;
 	  this.jobnumber=null;
 	  this.jobStart=null;
       this.jobEnd=null;
@@ -374,7 +378,135 @@
     });
     },
     start:function(){
-      this.Isbegin=true;
+	  let sstart=[];
+	  let eend=[];
+	  let ddistance=[];
+      for (var i = 0; i < this.Indexpath.length; i++) {
+       if(this.Indexpath[i]==0)
+		continue;
+		sstart[i]=this.Pathstart[i];
+		eend[i]=this.Pathend[i];
+		ddistance[i]=this.Pathdis[i];
+      }
+	   var arrpathstart = [];
+      for (var i = 0; i < this.sstart.length; i++) {
+        var jsonobj1 = {};
+        jsonobj1["startNode"] = this.sstart[i];
+        arrpathstart[i] = jsonobj1;
+      }
+	  var arrpathend = [];
+      for (var i = 0; i < this.eend.length; i++) {
+        var jsonobj2 = {};
+        jsonobj2["endNode"] = this.eend[i];
+        arrpathend[i] = jsonobj2;
+      }
+	  var arrpathdis = [];
+      for (var i = 0; i < this.ddistance.length; i++) {
+        var jsonobj3 = {};
+        jsonobj3["nodeDistance"] = this.ddistance[i]/20;
+        arrpathdis[i] = jsonobj3;
+      }
+	  let sstart_buffer=[];
+	  let eend_buffer=[];
+	  let ddistance_buffer=[];
+	  
+	  for (var i = 0; i < this.Indexpath_buffer.length; i++) {
+       if(this.Indexpath_buffer[i]==0)
+		continue;
+		sstart_buffer[i]=this.Pathstart_buffer[i];
+		eend_buffer[i]=this.Pathend_buffer[i];
+		ddistance_buffer[i]=this.Pathdis_buffer[i];
+      }
+	  var arrpathstartbuffer=[];
+	  for (var i = 0; i < this.sstart_buffer.length; i++) {
+        var jsonobj4 = {};
+        jsonobj4["Pathstartbuffer"] = this.sstart_buffer[i];
+        arrpathstartbuffer[i] = jsonobj4;
+      }
+	  var arrpathendbuffer = [];
+      for (var i = 0; i < this.eend.length; i++) {
+        var jsonobj5 = {};
+        jsonobj5["Pathend"] = this.eend[i];
+        arrpathendbuffer[i] = jsonobj5;
+      }
+	  var arrpathdisbuffer = [];
+      for (var i = 0; i < this.ddistance.length; i++) {
+        var jsonobj6 = {};
+        jsonobj6["distance"] = this.ddistance[i];
+        arrpathdisbuffer[i] = jsonobj6;
+      }
+	  var arrpath=[];
+	  for(let i=0;i<this.agvnum;i++){
+		let jsonobj7 = {};
+        jsonobj7["paths"] = this.path;
+        arrpath[i] = jsonobj7;
+	  }
+	  let tasks=[];
+	  for(let i=0;i<this.jobnum){
+		tasks[i]=new Array();
+		tasks[i][0]=this.jobStartset[i];
+		tasks[i][1]=this.jobEndset[i];
+		tasks[i][2]=this.jobnumberset[i];
+	  }
+	  var arrtasks=[];
+	  for(let i=0;i<tasks.length;i++){
+		let jsonobj8 = {};
+        jsonobj8["tasks"] = tasks[i];
+        arrtasks[i] = jsonobj8;
+	  }
+	  var arrv=[];
+	  let jsonobj9={};
+	  jsonobj9["speed"]=this.V;
+	  arrv[0]=jsonobj9;
+	  
+	  var arrpre=[];
+	  let jsonobj10={};
+	  jsonobj10["precision"]=this.Minlength;
+	  arrpre[0]=jsonobj10;
+	  var arrnodenum=[];
+	  let jsonobj11={};
+	  jsonobj11["numberOfGraphNode"]=this.Nodenum_real;
+	  arrnodenum[0]=jsonobj11;
+	  var arrbufferset=[];//假数据
+	  let jsonobj12={};
+	  let bu=[[5,7,8,9,10,6],[2,11,12,13,14,3]]
+	  jsonboj12["bufferset"]=bu[0];
+	  arrbufferset[0]=jsonboj12;
+	  jsonboj12["bufferset"]=bu[0];
+	  arrbufferset[0]=jsonboj12;
+	  jsonboj12["bufferset"]=bu[1];
+	  arrbufferset[1]=jsonboj12;
+	  var arrcarset=[];//假数据
+	  let jsonobj13={};
+	  jsonboj13["bufferForAGV"]=0;
+	  arrcarset[0]=jsonboj13;
+	  jsonboj13["bufferForAGV"]=0;
+	  arrcarset[1]=jsonboj13;
+	  jsonboj13["bufferForAGV"]=1;
+	  arrcarset[2]=jsonboj13;
+	  jsonboj13["bufferForAGV"]=1;
+	  arrcarset[3]=jsonboj13;
+	  var arrtime=[];
+	  for(let i=0;i<this.T.length;i++){
+		let jsonobj14 = {};
+        jsonobj14["time"] = this.T[i];
+        arrtime[i] = jsonobj14;
+	  }
+	  var message={
+		"startNode":arrpathstart,
+		"endNode":arrpathend,
+		"nodeDistance":arrpathdis,
+		"paths":arrpath,
+		"tasks":arrtasks,
+		"speed":arrv,
+		"precision":arrpre,
+		"numberOfGraphNode":arrnodenum,
+		"bufferset":arrbufferset,
+		"bufferForAGV":arrcarset,
+		"time":arrtime
+	  }; 
+	  
+	  this.Isbegin=true;
       for(let i=0;i<this.rects.length;i++)
         this.move(i,0);
 
