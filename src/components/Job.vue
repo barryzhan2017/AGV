@@ -116,7 +116,7 @@
 		pagesize:7,
 		//tableDatas:[],//二维数组存储表格单页元组
 		tableData:[],//存储表格当前页面元组
-		data: [],		//存储表格所有元组  
+		data: [],		//存储表格所有元组
         columns: [
                     {field: 'number', title: '序号', width: 40, titleAlign: 'center', columnAlign: 'center',isResize:true},
                     {field: 'start', title: '起点', width: 40, titleAlign: 'center', columnAlign: 'center',isResize:true},
@@ -165,7 +165,7 @@
 					j++;
 				}
 			}
-		
+
 		return currentdata;
 	  }
 
@@ -339,7 +339,7 @@
           datapath[i]=dpath;
         }
 
-        //AJAX
+
 
 
         for(let i=0;i<this.agvnum;i++){
@@ -409,7 +409,7 @@
 	  let sstart_buffer=[];
 	  let eend_buffer=[];
 	  let ddistance_buffer=[];
-	  
+
 	  for (var i = 0; i < this.Indexpath_buffer.length; i++) {
        if(this.Indexpath_buffer[i]==0)
 		continue;
@@ -442,7 +442,7 @@
         arrpath[i] = jsonobj7;
 	  }
 	  let tasks=[];
-	  for(let i=0;i<this.jobnum){
+	  for(let i=0;i<this.jobnum;i++){
 		tasks[i]=new Array();
 		tasks[i][0]=this.jobStartset[i];
 		tasks[i][1]=this.jobEndset[i];
@@ -458,7 +458,7 @@
 	  let jsonobj9={};
 	  jsonobj9["speed"]=this.V;
 	  arrv[0]=jsonobj9;
-	  
+
 	  var arrpre=[];
 	  let jsonobj10={};
 	  jsonobj10["precision"]=this.Minlength;
@@ -504,19 +504,24 @@
 		"bufferset":arrbufferset,
 		"bufferForAGV":arrcarset,
 		"time":arrtime
-	  }; 
-	  
+	  };
+
 	  this.Isbegin=true;
       for(let i=0;i<this.rects.length;i++)
         this.move(i,0);
-
+    axios.post('/api/genetic', {
+      data: message
+      })
+      .then(function (response) {
+        alert(response.data);
+      })
 
     },
 	pageChange:function(pageIndex){console.log(pageIndex);
 		this.index=pageIndex;
-		this.tableData=this.tableDatas[pageIndex-1];console.log(tableData);	
+		this.tableData=this.tableDatas[pageIndex-1];console.log(tableData);
 	}
-	
+
   }
 
 
