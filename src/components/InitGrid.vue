@@ -147,7 +147,7 @@ export default {
   methods: {
 
     MapChange: function () {
-      road change
+      //road change
       this.$store.dispatch('MapwChange', this.mapwidth);
       this.$store.dispatch('MaphChange', this.mapheight);
       this.$store.dispatch('MinlChange', this.minlength);
