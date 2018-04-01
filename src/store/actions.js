@@ -3,6 +3,9 @@
  */
 
 export default{
+  MinlChange({commit},minlength){
+    commit('MinlChange',minlength);
+  },
   MapwChange({commit},mapwidth){
     commit('MapwChange',mapwidth);
   },

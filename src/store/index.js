@@ -7,6 +7,7 @@ import getters from './getters'
 Vue.use(Vuex)
 
 const state = {
+  Minlength:null,
   Mapwidth:null,  //地图总宽度
   Mapheight:null,  //地图总高度
   Minlength:null, //精度即一个网格的边长

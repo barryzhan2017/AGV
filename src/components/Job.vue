@@ -94,9 +94,9 @@
     data(){
       return{
         index:1,//表格页码
-		jobnumber:null,//任务次数
-		jobnumberset:[],//任务次数集合
-		agvnum:0,//小车数目
+		    jobnumber:null,//任务次数
+		    jobnumberset:[],//任务次数集合
+		    agvnum:0,//小车数目
         carposition:null,//小车初始位置
         carsposition:[],//小车初始位置集合
         stage:null,
@@ -112,18 +112,18 @@
         flag:[],//后台传新的路径过来时将对应的flag[i]由0变为1
         Isbegin:false,//系统是否已经启动
         num:[],//存储小车运行到路径数组中的第几个点，3->4则记录到3,-1代表还未到达路径的第0个点
-		rectgroup:[],//存储矩形小车和对应小车序号的组
-		pagesize:7,
-		//tableDatas:[],//二维数组存储表格单页元组
-		tableData:[],//存储表格当前页面元组
-		data: [],		//存储表格所有元组
-        columns: [
-                    {field: 'number', title: '序号', width: 40, titleAlign: 'center', columnAlign: 'center',isResize:true},
-                    {field: 'start', title: '起点', width: 40, titleAlign: 'center', columnAlign: 'center',isResize:true},
-                    {field: 'end', title: '终点', width: 40, titleAlign: 'center', columnAlign: 'center',isResize:true},
-                    {field: 'remain', title: '剩余次数', width: 40, titleAlign: 'center', columnAlign: 'center',isResize:true},
-					{field: 'car', title: '小车', width: 150, titleAlign: 'left', columnAlign: 'left',isResize:true},
-                ]
+		    rectgroup:[],//存储矩形小车和对应小车序号的组
+		    pagesize:7,
+		    //tableDatas:[],//二维数组存储表格单页元组
+		    tableData:[],//存储表格当前页面元组
+		    data: [],		//存储表格所有元组
+            columns: [
+                        {field: 'number', title: '序号', width: 40, titleAlign: 'center', columnAlign: 'center',isResize:true},
+                         {field: 'start', title: '起点', width: 40, titleAlign: 'center', columnAlign: 'center',isResize:true},
+                        {field: 'end', title: '终点', width: 40, titleAlign: 'center', columnAlign: 'center',isResize:true},
+                        {field: 'remain', title: '剩余次数', width: 40, titleAlign: 'center', columnAlign: 'center',isResize:true},
+					              {field: 'car', title: '小车', width: 150, titleAlign: 'left', columnAlign: 'left',isResize:true},
+                      ]
       }
     },
     computed:{
@@ -152,25 +152,26 @@
         'Pathdis_buffer',//路径长度
         'Indexpath_buffer' //路线是否有效的标
       ]),
-	  pagetotal(){ //表格元组总个数
-		return this.data.length
-	  },
-	  tableDatas(){
-		let currentdata=new Array();
-		for(let j=0;j<this.pagetotal/this.pagesize;j++)
-			currentdata[j]=new Array();
-		for(let i=0,j=0;i<this.pagetotal;i++){
-			currentdata[j].push(this.data[i]);
-				if((i!=0&&((i+1)%this.pagesize)==0)||i==this.pagetotal-1){
-					j++;
-				}
-			}
+	    pagetotal(){ //表格元组总个数
+		  return this.data.length
+	    },
+	    tableDatas(){
+		  let currentdata=new Array();
+		  for(let j=0;j<this.pagetotal/this.pagesize;j++)
+		  	currentdata[j]=new Array();
+		  for(let i=0,j=0;i<this.pagetotal;i++){
+			  currentdata[j].push(this.data[i]);
+				  if((i!=0&&((i+1)%this.pagesize)==0)||i==this.pagetotal-1){
+				  	j++;
+				  }
+			  }
 
-		return currentdata;
-	  }
+		  return currentdata;
+	    }
 
   },
     mounted:function(){
+      //alert(this.X);
     var width = window.innerWidth;
     var height = window.innerHeight;
     this.stage = new Konva.Stage({

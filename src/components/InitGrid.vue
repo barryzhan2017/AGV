@@ -39,22 +39,22 @@
 					<table class="table table-striped"  style="white-space: nowrap;">
 						<tr>
 							<td><p>WIDTH:</p></td>
-							<td><input id="mapwidth" v-model="mapwidth" type="text" style="width: 100px;" placeholder="地图实际长度"></td>
+							<td><input id="mapwidth" v-model="mapwidth" @input = "UpdateWidth" type="text" style="width: 100px;" placeholder="地图实际长度"></td>
 							<td><p>m</p></td>
 						</tr>
 						<tr>
 							<td><p>HIGHT:</p></td>
-							<td><input id="maphight" v-model="mapheight" type="text" style="width: 100px;" placeholder="地图实际宽度"></td>
+							<td><input id="maphight" v-model="mapheight" @input = "UpdateHeight" type="text" style="width: 100px;" placeholder="地图实际宽度"></td>
 							<td><p>m</p></td>
 						</tr>
 						<tr>
 							<td><p>精度:</p></td>
-							<td><input id="minlength" v-model="minlength" type="text" style="width: 100px;" placeholder="网格每格几米"></td>
+							<td><input id="minlength" v-model="minlength" @input = "UpdateMinl" type="text" style="width: 100px;" placeholder="网格每格几米"></td>
 							<td><p>m</p></td>
 						</tr>
 						<tr>
 							<td><p>速度:</p></td>
-							<td><input id="v" v-model="v" type="text" style="width: 100px;" placeholder="AGV实际速度"></td>
+							<td><input id="v" v-model="v" @input = "UpdateV" type="text" style="width: 100px;" placeholder="AGV实际速度"></td>
 							<td><p>m/s</p></td>
 						</tr>
 					</table>
@@ -145,13 +145,22 @@ export default {
 
   },
   methods: {
+    UpdateWidth:function(e){
+      this.$store.dispatch('MapwChange',e.target.value);
 
+    },
+    UpdateHeight:function(e){
+      this.$store.dispatch('MaphChange',e.target.value);
+    },
+    UpdateMinl:function(e){
+      this.$store.dispatch('MinlChange',e.target.value);
+    },
+    UpdateV:function(e){
+      this.$store.dispatch('VChange', e.target.value);
+    },
     MapChange: function () {
       //road change
-      this.$store.dispatch('MapwChange', this.mapwidth);
-      this.$store.dispatch('MaphChange', this.mapheight);
-      this.$store.dispatch('MinlChange', this.minlength);
-      this.$store.dispatch('VChange', this.v);
+
       this.$store.dispatch('numNodeChange', this.nodenum_real);
       this.$store.dispatch('NodenameChange', this.nodename);
       this.$store.dispatch('XChange', this.x);
@@ -177,6 +186,7 @@ export default {
     roadmake:function(){
       this.roadOrbuffer = 1;
       alert('路径设定');
+
     },
     buffermake:function(){
       this.roadOrbuffer = 2;
@@ -1013,82 +1023,85 @@ export default {
       reader.onload = function (f) {
         this.strimport = this.result;
         this.tagimport = 1;
-		let m=JSON.parse(this.strimport);
-		this.pathdis=new Array();
-		for(let i=0;i<m.Distance.length;i++){
-			this.pathdis[i]=m.Distance[i].distance;
-		}
-		this.pathstart=new Array();
-		for(let i=0;i<m.Startorder.length;i++){
-			this.pathstart[i]=m.Startorder[i].pathstart;
-		}
-		this.pathend=new Array();
-		for(let i=0;i<m.Endorder.length;i++){
-			this.pathend[i]=m.Endorder[i].pathend;
-		}
-		this.indexpath=new Array();
-		for(let i=0;i<m.Pathkind.length;i++){
-			this.indexpath[i]=m.Pathkind[i].indexpath;
-		}
-		this.nodename=new Array();
-		for(let i=0;i<m.Nodeorder.length;i++){
-			this.nodename[i]=m.Nodeorder[i].nodename;
-		}
-		this.x=new Array();
-		for(let i=0;i<m.Xpos.length;i++){
-			this.x[i]=m.Xpos[i].x;
-		}
-		this.y=new Array();
-		for(let i=0;i<m.Ypos.length;i++){
-			this.y[i]=m.Ypos[i].y;
-		}
-		this.indexnode=new Array();
-		for(let i=0;i<m.Nodekind.length;i++){
-			this.indexnode[i]=m.Nodekind[i].indexnode;
-		}
-		
-		for(let i=0;i<m.Nodenumclicked.length;i++){
-			this.nodenum=m.Nodenumclicked[i].nodenum;
-		}
-		this.pathstart_buffer=new Array();
-		for(let i=0;i<m.Startorder_buffer.length;i++){
-			this.pathstart_buffer[i]=m.Startorder_buffer[i].pathstart_buffer;
-		}
-		this.pathend_buffer=new Array();
-		for(let i=0;i<m.Endorder_buffer.length;i++){
-			this.pathend_buffer[i]=m.Endorder_buffer[i].pathend_buffer;
-		}
-		this.pathdis_buffer=new Array();
-		for(let i=0;i<m.Distance_buffer.length;i++){
-			this.pathdis_buffer[i]=m.Distance_buffer[i].distance_buffer;
-		}
-		this.indexpath_buffer=new Array();
-		for(let i=0;i<m.Pathkind_buffer.length;i++){
-			this.indexpath_buffer[i]=m.Pathkind_buffer[i].indexpath_buffer;
-		}
-		this.nodename_buffer=new Array();
-		for(let i=0;i<m.Nodeorder_buffer.length;i++){
-			this.nodename_buffer[i]=m.Nodeorder_buffer[i].nodename_buffer;
-		}
-		this.x_buffer=new Array();
-		for(let i=0;i<m.Xpos_buffer.length;i++){
-			this.x_buffer[i]=m.Xpos_buffer[i].x_buffer;
-		}
-		this.y_buffer=new Array();
-		for(let i=0;i<m.Ypos_buffer.length;i++){
-			this.y_buffer[i]=m.Ypos_buffer[i].y_buffer;
-		}
-		this.indexnode_buffer=new Array();
-		for(let i=0;i<m.Nodekind_buffer.length;i++){
-			this.indexnode_buffer[i]=m.Nodekind_buffer[i].indexnode;
-		}
-		
-		for(let i=0;i<m.Nodenumclicked_buffer.length;i++){
-			this.nodenum_realbuffer=m.Nodenumclicked_buffer[i].nodenum_buffer;
-		}
+        let m=JSON.parse(this.strimport);
+        this.pathdis=new Array();
+        for(let i=0;i<m.Distance.length;i++){
+          this.pathdis[i]=m.Distance[i].distance;
+        }
+        this.pathstart=new Array();
+        for(let i=0;i<m.Startorder.length;i++){
+          this.pathstart[i]=m.Startorder[i].pathstart;
+        }
+        this.pathend=new Array();
+        for(let i=0;i<m.Endorder.length;i++){
+          this.pathend[i]=m.Endorder[i].pathend;
+        }
+        this.indexpath=new Array();
+        for(let i=0;i<m.Pathkind.length;i++){
+          this.indexpath[i]=m.Pathkind[i].indexpath;
+        }
+        this.nodename=new Array();
+        for(let i=0;i<m.Nodeorder.length;i++){
+          this.nodename[i]=m.Nodeorder[i].nodename;
+        }
+        this.x=new Array();
+        for(let i=0;i<m.Xpos.length;i++){
+          this.x[i]=m.Xpos[i].x;
+        }
+        this.y=new Array();
+        for(let i=0;i<m.Ypos.length;i++){
+          this.y[i]=m.Ypos[i].y;
+        }
+        this.indexnode=new Array();
+        for(let i=0;i<m.Nodekind.length;i++){
+          this.indexnode[i]=m.Nodekind[i].indexnode;
+        }
+
+        for(let i=0;i<m.Nodenumclicked.length;i++){
+          this.nodenum_real=m.Nodenumclicked[i].nodenum;
+        }
+        this.pathstart_buffer=new Array();
+        for(let i=0;i<m.Startorder_buffer.length;i++){
+          this.pathstart_buffer[i]=m.Startorder_buffer[i].pathstart_buffer;
+        }
+        this.pathend_buffer=new Array();
+        for(let i=0;i<m.Endorder_buffer.length;i++){
+          this.pathend_buffer[i]=m.Endorder_buffer[i].pathend_buffer;
+        }
+        this.pathdis_buffer=new Array();
+        for(let i=0;i<m.Distance_buffer.length;i++){
+          this.pathdis_buffer[i]=m.Distance_buffer[i].distance_buffer;
+        }
+        this.indexpath_buffer=new Array();
+        for(let i=0;i<m.Pathkind_buffer.length;i++){
+          this.indexpath_buffer[i]=m.Pathkind_buffer[i].indexpath_buffer;
+        }
+        this.nodename_buffer=new Array();
+        for(let i=0;i<m.Nodeorder_buffer.length;i++){
+          this.nodename_buffer[i]=m.Nodeorder_buffer[i].nodename_buffer;
+        }
+        this.x_buffer=new Array();
+        for(let i=0;i<m.Xpos_buffer.length;i++){
+          this.x_buffer[i]=m.Xpos_buffer[i].x_buffer;
+        }
+        this.y_buffer=new Array();
+        for(let i=0;i<m.Ypos_buffer.length;i++){
+          this.y_buffer[i]=m.Ypos_buffer[i].y_buffer;
+        }
+        this.indexnode_buffer=new Array();
+        for(let i=0;i<m.Nodekind_buffer.length;i++){
+          this.indexnode_buffer[i]=m.Nodekind_buffer[i].indexnode;
+        }
+
+        for(let i=0;i<m.Nodenumclicked_buffer.length;i++){
+          this.nodenum_realbuffer=m.Nodenumclicked_buffer[i].nodenum_buffer;
+
+        }
+
+
         alert("读取完毕，保存地图即可！");
       };
-	  this.MapChange();
+
 
 
     },
@@ -1180,7 +1193,9 @@ export default {
         if (this.indexnode_buffer[i] == 1)
           this.nodenum_realbuffer++;
       }
+
       this.MapChange();
+
       this.$router.push({path: '/Job'})
     }
 

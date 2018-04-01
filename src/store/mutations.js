@@ -2,6 +2,11 @@
  * Created by hasee on 2018/3/22.
  */
 export default{
+
+  Minlength(state,minlength){
+    state.Minlength = minlength;
+  },
+
   MapwChange(state,mapwidth){
     state.Mapwidth = mapwidth;
   },
