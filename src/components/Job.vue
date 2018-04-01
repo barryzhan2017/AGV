@@ -93,10 +93,16 @@
     name: 'JOB',
     data(){
       return{
-        index:1,//表格页码
+        pathflag:0,//变为1时表示系统开始后有新任务添加并传输到后台
+		newpath:[],//存储后台传过来的新的小车路径
+		index:1,//表格页码
 		jobnumber:null,//任务次数
 		jobnumberset:[],//任务次数集合
 		agvnum:0,//小车数目
+        index:1,//表格页码
+		    jobnumber:null,//任务次数
+		    jobnumberset:[],//任务次数集合
+		    agvnum:0,//小车数目
         carposition:null,//小车初始位置
         carsposition:[],//小车初始位置集合
         stage:null,
@@ -112,18 +118,18 @@
         flag:[],//后台传新的路径过来时将对应的flag[i]由0变为1
         Isbegin:false,//系统是否已经启动
         num:[],//存储小车运行到路径数组中的第几个点，3->4则记录到3,-1代表还未到达路径的第0个点
-		rectgroup:[],//存储矩形小车和对应小车序号的组
-		pagesize:7,
-		//tableDatas:[],//二维数组存储表格单页元组
-		tableData:[],//存储表格当前页面元组
-		data: [],		//存储表格所有元组
-        columns: [
-                    {field: 'number', title: '序号', width: 40, titleAlign: 'center', columnAlign: 'center',isResize:true},
-                    {field: 'start', title: '起点', width: 40, titleAlign: 'center', columnAlign: 'center',isResize:true},
-                    {field: 'end', title: '终点', width: 40, titleAlign: 'center', columnAlign: 'center',isResize:true},
-                    {field: 'remain', title: '剩余次数', width: 40, titleAlign: 'center', columnAlign: 'center',isResize:true},
-					{field: 'car', title: '小车', width: 150, titleAlign: 'left', columnAlign: 'left',isResize:true},
-                ]
+		    rectgroup:[],//存储矩形小车和对应小车序号的组
+		    pagesize:7,
+		    //tableDatas:[],//二维数组存储表格单页元组
+		    tableData:[],//存储表格当前页面元组
+		    data: [],		//存储表格所有元组
+            columns: [
+                        {field: 'number', title: '序号', width: 40, titleAlign: 'center', columnAlign: 'center',isResize:true},
+                         {field: 'start', title: '起点', width: 40, titleAlign: 'center', columnAlign: 'center',isResize:true},
+                        {field: 'end', title: '终点', width: 40, titleAlign: 'center', columnAlign: 'center',isResize:true},
+                        {field: 'remain', title: '剩余次数', width: 40, titleAlign: 'center', columnAlign: 'center',isResize:true},
+					              {field: 'car', title: '小车', width: 150, titleAlign: 'left', columnAlign: 'left',isResize:true},
+                      ]
       }
     },
     computed:{
@@ -152,22 +158,22 @@
         'Pathdis_buffer',//路径长度
         'Indexpath_buffer' //路线是否有效的标
       ]),
-	  pagetotal(){ //表格元组总个数
-		return this.data.length
-	  },
-	  tableDatas(){
-		let currentdata=new Array();
-		for(let j=0;j<this.pagetotal/this.pagesize;j++)
-			currentdata[j]=new Array();
-		for(let i=0,j=0;i<this.pagetotal;i++){
-			currentdata[j].push(this.data[i]);
-				if((i!=0&&((i+1)%this.pagesize)==0)||i==this.pagetotal-1){
-					j++;
-				}
-			}
+	    pagetotal(){ //表格元组总个数
+		  return this.data.length
+	    },
+	    tableDatas(){
+		  let currentdata=new Array();
+		  for(let j=0;j<this.pagetotal/this.pagesize;j++)
+		  	currentdata[j]=new Array();
+		  for(let i=0,j=0;i<this.pagetotal;i++){
+			  currentdata[j].push(this.data[i]);
+				  if((i!=0&&((i+1)%this.pagesize)==0)||i==this.pagetotal-1){
+				  	j++;
+				  }
+			  }
 
-		return currentdata;
-	  }
+		  return currentdata;
+	    }
 
   },
     mounted:function(){
@@ -270,6 +276,7 @@
         return;
       this.agvnum++;
       this.carsposition[this.agvnum-1]=this.carposition;
+	  //this.path=new Array();
 	  this.path[this.agvnum-1]=new Array();
 	  this.path[this.agvnum-1][0]=this.carposition;
 	  var rectnumber = new Konva.Text({
@@ -304,8 +311,32 @@
       this.num[this.agvnum-1]=-1;//初始化num数组
     },
     addjob:function(){
-      if(this.jobStart==null||this.jobEnd==null)
-        return;
+      /* let ppath=[
+			[	{"paths":1},
+				{"paths":2},
+				{"paths":3},
+				{"paths":4},
+				//{"paths":8},
+				{"paths":-1}
+			
+			],
+			[
+				{"paths":10},
+				{"paths":1},
+				{"paths":5},
+				//{"paths":6},
+				{"paths":-1}
+			]
+		];
+		for(let i=0;i<ppath.length;i++){
+			this.path[i]=new Array();
+			for(let j=0;j<ppath[i].length;j++){
+				this.path[i][j]=ppath[i][j].paths;
+			}
+		}*/
+	
+	  //if(this.jobStart==null||this.jobEnd==null)
+        //return;
       this.jobnum++;
       this.jobStartset[this.jobnum-1]=this.jobStart;
       this.jobEndset[this.jobnum-1]=this.jobEnd;
@@ -318,6 +349,7 @@
       if(this.Isbegin){
         let datapath=new Array();//传给志诚所写的后端的当前路径
         datapath=this.path;
+		this.newpath=this.path;
         for(let i=0;i<this.agvnum;i++){
           if(this.T[i]==-1)
             continue;
@@ -338,10 +370,14 @@
           }
           datapath[i]=dpath;
         }
-
-
-
-
+		//AjAx
+		//if(this.pathflag==0)
+		//传datapath
+		//else
+		//传newpath
+		this.pathflag=1;
+		//this.flag[i]=1;改变路径的小车的flag变为1
+		//this.newpath[1][2]=3;
         for(let i=0;i<this.agvnum;i++){
           if(this.T[i]==-1)
             this.move(i,0);
@@ -350,7 +386,11 @@
       }
     },
     move:function(i,j){
-      if(this.path[i][j]==-1){
+      if(this.pathflag==1){
+		this.pathflag=0;
+		this.path=this.newpath;
+	  }
+	  if(this.path[i][j]==-1){
         this.T[i]=-1;
         return;
       }
@@ -359,28 +399,29 @@
         time=Math.abs((this.Y[this.path[i][j]-1]-10-this.rects[i].getAbsolutePosition().y))/(this.V*20);
       else
         time=Math.abs((this.X[this.path[i][j]-1]-10-this.rects[i].getAbsolutePosition().x))/(this.V*20);
-      console.log(time);
+      console.log(i+" "+this.path[i][j]);
       this.rectgroup[i].to({
           x:this.X[this.path[i][j]-1]-10,
           y:this.Y[this.path[i][j]-1]-10,
           duration:time,
           onFinish:()=> {
-          if(j<this.path[i].length-1){
+          if(j<this.path[i].length-1){//this.pathflag=1;this.newpath=this.path;this.newpath[1][2]=3;
         this.num[i]=j;
         if(this.flag[i]==1){
           this.flag[i]=0;
           this.move(i,1);
         }
-        this.move(i,j+1);
+        else
+			this.move(i,j+1);
       }
     }
 
     });
     },
     start:function(){
-	  let sstart=[];
-	  let eend=[];
-	  let ddistance=[];
+	  let sstart=new Array();
+	  let eend=new Array();
+	  let ddistance=new Array();
       for (var i = 0; i < this.Indexpath.length; i++) {
        if(this.Indexpath[i]==0)
 		continue;
@@ -389,21 +430,21 @@
 		ddistance[i]=this.Pathdis[i];
       }
 	   var arrpathstart = [];
-      for (var i = 0; i < this.sstart.length; i++) {
+      for (var i = 0; i < sstart.length; i++) {
         var jsonobj1 = {};
-        jsonobj1["startNode"] = this.sstart[i];
+        jsonobj1["startNode"] = sstart[i];
         arrpathstart[i] = jsonobj1;
       }
 	  var arrpathend = [];
-      for (var i = 0; i < this.eend.length; i++) {
-        var jsonobj2 = {};
-        jsonobj2["endNode"] = this.eend[i];
+      for (var i = 0; i < eend.length; i++) {
+        let jsonobj2 = {};
+        jsonobj2["endNode"] = eend[i];
         arrpathend[i] = jsonobj2;
       }
 	  var arrpathdis = [];
-      for (var i = 0; i < this.ddistance.length; i++) {
+      for (var i = 0; i < ddistance.length; i++) {
         var jsonobj3 = {};
-        jsonobj3["nodeDistance"] = this.ddistance[i]/20;
+        jsonobj3["nodeDistance"] = ddistance[i]/20;
         arrpathdis[i] = jsonobj3;
       }
 	  let sstart_buffer=[];
@@ -418,21 +459,21 @@
 		ddistance_buffer[i]=this.Pathdis_buffer[i];
       }
 	  var arrpathstartbuffer=[];
-	  for (var i = 0; i < this.sstart_buffer.length; i++) {
+	  for (var i = 0; i < sstart_buffer.length; i++) {
         var jsonobj4 = {};
-        jsonobj4["Pathstartbuffer"] = this.sstart_buffer[i];
+        jsonobj4["Pathstartbuffer"] = sstart_buffer[i];
         arrpathstartbuffer[i] = jsonobj4;
       }
 	  var arrpathendbuffer = [];
-      for (var i = 0; i < this.eend.length; i++) {
+      for (var i = 0; i < eend.length; i++) {
         var jsonobj5 = {};
-        jsonobj5["Pathend"] = this.eend[i];
+        jsonobj5["Pathend"] = eend[i];
         arrpathendbuffer[i] = jsonobj5;
       }
 	  var arrpathdisbuffer = [];
-      for (var i = 0; i < this.ddistance.length; i++) {
+      for (var i = 0; i < ddistance.length; i++) {
         var jsonobj6 = {};
-        jsonobj6["distance"] = this.ddistance[i];
+        jsonobj6["distance"] = ddistance[i];
         arrpathdisbuffer[i] = jsonobj6;
       }
 	  var arrpath=[];
@@ -469,23 +510,23 @@
 	  arrnodenum[0]=jsonobj11;
 	  var arrbufferset=[];//假数据
 	  let jsonobj12={};
-	  let bu=[[5,7,8,9,10,6],[2,11,12,13,14,3]]
-	  jsonboj12["bufferset"]=bu[0];
-	  arrbufferset[0]=jsonboj12;
-	  jsonboj12["bufferset"]=bu[0];
-	  arrbufferset[0]=jsonboj12;
-	  jsonboj12["bufferset"]=bu[1];
-	  arrbufferset[1]=jsonboj12;
+	  let bu=[[5,7,8,9,10,6],[2,11,12,13,14,3]];
+	  jsonobj12["bufferset"]=bu[0];
+	  arrbufferset[0]=jsonobj12;
+	  jsonobj12["bufferset"]=bu[0];
+	  arrbufferset[0]=jsonobj12;
+	  jsonobj12["bufferset"]=bu[1];
+	  arrbufferset[1]=jsonobj12;
 	  var arrcarset=[];//假数据
 	  let jsonobj13={};
-	  jsonboj13["bufferForAGV"]=0;
-	  arrcarset[0]=jsonboj13;
-	  jsonboj13["bufferForAGV"]=0;
-	  arrcarset[1]=jsonboj13;
-	  jsonboj13["bufferForAGV"]=1;
-	  arrcarset[2]=jsonboj13;
-	  jsonboj13["bufferForAGV"]=1;
-	  arrcarset[3]=jsonboj13;
+	  jsonobj13["bufferForAGV"]=0;
+	  arrcarset[0]=jsonobj13;
+	  jsonobj13["bufferForAGV"]=0;
+	  arrcarset[1]=jsonobj13;
+	  jsonobj13["bufferForAGV"]=1;
+	  arrcarset[2]=jsonobj13;
+	  jsonobj13["bufferForAGV"]=1;
+	  arrcarset[3]=jsonobj13;
 	  var arrtime=[];
 	  for(let i=0;i<this.T.length;i++){
 		let jsonobj14 = {};
@@ -505,16 +546,39 @@
 		"bufferForAGV":arrcarset,
 		"time":arrtime
 	  };
-
+	
+		let ppath=[
+			[	{"paths":9},
+				{"paths":8},
+				{"paths":1},
+				{"paths":2},
+				{"paths":-1}
+			
+			],
+			[
+				{"paths":3},
+				{"paths":2},
+				{"paths":1},
+				{"paths":-1}
+			]
+		];
+		for(let i=0;i<ppath.length;i++){
+			this.path[i]=new Array();
+			for(let j=0;j<ppath[i].length;j++){
+				this.path[i][j]=ppath[i][j].paths;
+			}
+		}
+		
 	  this.Isbegin=true;
       for(let i=0;i<this.rects.length;i++)
         this.move(i,0);
-    axios.post('/api/genetic', {
+    
+	/*axios.post('/api/genetic', {
       data: message
       })
       .then(function (response) {
         alert(response.data);
-      })
+      })  */
 
     },
 	pageChange:function(pageIndex){console.log(pageIndex);
