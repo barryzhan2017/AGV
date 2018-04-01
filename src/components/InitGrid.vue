@@ -1010,9 +1010,10 @@ export default {
       var selectedFile = document.getElementById("files").files[0];//获取读取的File对象
       var reader = new FileReader();//这里是核心！！！读取操作就是由它完成的。
       reader.readAsText(selectedFile);//读取文件的内容
-      reader.onload = function (f) {
-        this.strimport = this.result;
+      reader.onload = (f)=> {
+        this.strimport = reader.result;
         this.tagimport = 1;
+		
 		let m=JSON.parse(this.strimport);
 		this.pathdis=new Array();
 		for(let i=0;i<m.Distance.length;i++){
@@ -1034,10 +1035,10 @@ export default {
 		for(let i=0;i<m.Nodeorder.length;i++){
 			this.nodename[i]=m.Nodeorder[i].nodename;
 		}
-		this.x=new Array();
+		let aaa=new Array();
 		for(let i=0;i<m.Xpos.length;i++){
-			this.x[i]=m.Xpos[i].x;
-		}
+			aaa[i]=m.Xpos[i].x;
+		}this.x=aaa;
 		this.y=new Array();
 		for(let i=0;i<m.Ypos.length;i++){
 			this.y[i]=m.Ypos[i].y;
@@ -1086,14 +1087,14 @@ export default {
 		for(let i=0;i<m.Nodenumclicked_buffer.length;i++){
 			this.nodenum_realbuffer=m.Nodenumclicked_buffer[i].nodenum_buffer;
 		}
-        alert("读取完毕，保存地图即可！");
+    
+	  this.MapChange();alert("读取完毕，保存地图即可！");
       };
-	  this.MapChange();
 
 
     },
     Save: function () {
-      var finallength = this.pathstart.length;
+     /* var finallength = this.pathstart.length;
       //分离产生的非交点的indexnode为3 交点为2  新产生的线indexpath 为2
       //将超过1格的边分离
       for (var i = 0; i < finallength; i++) {
@@ -1180,7 +1181,7 @@ export default {
         if (this.indexnode_buffer[i] == 1)
           this.nodenum_realbuffer++;
       }
-      this.MapChange();
+      this.MapChange();*/
       this.$router.push({path: '/Job'})
     }
 
