@@ -39,22 +39,22 @@
 					<table class="table table-striped"  style="white-space: nowrap;">
 						<tr>
 							<td><p>WIDTH:</p></td>
-							<td><input id="mapwidth" v-model="mapwidth" type="text" style="width: 100px;" placeholder="地图实际长度"></td>
+							<td><input id="mapwidth" v-model="mapwidth" @input = "UpdateWidth" type="text" style="width: 100px;" placeholder="地图实际长度"></td>
 							<td><p>m</p></td>
 						</tr>
 						<tr>
 							<td><p>HIGHT:</p></td>
-							<td><input id="maphight" v-model="mapheight" type="text" style="width: 100px;" placeholder="地图实际宽度"></td>
+							<td><input id="maphight" v-model="mapheight" @input = "UpdateHeight" type="text" style="width: 100px;" placeholder="地图实际宽度"></td>
 							<td><p>m</p></td>
 						</tr>
 						<tr>
 							<td><p>精度:</p></td>
-							<td><input id="minlength" v-model="minlength" type="text" style="width: 100px;" placeholder="网格每格几米"></td>
+							<td><input id="minlength" v-model="minlength" @input = "UpdateMinl" type="text" style="width: 100px;" placeholder="网格每格几米"></td>
 							<td><p>m</p></td>
 						</tr>
 						<tr>
 							<td><p>速度:</p></td>
-							<td><input id="v" v-model="v" type="text" style="width: 100px;" placeholder="AGV实际速度"></td>
+							<td><input id="v" v-model="v" @input = "UpdateV" type="text" style="width: 100px;" placeholder="AGV实际速度"></td>
 							<td><p>m/s</p></td>
 						</tr>
 					</table>
@@ -145,13 +145,22 @@ export default {
 
   },
   methods: {
+    UpdateWidth:function(e){
+      this.$store.dispatch('MapwChange',e.target.value);
 
+    },
+    UpdateHeight:function(e){
+      this.$store.dispatch('MaphChange',e.target.value);
+    },
+    UpdateMinl:function(e){
+      this.$store.dispatch('MinlChange',e.target.value);
+    },
+    UpdateV:function(e){
+      this.$store.dispatch('VChange', e.target.value);
+    },
     MapChange: function () {
       //road change
-      this.$store.dispatch('MapwChange', this.mapwidth);
-      this.$store.dispatch('MaphChange', this.mapheight);
-      this.$store.dispatch('MinlChange', this.minlength);
-      this.$store.dispatch('VChange', this.v);
+
       this.$store.dispatch('numNodeChange', this.nodenum_real);
       this.$store.dispatch('NodenameChange', this.nodename);
       this.$store.dispatch('XChange', this.x);
@@ -177,6 +186,7 @@ export default {
     roadmake:function(){
       this.roadOrbuffer = 1;
       alert('路径设定');
+
     },
     buffermake:function(){
       this.roadOrbuffer = 2;
@@ -673,7 +683,7 @@ export default {
               this.pathdis_buffer[this.tag_buffer] = endy - starty;
               this.indexpath_buffer[this.tag_buffer] = 1;
               this.tag_buffer++;
-            }/////////////////////
+            }
           }
           else {
             alert("请勿点击无效区域！");
@@ -1090,6 +1100,7 @@ export default {
     
 	  this.MapChange();alert("读取完毕，保存地图即可！");
       };
+       
 
 
     },
@@ -1181,6 +1192,7 @@ export default {
         if (this.indexnode_buffer[i] == 1)
           this.nodenum_realbuffer++;
       }
+
       this.MapChange();*/
       this.$router.push({path: '/Job'})
     }

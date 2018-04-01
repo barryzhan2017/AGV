@@ -2,6 +2,7 @@
  * Created by hasee on 2018/3/22.
  */
 export default{
+  Minlength: state => state.Minlength,
   Mapwidth: state => state.Mapwidth,
   Maphight: state => state.Mapheight,
   V: state => state.V,
