@@ -318,7 +318,7 @@
 				{"paths":4},
 				//{"paths":8},
 				{"paths":-1}
-			
+
 			],
 			[
 				{"paths":10},
@@ -334,7 +334,7 @@
 				this.path[i][j]=ppath[i][j].paths;
 			}
 		}*/
-	
+
 	  //if(this.jobStart==null||this.jobEnd==null)
         //return;
       this.jobnum++;
@@ -506,7 +506,7 @@
 	  arrpre[0]=jsonobj10;
 	  var arrnodenum=[];
 	  let jsonobj11={};
-	  jsonobj11["numberOfGraphNode"]=this.Nodenum_real;
+	  jsonobj11["numberOfGraphNode"]=this.X.length;
 	  arrnodenum[0]=jsonobj11;
 	  var arrbufferset=[];//假数据
 	  let jsonobj12={};
@@ -539,21 +539,21 @@
 		"nodeDistance":arrpathdis,
 		"paths":arrpath,
 		"tasks":arrtasks,
-		"speed":arrv,
-		"precision":arrpre,
-		"numberOfGraphNode":arrnodenum,
+		"speed":arrv[0].speed,
+		"precision":arrpre[0].precision,
+		"numberOfGraphNode":arrnodenum[0].numberOfGraphNode,
 		"bufferset":arrbufferset,
 		"bufferForAGV":arrcarset,
 		"time":arrtime
 	  };
-	
+
 		let ppath=[
 			[	{"paths":9},
 				{"paths":8},
 				{"paths":1},
 				{"paths":2},
 				{"paths":-1}
-			
+
 			],
 			[
 				{"paths":3},
@@ -568,17 +568,22 @@
 				this.path[i][j]=ppath[i][j].paths;
 			}
 		}
-		
+
 	  this.Isbegin=true;
       for(let i=0;i<this.rects.length;i++)
         this.move(i,0);
-    
-	/*axios.post('/api/genetic', {
-      data: message
-      })
-      .then(function (response) {
-        alert(response.data);
-      })  */
+
+
+      // Send a POST request
+      this.$axios.post('/api/genetic', {
+                data: message,
+              }).then(response => {
+               alert(response.data);
+              })
+
+
+
+
 
     },
 	pageChange:function(pageIndex){console.log(pageIndex);
