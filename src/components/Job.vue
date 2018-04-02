@@ -445,7 +445,8 @@
       for (var i = 0; i < ddistance.length; i++) {
         var jsonobj3 = {};
 		let dis=parseFloat((ddistance[i]/20).toString());
-        jsonobj3["nodeDistance"] = dis;
+        dis=dis.toFixed(3);
+		jsonobj3["nodeDistance"] = dis;
         arrpathdis[i] = jsonobj3;
 		
       }
@@ -500,12 +501,14 @@
 	  var arrv=[];
 	  let jsonobj9={};
 	  let vv=parseFloat((this.V).toString());
+	  vv=vv.toFixed(3);
 	  jsonobj9["speed"]=vv;
 	  arrv[0]=jsonobj9;
 
 	  var arrpre=[];
 	  let jsonobj10={};
 	  let pre=parseFloat((this.Minlength).toString());
+	  pre=pre.toFixed(3);
 	  jsonobj10["precision"]=pre;
 	  arrpre[0]=jsonobj10;
 	  var arrnodenum=[];
