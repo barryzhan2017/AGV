@@ -557,16 +557,16 @@
 		"startNode":arrpathstart,
 		"endNode":arrpathend,
 		"nodeDistance":arrpathdis,
-		"paths":ppath,
+		"paths":arrpath,
 		"tasks":arrtasks,
-		"speed":1.0,
-		"precision":1.0,
+		"speed":arrv[0],
+		"precision":arrpre[0],
 		"numberOfGraphNode":arrnodenum[0].numberOfGraphNode,
-		"bufferSet":ppath,
+		"bufferSet":arrbufferset,
 		"bufferForAGV":arrcarset,
 		"time":arrtime
 	  };
-
+		console.log(message);
 
 		for(let i=0;i<ppath.length;i++){
 			this.path[i]=new Array();
