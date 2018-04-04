@@ -446,7 +446,7 @@
         var jsonobj3 = {};
 		jsonobj3["nodeDistance"] = ddistance[i]/20;
         arrpathdis[i] = jsonobj3;
-		
+
       }
 	  let sstart_buffer=[];
 	  let eend_buffer=[];
@@ -537,35 +537,37 @@
         jsonobj14["time"] = this.T[i];
         arrtime[i] = jsonobj14;
 	  }
+
+	  		let ppath=[
+    			[	{"paths":9},
+    				{"paths":8},
+    				{"paths":1},
+    				{"paths":2},
+    				{"paths":-1}
+
+    			],
+    			[
+    				{"paths":3},
+    				{"paths":2},
+    				{"paths":1},
+    				{"paths":-1}
+    			]
+    		];
 	  var message={
 		"startNode":arrpathstart,
 		"endNode":arrpathend,
 		"nodeDistance":arrpathdis,
-		"paths":arrpath,
+		"paths":ppath,
 		"tasks":arrtasks,
-		"speed":arrv[0].speed,
-		"precision":arrpre[0].precision,
+		"speed":1.0,
+		"precision":1.0,
 		"numberOfGraphNode":arrnodenum[0].numberOfGraphNode,
-		"bufferset":arrbufferset,
+		"bufferSet":ppath,
 		"bufferForAGV":arrcarset,
 		"time":arrtime
 	  };
 
-		let ppath=[
-			[	{"paths":9},
-				{"paths":8},
-				{"paths":1},
-				{"paths":2},
-				{"paths":-1}
 
-			],
-			[
-				{"paths":3},
-				{"paths":2},
-				{"paths":1},
-				{"paths":-1}
-			]
-		];
 		for(let i=0;i<ppath.length;i++){
 			this.path[i]=new Array();
 			for(let j=0;j<ppath[i].length;j++){
