@@ -562,11 +562,11 @@
 		"speed":arrv[0],
 		"precision":arrpre[0],
 		"numberOfGraphNode":arrnodenum[0].numberOfGraphNode,
-		"bufferSet":ppath,
+		"bufferSet":arrbufferset,
 		"bufferForAGV":arrcarset,
 		"time":arrtime
 	  };
-
+		console.log(message);
 
 		for(let i=0;i<ppath.length;i++){
 			this.path[i]=new Array();
