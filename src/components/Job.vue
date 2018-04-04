@@ -480,8 +480,10 @@
 	  var arrpath=[];
 	  for(let i=0;i<this.agvnum;i++){
 		let jsonobj7 = {};
-        jsonobj7["paths"] = this.path;
-        arrpath[i] = jsonobj7;
+        arrpath[i]=new Array();
+		this.path[i][0]=parseFloat(this.path[i][0]);
+		jsonobj7["paths"] = this.path[i][0];
+        arrpath[i][0] = jsonobj7;
 	  }
 	  let tasks=[];
 	  for(let i=0;i<this.jobnum;i++){
@@ -499,12 +501,12 @@
 	  }
 	  var arrv=[];
 	  let jsonobj9={};
-	  jsonobj9["speed"]=this.V;
+	  jsonobj9["speed"]=parseFloat(this.V);
 	  arrv[0]=jsonobj9;
 
 	  var arrpre=[];
 	  let jsonobj10={};
-	  jsonobj10["precision"]=this.Minlength;
+	  jsonobj10["precision"]=parseFloat(this.Minlength);
 	  arrpre[0]=jsonobj10;
 	  var arrnodenum=[];
 	  let jsonobj11={};
@@ -513,11 +515,11 @@
 	  var arrbufferset=[];//假数据
 	  let jsonobj12={};
 	  let bu=[[5,7,8,9,10,6],[2,11,12,13,14,3]];
-	  jsonobj12["bufferset"]=bu[0];
+	  jsonobj12["bufferSet"]=bu[0];
 	  arrbufferset[0]=jsonobj12;
-	  jsonobj12["bufferset"]=bu[0];
+	  jsonobj12["bufferSet"]=bu[0];
 	  arrbufferset[0]=jsonobj12;
-	  jsonobj12["bufferset"]=bu[1];
+	  jsonobj12["bufferSet"]=bu[1];
 	  arrbufferset[1]=jsonobj12;
 	  var arrcarset=[];//假数据
 	  let jsonobj13={};
