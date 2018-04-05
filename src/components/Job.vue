@@ -499,15 +499,11 @@
 		console.log(jsonobj8.tasks);
         arrtasks[i] = jsonobj8;
 	  }
-	  var arrv=[];
-	  let jsonobj9={};
-	  jsonobj9["speed"]=parseFloat(this.V);
-	  arrv[0]=jsonobj9;
 
-	  var arrpre=[];
-	  let jsonobj10={};
-	  jsonobj10["precision"]=parseFloat(this.Minlength);
-	  arrpre[0]=jsonobj10;
+	  let arrspeed=parseFloat(this.V);
+
+
+	  let arrpre=parseFloat(this.Minlength);
 	  var arrnodenum=[];
 	  let jsonobj11={};
 	  jsonobj11["numberOfGraphNode"]=this.X.length;
@@ -590,8 +586,8 @@
 		"nodeDistance":arrpathdis,
 		"paths":arrpath,
 		"tasks":arrtasks,
-		"speed":arrv[0],
-		"precision":arrpre[0],
+		"speed":arrspeed,
+		"precision":arrpre,
 		"numberOfGraphNode":arrnodenum[0].numberOfGraphNode,
 		"bufferSet":arrbufferset,
 		"bufferForAGV":arrcarset,
