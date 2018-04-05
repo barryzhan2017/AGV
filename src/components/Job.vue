@@ -515,11 +515,11 @@
 	  var arrbufferset=[];//假数据
 	  let jsonobj12={};
 	  let bu=[[5,7,8,9,10,6],[2,11,12,13,14,3]];
-	  jsonobj12["bufferSet"]=bu[0];
+	  jsonobj12["paths"]=bu[0];
 	  arrbufferset[0]=jsonobj12;
-	  jsonobj12["bufferSet"]=bu[0];
+	  jsonobj12["paths"]=bu[0];
 	  arrbufferset[0]=jsonobj12;
-	  jsonobj12["bufferSet"]=bu[1];
+	  jsonobj12["paths"]=bu[1];
 	  arrbufferset[1]=jsonobj12;
 	  var arrcarset=[];//假数据
 	  let jsonobj13={};
