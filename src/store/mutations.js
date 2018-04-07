@@ -48,6 +48,9 @@ export default{
     state.Indexpath = indexpath;
   },
   //buffer of mutation
+  TotalChange(state,total_buffer){
+    state.Total_buffer = total_buffer;
+  },
   numNodeChange_buffer(state,nodenum_realbuffer){
     state.Nodenum_realbuffer = nodenum_realbuffer;
   },

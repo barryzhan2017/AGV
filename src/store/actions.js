@@ -50,6 +50,9 @@ export default{
 
 
   //action of buffer
+  TotalChange({commit},total_buffer){
+    commit('TotalChange',total_buffer);
+  },
   NodenameChange_buffer({commit},nodename_buffer){
     commit('NodenameChange_buffer',nodename_buffer);
   },

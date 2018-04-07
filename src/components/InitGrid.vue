@@ -65,6 +65,9 @@
 					<button id="roadbtn" class = "btn btn-info" @click = "roadmake" >路径设立</button>
 					<div style="height: 10px;"></div>
 					<button id="bufferbtn" class = "btn btn-info" @click = "buffermake" >缓冲区设立</button>
+          <br>
+          <input id="bufferdeep" v-model="bufferdeep"  type="text" style="width: 100px;" placeholder="缓存区深度">
+          <button id = "finishbtn" class = "btn btn-info" @click = "bufferfinish">完成</button>
 					<div style="height: 10px;"></div>
 					<button id="savebtn2" class="btn" @click="exportmap">导出map文件</button>
 					<input type="file" @change="importmap" class ="btn" id ="files"/>
@@ -106,7 +109,7 @@ export default {
 	    y:[],
       x_buffer:[],
       y_buffer:[],
-
+      bufferdeep:null,
       nodename:[], //存有所有点击过的点被点击时的次序（作为第几个被点击的点）
       nodename_buffer:[],
 	    indexnode:[], //被点击过的点是否有效
@@ -119,9 +122,11 @@ export default {
       pathdis_buffer:[],
 	    indexpath:[], //路线是否有效的标志
       indexpath_buffer:[],
+      total_buffer:[],
 
       tag:0, //变数的计数器
       tag_buffer:0,
+      count_buffer:0,
 
       strimport:null,
 	    tagimport:0,
@@ -181,7 +186,655 @@ export default {
       this.$store.dispatch('EndChange_buffer', this.pathend_buffer);
       this.$store.dispatch('DisChange_buffer', this.pathdis_buffer);
       this.$store.dispatch('pathIndexChange_buffer', this.indexpath_buffer);
+      this.$store.dispatch('TotalChange',this.total_buffer);
+    },
+    bufferfinish:function(){
 
+      var canvas = document.getElementById("myCanvas");
+      var ctx = canvas.getContext("2d");
+      var deep = this.bufferdeep;
+      var begin_x,begin_y;
+      var max_y = -1,max_x = -1,min_x = 9999999,min_y = 9999999;
+      var end_x,end_y;
+      var n = 0,j;
+
+      for(var i = 0 ; i < this.x.length;++i){
+        if(this.x[i] < min_x){
+          min_x = this.x[i];
+        }
+        if(this.x[i] > max_x){
+          max_x = this.x[i];
+        }
+        if(this.y[i] < min_y){
+          min_y = this.y[i];
+        }
+        if(this.y[i] > max_y){
+          max_y = this.y[i];
+        }
+      }
+      if(deep > 1){
+
+
+        for(var i = 0 ; i < this.indexnode_buffer.length; ++i){
+          if(this.indexnode_buffer[i] == 1) {
+            begin_x = this.x_buffer[i];
+            begin_y = this.y_buffer[i];
+          }
+
+          if(this.indexnode_buffer[i] == 2) {
+            end_x = this.x_buffer[i];
+            end_y = this.y_buffer[i];
+          }
+
+
+        }
+        if(begin_x == end_x){//竖线
+          var dis;
+          var temp = deep;
+          while(temp > 1){
+            if(begin_x == min_x){
+              this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+              this.y_buffer[this.nodenum_buffer] = begin_y;
+              this.x_buffer[this.nodenum_buffer] = begin_x - (deep - temp +1)*this.length;
+              this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
+              this.nodenum_buffer++;
+            }
+            else{
+              this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+              this.y_buffer[this.nodenum_buffer] = begin_y;
+              this.x_buffer[this.nodenum_buffer] = begin_x + (deep - temp + 1)*this.length;
+              this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
+              this.nodenum_buffer++;
+            }
+
+            temp--;
+          }
+
+
+          if(begin_y > end_y){
+            dis = begin_y - end_y;
+          }
+          else{
+            dis = end_y - begin_y;
+          }
+          while(n <= dis/this.length){
+
+            this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+            if(begin_y > end_y){
+              this.y_buffer[this.nodenum_buffer] = begin_y - n*this.length;
+              if(begin_x == min_x){
+                this.x_buffer[this.nodenum_buffer] = begin_x - deep*this.length;
+              }
+              else {
+                this.x_buffer[this.nodenum_buffer] = begin_x + deep*this.length;
+              }
+            }
+            else{
+              this.y_buffer[this.nodenum_buffer] = begin_y + n*this.length;
+              if(begin_x == min_x){
+                this.x_buffer[this.nodenum_buffer] = begin_x - deep*this.length;
+              }
+              else {
+                this.x_buffer[this.nodenum_buffer] = begin_x + deep*this.length;
+              }
+            }
+            this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
+            this.nodenum_buffer++;
+            n++;
+          }
+
+          temp = deep;
+          while(temp > 1){
+            if(begin_x == min_x){
+              this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+              this.y_buffer[this.nodenum_buffer] = end_y;
+              this.x_buffer[this.nodenum_buffer] = end_x - (temp - 1 )*this.length;
+              this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
+              this.nodenum_buffer++;
+            }
+            else{
+              this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+              this.y_buffer[this.nodenum_buffer] = end_y;
+              this.x_buffer[this.nodenum_buffer] = end_x + (temp - 1)*this.length;
+              this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
+              this.nodenum_buffer++;
+            }
+
+            temp--;
+          }
+
+        }
+        else if(begin_y == end_y){ //横线
+          var dis;
+          var temp = deep;
+          while(temp > 1){
+            if(begin_y == max_y){
+              this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+              this.x_buffer[this.nodenum_buffer] = begin_x;
+              this.y_buffer[this.nodenum_buffer] = begin_y + (deep - temp +1)*this.length;
+              this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
+              this.nodenum_buffer++;
+            }
+            else{
+              this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+              this.x_buffer[this.nodenum_buffer] = begin_x;
+              this.y_buffer[this.nodenum_buffer] = begin_y - (deep - temp + 1)*this.length;
+              this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
+              this.nodenum_buffer++;
+            }
+
+            temp--;
+          }
+
+
+          if(begin_x > end_x){
+            dis = begin_x - end_x;
+          }
+          else{
+            dis = end_x - begin_x;
+          }
+          while(n <= dis/this.length){
+
+            this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+            if(begin_x > end_x){
+              this.x_buffer[this.nodenum_buffer] = begin_x - n*this.length;
+              if(begin_y == max_y){
+                this.y_buffer[this.nodenum_buffer] = begin_y + deep*this.length;
+              }
+              else {
+                this.y_buffer[this.nodenum_buffer] = begin_y - deep*this.length;
+              }
+            }
+            else{
+              this.x_buffer[this.nodenum_buffer] = begin_x + n*this.length;
+              if(begin_y == max_y){
+                this.y_buffer[this.nodenum_buffer] = begin_y + deep*this.length;
+              }
+              else {
+                this.y_buffer[this.nodenum_buffer] = begin_y - deep*this.length;
+              }
+            }
+            this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
+            this.nodenum_buffer++;
+            n++;
+          }
+
+          temp = deep;
+          while(temp > 1){
+            if(begin_y == max_y){
+              this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+              this.x_buffer[this.nodenum_buffer] = end_x;
+              this.y_buffer[this.nodenum_buffer] = end_y + (temp - 1 )*this.length;
+              this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
+              this.nodenum_buffer++;
+            }
+            else{
+              this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+              this.x_buffer[this.nodenum_buffer] = end_x;
+              this.y_buffer[this.nodenum_buffer] = end_y - (temp - 1)*this.length;
+              this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
+              this.nodenum_buffer++;
+            }
+
+            temp--;
+          }
+
+        }
+        else {
+          //左右两条线按竖线存 上下按横线存
+          if(begin_x == min_x || begin_x == max_x){
+            var dis;
+            var temp = deep;
+            while(temp > 1){
+              if(begin_x == min_x){
+                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+                this.y_buffer[this.nodenum_buffer] = begin_y;
+                this.x_buffer[this.nodenum_buffer] = begin_x - (deep - temp +1)*this.length;
+                this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
+                this.nodenum_buffer++;
+              }
+              else{
+                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+                this.y_buffer[this.nodenum_buffer] = begin_y;
+                this.x_buffer[this.nodenum_buffer] = begin_x + (deep - temp + 1)*this.length;
+                this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
+                this.nodenum_buffer++;
+              }
+
+              temp--;
+            }
+
+
+            if(begin_y > end_y){
+              dis = begin_y - end_y;
+            }
+            else{
+              dis = end_y - begin_y;
+            }
+            while(n <= (dis+deep*this.length)/this.length){
+
+              this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+              if(begin_y > end_y){
+                this.y_buffer[this.nodenum_buffer] = begin_y - n*this.length;
+                if(begin_x == min_x){
+                  this.x_buffer[this.nodenum_buffer] = begin_x - deep*this.length;
+                }
+                else {
+                  this.x_buffer[this.nodenum_buffer] = begin_x + deep*this.length;
+                }
+              }
+              else{
+                this.y_buffer[this.nodenum_buffer] = begin_y + n*this.length;
+                if(begin_x == min_x){
+                  this.x_buffer[this.nodenum_buffer] = begin_x - deep*this.length;
+                }
+                else {
+                  this.x_buffer[this.nodenum_buffer] = begin_x + deep*this.length;
+                }
+              }
+              this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
+              this.nodenum_buffer++;
+              n++;
+            }
+
+            if(begin_x == min_x){
+              while(this.x_buffer[this.nodenum_buffer-1] + this.length <= end_x){
+                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+                this.x_buffer[this.nodenum_buffer] =  this.x_buffer[this.nodenum_buffer-1] + this.length;
+                this.y_buffer[this.nodenum_buffer] = this.y_buffer[this.nodenum_buffer-1] ;
+                this.indexnode_buffer[this.nodenum_buffer] = 3;
+                this.nodenum_buffer++;
+              }
+            }
+            else{
+              while(this.x_buffer[this.nodenum_buffer-1] - this.length >= end_x){
+                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+                this.x_buffer[this.nodenum_buffer] = this.x_buffer[this.nodenum_buffer-1] - this.length;
+                this.y_buffer[this.nodenum_buffer] = this.y_buffer[this.nodenum_buffer-1] ;
+                this.indexnode_buffer[this.nodenum_buffer] = 3;
+                this.nodenum_buffer++;
+              }
+            }
+
+            temp = deep;
+            while(temp > 2){
+              if(begin_y == max_y){
+                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+                this.x_buffer[this.nodenum_buffer] = end_x;
+                this.y_buffer[this.nodenum_buffer] = end_y + (temp - 1 )*this.length;
+                this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
+                this.nodenum_buffer++;
+              }
+              else{
+                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+                this.x_buffer[this.nodenum_buffer] = end_x;
+                this.y_buffer[this.nodenum_buffer] = end_y - (temp - 1)*this.length;
+                this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
+                this.nodenum_buffer++;
+              }
+
+              temp--;
+            }
+
+          }
+          else if(begin_y == min_y || begin_y == max_y){
+            var dis;
+            var temp = deep;
+            while(temp > 1){
+              if(begin_y == max_y){
+                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+                this.x_buffer[this.nodenum_buffer] = begin_x;
+                this.y_buffer[this.nodenum_buffer] = begin_y + (deep - temp +1)*this.length;
+                this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
+                this.nodenum_buffer++;
+              }
+              else{
+                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+                this.x_buffer[this.nodenum_buffer] = begin_x;
+                this.y_buffer[this.nodenum_buffer] = begin_y - (deep - temp + 1)*this.length;
+                this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
+                this.nodenum_buffer++;
+              }
+
+              temp--;
+            }
+
+
+            if(begin_x > end_x){
+              dis = begin_x - end_x;
+            }
+            else{
+              dis = end_x - begin_x;
+            }
+            while(n <= (dis+deep*this.length)/this.length){
+
+              this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+              if(begin_x > end_x){
+                this.x_buffer[this.nodenum_buffer] = begin_x - n*this.length;
+                if(begin_y == max_y){
+                  this.y_buffer[this.nodenum_buffer] = begin_y + deep*this.length;
+                }
+                else {
+                  this.y_buffer[this.nodenum_buffer] = begin_y - deep*this.length;
+                }
+              }
+              else{
+                this.x_buffer[this.nodenum_buffer] = begin_x + n*this.length;
+                if(begin_y == max_y){
+                  this.y_buffer[this.nodenum_buffer] = begin_y + deep*this.length;
+                }
+                else {
+                  this.y_buffer[this.nodenum_buffer] = begin_y - deep*this.length;
+                }
+              }
+              this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
+              this.nodenum_buffer++;
+              n++;
+            }
+
+            if(begin_y == min_y){
+              while(this.y_buffer[this.nodenum_buffer-1] + this.length <= end_y){
+                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+                this.x_buffer[this.nodenum_buffer] = this.x_buffer[this.nodenum_buffer-1];
+                this.y_buffer[this.nodenum_buffer] = this.y_buffer[this.nodenum_buffer-1] + this.length;
+                this.indexnode_buffer[this.nodenum_buffer] = 3;
+                this.nodenum_buffer++;
+              }
+            }
+            else{
+              while(this.y_buffer[this.nodenum_buffer-1] - this.length >= end_y){
+                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+                this.x_buffer[this.nodenum_buffer] = this.x_buffer[this.nodenum_buffer - 1];
+                this.y_buffer[this.nodenum_buffer] = this.y_buffer[this.nodenum_buffer - 1] - this.length;
+                this.indexnode_buffer[this.nodenum_buffer] = 3;
+                this.nodenum_buffer++;
+              }
+            }
+            temp = deep;
+            while(temp > 1){
+              if(begin_x == min_x){
+                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+                this.y_buffer[this.nodenum_buffer] = end_y;
+                this.x_buffer[this.nodenum_buffer] = end_x - (temp - 1 )*this.length;
+                this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
+                this.nodenum_buffer++;
+              }
+              else{
+                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+                this.y_buffer[this.nodenum_buffer] = end_y;
+                this.x_buffer[this.nodenum_buffer] = end_x + (temp - 1)*this.length;
+                this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
+                this.nodenum_buffer++;
+              }
+
+              temp--;
+            }
+
+          }
+
+        }
+      }
+      else if(deep == 1){
+        for(var i = 0 ; i < this.indexnode_buffer.length; ++i){
+          if(this.indexnode_buffer[i] == 1) {
+            begin_x = this.x_buffer[i];
+            begin_y = this.y_buffer[i];
+          }
+
+          if(this.indexnode_buffer[i] == 2) {
+            end_x = this.x_buffer[i];
+            end_y = this.y_buffer[i];
+          }
+
+
+        }
+        if(begin_x == end_x){//竖线
+          var dis;
+          if(begin_y > end_y){
+            dis = begin_y - end_y;
+          }
+          else{
+            dis = end_y - begin_y;
+          }
+          while(n <= dis/this.length){
+
+            this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+            if(begin_y > end_y){
+              this.y_buffer[this.nodenum_buffer] = begin_y - n*this.length;
+              if(begin_x == min_x){
+                this.x_buffer[this.nodenum_buffer] = begin_x - this.length;
+              }
+              else {
+                this.x_buffer[this.nodenum_buffer] = begin_x + this.length;
+              }
+            }
+            else{
+              this.y_buffer[this.nodenum_buffer] = begin_y + n*this.length;
+              if(begin_x == min_x){
+                this.x_buffer[this.nodenum_buffer] = begin_x - this.length;
+              }
+              else {
+                this.x_buffer[this.nodenum_buffer] = begin_x + this.length;
+              }
+            }
+            this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
+            this.nodenum_buffer++;
+            n++;
+          }
+
+        }
+        else if(begin_y == end_y){ //横线
+          var dis;
+          if(begin_x > end_x){
+            dis = begin_x - end_x;
+          }
+          else{
+            dis = end_x - begin_x;
+          }
+          while(n <= dis/this.length){
+
+            this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+            if(begin_x > end_x){
+              this.x_buffer[this.nodenum_buffer] = begin_x - n*this.length;
+              if(begin_y == max_y){
+                this.y_buffer[this.nodenum_buffer] = begin_y + this.length;
+              }
+              else {
+                this.y_buffer[this.nodenum_buffer] = begin_y - this.length;
+              }
+            }
+            else{
+              this.x_buffer[this.nodenum_buffer] = begin_x + n*this.length;
+              if(begin_y == max_y){
+                this.y_buffer[this.nodenum_buffer] = begin_y + this.length;
+              }
+              else {
+                this.y_buffer[this.nodenum_buffer] = begin_y - this.length;
+              }
+            }
+            this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
+            this.nodenum_buffer++;
+            n++;
+          }
+
+        }
+        else {
+          if(begin_x == min_x || begin_x == max_x){
+            var dis;
+            if(begin_y > end_y){
+              dis = begin_y - end_y;
+            }
+            else{
+              dis = end_y - begin_y;
+            }
+            while(n <= (dis+this.length)/this.length){
+
+              this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+              if(begin_y > end_y){
+                this.y_buffer[this.nodenum_buffer] = begin_y - n*this.length;
+                if(begin_x == min_x){
+                  this.x_buffer[this.nodenum_buffer] = begin_x - this.length;
+                }
+                else {
+                  this.x_buffer[this.nodenum_buffer] = begin_x + this.length;
+                }
+              }
+              else{
+                this.y_buffer[this.nodenum_buffer] = begin_y + n*this.length;
+                if(begin_x == min_x){
+                  this.x_buffer[this.nodenum_buffer] = begin_x - this.length;
+                }
+                else {
+                  this.x_buffer[this.nodenum_buffer] = begin_x + this.length;
+                }
+              }
+              this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
+              this.nodenum_buffer++;
+              n++;
+            }
+            if(begin_x == min_x){
+              while(this.x_buffer[this.nodenum_buffer-1] + this.length <= end_x){
+                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+                this.x_buffer[this.nodenum_buffer] = this.x_buffer[this.nodenum_buffer - 1] + this.length;
+                this.y_buffer[this.nodenum_buffer] = this.y_buffer[this.nodenum_buffer-1] ;
+                this.indexnode_buffer[this.nodenum_buffer] = 3;
+                this.nodenum_buffer++;
+              }
+            }
+            else{
+              while(this.x_buffer[this.nodenum_buffer-1] - this.length >= end_x){
+                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+                this.x_buffer[this.nodenum_buffer] = this.x_buffer[this.nodenum_buffer - 1] - this.length;
+                this.y_buffer[this.nodenum_buffer] = this.y_buffer[this.nodenum_buffer - 1] ;
+                this.indexnode_buffer[this.nodenum_buffer] = 3;
+                this.nodenum_buffer++;
+              }
+            }
+          }
+          else if(begin_y == end_y){
+            var dis;
+            if(begin_x > end_x){
+              dis = begin_x - end_x;
+            }
+            else{
+              dis = end_x - begin_x;
+            }
+            while(n <= dis/this.length){
+
+              this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+              if(begin_x > end_x){
+                this.x_buffer[this.nodenum_buffer] = begin_x - n*this.length;
+                if(begin_y == max_y){
+                  this.y_buffer[this.nodenum_buffer] = begin_y + this.length;
+                }
+                else {
+                  this.y_buffer[this.nodenum_buffer] = begin_y - this.length;
+                }
+              }
+              else{
+                this.x_buffer[this.nodenum_buffer] = begin_x + n*this.length;
+                if(begin_y == max_y){
+                  this.y_buffer[this.nodenum_buffer] = begin_y + this.length;
+                }
+                else {
+                  this.y_buffer[this.nodenum_buffer] = begin_y - this.length;
+                }
+              }
+              this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
+              this.nodenum_buffer++;
+              n++;
+            }
+            if(begin_y == min_y){
+              while(this.y_buffer[this.nodenum_buffer-1] + this.length <= end_y){
+                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+                this.x_buffer[this.nodenum_buffer] = this.x_buffer[this.nodenum_buffer-1];
+                this.y_buffer[this.nodenum_buffer] = this.y_buffer[this.nodenum_buffer] + this.length;
+                this.indexnode_buffer[this.nodenum_buffer] = 3;
+                this.nodenum_buffer++;
+              }
+            }
+            else {
+              while (this.y_buffer[this.nodenum_buffer - 1] - this.length >= end_y) {
+                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+                this.x_buffer[this.nodenum_buffer] = this.x_buffer[this.nodenum_buffer - 1];
+                this.y_buffer[this.nodenum_buffer] = this.y_buffer[this.nodenum_buffer - 1] - this.length;
+                this.indexnode_buffer[this.nodenum_buffer] = 3;
+                this.nodenum_buffer++;
+              }
+            }
+          }
+        }
+      }
+      else {
+        alert('深度须大于等于1')
+      }
+
+      for(var i = 0 ; i < this.indexnode_buffer.length; ++i){
+
+        if(this.indexnode_buffer[i] == 1){
+
+          for(j = i; j < this.indexnode_buffer.length; ++j ){
+
+            if(this.indexnode_buffer[j] == 3){
+
+              ctx.lineWidth = 4;
+              ctx.lineCap = "round"; //设置端点样式:butt(默认),round,square
+              ctx.lineJoin = "miter"; //设置连接样式:miter(默认),bevel,round
+              ctx.strokeStyle = '#0000FF'; // 设置线的颜色
+
+              ctx.beginPath();
+              ctx.moveTo(this.x_buffer[i], this.y_buffer[i] );
+              ctx.lineTo(this.x_buffer[j], this.y_buffer[j] );
+              ctx.stroke();
+              ctx.closePath();
+              break;
+            }
+          }
+          break;
+        }
+      }
+      for(var i = j+1 ; i <this.indexnode_buffer.length; ++i){
+        if(this.indexnode_buffer[i] == 3){
+          ctx.lineWidth = 4;
+          ctx.lineCap = "round"; //设置端点样式:butt(默认),round,square
+          ctx.lineJoin = "miter"; //设置连接样式:miter(默认),bevel,round
+          ctx.strokeStyle = '#0000FF'; // 设置线的颜色
+
+          ctx.beginPath();
+          ctx.moveTo(this.x_buffer[j], this.y_buffer[j] );
+          ctx.lineTo(this.x_buffer[i], this.y_buffer[i] );
+          ctx.stroke();
+          ctx.closePath();
+          j = i;
+        }
+      }
+      for(var i = 0 ; i < this.indexnode_buffer.length; ++i){
+        if(this.indexnode_buffer[i] == 2){
+          ctx.lineWidth = 4;
+          ctx.lineCap = "round"; //设置端点样式:butt(默认),round,square
+          ctx.lineJoin = "miter"; //设置连接样式:miter(默认),bevel,round
+          ctx.strokeStyle = '#0000FF'; // 设置线的颜色
+
+          ctx.beginPath();
+          ctx.moveTo(this.x_buffer[j], this.y_buffer[j] );
+          ctx.lineTo(this.x_buffer[i], this.y_buffer[i] );
+          ctx.stroke();
+          ctx.closePath();
+          break;
+        }
+      }
+
+
+
+      this.total_buffer[this.count_buffer] = [this.x_buffer,this.y_buffer,this.indexnode_buffer,this.nodename_buffer];
+      console.log(this.total_buffer);
+      this.count_buffer++;
+      this.nodenum_buffer = 0;
+      this.x_buffer = [];
+      this.y_buffer = [];
+      this.nodename_buffer = [];
+      this.indexnode_buffer = [];
+      this.bufferdeep = null;
     },
     roadmake:function(){
       this.roadOrbuffer = 1;
@@ -190,7 +843,7 @@ export default {
     },
     buffermake:function(){
       this.roadOrbuffer = 2;
-      alert('缓冲区设定');
+      alert('缓冲区设定--请依次选定起点终点并输入深度');
     },
     init: function () {    //地图初始化
 
@@ -226,11 +879,14 @@ export default {
         this.pathdis_buffer = [];
         this.indexpath = [];
         this.indexpath_buffer = [];
+        this.total_buffer = [];
+
 
         this.tag = 0;
         this.tag_buffer = 0;
         this.strimport = null;
         this.tagimport = 0;
+        this.count_buffer = 0;
 
         this.MapChange();
 
@@ -565,21 +1221,6 @@ export default {
           }
 
           if (tag5 == 1) { //删除节点
-            var tt1 = 0; //用于记录该点是否是起点
-            var tt2 = 0; // 用于记录该店是否是终点
-            for (var i = 0; i < this.pathstart_buffer.length; i++) {
-              if (thisnodename == this.pathstart_buffer[i] && this.indexpath_buffer[i] == 1) {
-                tt1 = 1;
-              }
-            }
-            for (var i = 0; i < this.pathend_buffer.length; i++) {
-              if (thisnodename == this.pathend_buffer[i] && this.indexpath_buffer[i] == 1) {
-                tt2 = 1;
-              }
-            }
-            if (tt1 == 1 || tt2 == 1) {
-              alert("该点为起点或终点，无法删除！");
-            } else {
               numxx = numxx - 5;
               numyy = numyy - 5;
               ctx.clearRect(numxx, numyy, 10, 10);
@@ -587,7 +1228,6 @@ export default {
               numyy = numyy - 8;
               ctx.clearRect(numxx, numyy, 20, 20);
               this.indexnode_buffer[thisi] = 0;
-            }
           }
           else { //绘制节点
             ctx.beginPath();
@@ -598,178 +1238,32 @@ export default {
             ctx.font = "bold 20px";
             var numxxx = numxx - 10;
             var numyyy = numyy - 5;
-            ctx.fillText(this.nodenum_buffer + 1, numxxx, numyyy);
+            var firstornot = 1;
+            ctx.fillText(this.nodenum_buffer + 1, numxxx, numyyy); //是显示点击的顺序还是显示名字
             this.x_buffer[this.nodenum_buffer] = numxx;
             this.y_buffer[this.nodenum_buffer] = numyy;
-            this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + 1;
-            this.indexnode_buffer[this.nodenum_buffer] = 1;
+            for(var k = 0 ; k < this.x.length; ++k){
+              if(numxx == this.x[k] && numyy == this.y[k]){
+                this.nodename_buffer[this.nodenum_buffer] = this.nodename[k];
+              }
+            }
+
+            for(var k = 0; k < this.indexnode_buffer.length; ++k){
+              if(this.indexnode_buffer[k] == 1){
+                firstornot = 0;
+              }
+            }
+            if(firstornot == 1){
+              this.indexnode_buffer[this.nodenum_buffer] = 1; //起点
+            }
+            else {
+              this.indexnode_buffer[this.nodenum_buffer] = 2; //终点
+            }
+
             this.nodenum_buffer = this.nodenum_buffer + 1;
           }
         }
-        else if (xtag == 1 && ytag != 1) {
-          var tag1 = 0;
-          var tag2 = 0;
-          var startx, starty = 1, endx, endy = 1;
-          var factytemp1;
-          var factytemp2;
-          var startname1;
-          var endname1;
-          var disdel1;
-          factytemp1 = facty;
-          factytemp2 = facty;
-          startx = parseInt((factx + 6) / this.length) * this.length;
-          endx = parseInt((factx + 6) / this.length) * this.length;
-          while (starty > 0) {
-            starty = parseInt(factytemp1 / this.length) * this.length; //起点的纵坐标等于当前点击位置上面的节点纵坐标
-            factytemp1 = factytemp1 - this.length;
-            //alert(starty);
-            for (var i = 0; i < this.y_buffer.length; i++) {
-              if (starty == this.y_buffer[i] && startx == this.x_buffer[i]
-                && this.indexnode_buffer[i] == 1) {
-                startname1 = this.nodename_buffer[i];
-                tag1 = 1;
-                break;
-              }
-            }
-            if (tag1 == 1) {
-              break;
-            }
-          }
-          while (endy < 800) {
-            factytemp2 = factytemp2 + parseInt(this.length);
-            endy = parseInt(factytemp2 / this.length) * this.length;
-            //alert(endy);
-            for (var i = 0; i < this.y_buffer.length; i++) {
-              if (endy == this.y_buffer[i] && endx == this.x_buffer[i] && this.indexnode_buffer[i] == 1) {
-                endname1 = this.nodename_buffer[i];
-                tag2 = 1;
-                break;
-              }
-            }
-            if (tag2 == 1) {
-              break;
-            }
-          }
-          //alert(startx+" "+starty+" "+endx+" "+endy+" "+tag1+" "+tag2);
-          if (tag1 == 1 && tag2 == 1) {
-            //地图上竖线上已经有两个点
-            var tag12 = 0;
-            for (var i = 0; i < this.indexpath_buffer.length; i++) {  //点击在线上删除线
-              if (startname1 == this.pathstart_buffer[i]
-                && endname1 == this.pathend_buffer[i] && this.indexpath_buffer[i] == 1) {
-                this.indexpath_buffer[i] = 0;
-                disdel1 = this.pathdis_buffer[i] - 10;
-                tag12 = 1;
-              }
-            }
-            if (tag12 == 1) {
-              ctx.clearRect(startx - 2, starty + 5, 4, disdel1);
-            }
-            else {
-              //设置直线参数
-              ctx.lineWidth = 4;
-              ctx.lineCap = "round"; //设置端点样式:butt(默认),round,square
-              ctx.lineJoin = "miter"; //设置连接样式:miter(默认),bevel,round
-              ctx.strokeStyle = '#5CACEE'; // 设置线的颜色
-
-              ctx.beginPath();
-              ctx.moveTo(startx, starty + 6);
-              ctx.lineTo(endx, endy - 6);
-              ctx.stroke();
-              ctx.closePath();
-
-              this.pathstart_buffer[this.tag_buffer] = startname1;
-              this.pathend_buffer[this.tag_buffer] = endname1;
-              this.pathdis_buffer[this.tag_buffer] = endy - starty;
-              this.indexpath_buffer[this.tag_buffer] = 1;
-              this.tag_buffer++;
-            }/////////////////////
-          }
-          else {
-            alert("请勿点击无效区域！");
-          }
-        }
-        else if (xtag != 1 && ytag == 1) {
-          var tag3 = 0;
-          var tag4 = 0;
-          var startx = 1, starty, endx = 1, endy;
-          var factxtemp1;
-          var factxtemp2;
-          var startname2;
-          var endname2;
-          var disdel2;
-          factxtemp1 = factx;
-          factxtemp2 = factx;
-          starty = parseInt((facty + 6) / this.length) * this.length;
-          endy = parseInt((facty + 6) / this.length) * this.length;
-          while (startx > 0) {
-            startx = parseInt(factxtemp1 / this.length) * this.length;
-            factxtemp1 = factxtemp1 - this.length;
-            //alert(startx);
-            for (var i = 0; i < this.y_buffer.length; i++) {
-              if (startx == this.x_buffer[i] && starty == this.y_buffer[i]
-                && this.indexnode_buffer[i] == 1) {
-                startname2 = this.nodename_buffer[i];
-                tag3 = 1;
-                break;
-              }
-            }
-            if (tag3 == 1) {
-              break;
-            }
-          }
-          while (endx < 1500) {
-            factxtemp2 = factxtemp2 + parseInt(this.length);
-            endx = parseInt(factxtemp2 / this.length) * this.length;
-            //alert(endx);
-            for (var i = 0; i < this.y_buffer.length; i++) {
-              if (endx == this.x_buffer[i] && endy == this.y_buffer[i] && this.indexnode_buffer[i] == 1) {
-                endname2 = this.nodename_buffer[i];
-                tag4 = 1;
-                break;
-              }
-            }
-            if (tag4 == 1) {
-              break;
-            }
-          }
-          //alert(startx+" "+starty+" "+endx+" "+endy+" "+tag3+" "+tag4);
-          if (tag3 == 1 && tag4 == 1) {
-            var tag34 = 0;
-            for (var i = 0; i < this.indexpath_buffer.length; i++) {
-              if (startname2 == this.pathstart_buffer[i]
-                && endname2 == this.pathend_buffer[i] && this.indexpath_buffer[i] == 1) {
-                this.indexpath_buffer[i] = 0;
-                disdel2 = this.pathdis_buffer[i] - 10;
-                tag34 = 1;
-              }
-            }
-            if (tag34 == 1) {
-              ctx.clearRect(startx + 5, starty - 2, disdel2, 4);
-            } else {
-              //设置直线参数
-              ctx.lineWidth = 4;
-              ctx.lineCap = "round"; //设置端点样式:butt(默认),round,square
-              ctx.lineJoin = "miter"; //设置连接样式:miter(默认),bevel,round
-              ctx.strokeStyle = '#5CACEE'; // 设置线的颜色
-
-              ctx.beginPath();
-              ctx.moveTo(startx + 6, starty);
-              ctx.lineTo(endx - 6, endy);
-              ctx.stroke();
-              ctx.closePath();
-
-              this.pathstart_buffer[this.tag_buffer] = startname2;
-              this.pathend_buffer[this.tag_buffer] = endname2;
-              this.pathdis_buffer[this.tag_buffer] = endx - startx;
-              this.indexpath_buffer[this.tag_buffer] = 1;
-              this.tag_buffer++;
-            }
-          } else {
-            alert("请勿点击无效区域！");
-          }
-
-        } else {
+        else {
           alert("请勿点击空白区域！");
         }
       }

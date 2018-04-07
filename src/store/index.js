@@ -36,7 +36,7 @@ const state = {
   Pathend_buffer:[],//终点被点击的序号
   Pathdis_buffer:[],//路径长度
   Indexpath_buffer:[], //路线是否有效的标志
-
+  Total_buffer:[]
 }
 
 export default new Vuex.Store({

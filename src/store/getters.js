@@ -16,6 +16,7 @@ export default{
   Pathdis: state => state.Pathdis,
   Indexpath: state => state.Indexpath,
 
+  Total_buffer:state =>state.Total_buffer,
   Nodenum_realbuffer: state => state.Nodenum_realbuffer,
   X_buffer: state => state.X_buffer,
   Y_buffer: state => state.Y_buffer,
