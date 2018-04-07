@@ -1353,6 +1353,8 @@ export default {
 
       }
 
+
+
       var arrpathstart = [];
       for (var i = 0; i < this.pathstart.length; i++) {
         var jsonobj1 = {};
@@ -1415,6 +1417,10 @@ export default {
       jsonobj9["nodenum"] = this.nodenum_real;
       arrnodenum[0] = jsonobj9;
 
+      var arrminlength = [];
+      var jsonobj0 = {};
+      jsonobj0["minlength"] = this.minlength;
+      arrminlength[0] = jsonobj0;
 
       //buffer数据的传出
       var arrpathstart_buffer = [];
@@ -1483,6 +1489,7 @@ export default {
       //console.dir(arrpathdis);
       //alert(arr1);
       var arrxx = {
+        "Minlength" : arrminlength,
         "Startorder": arrpathstart,
         "Endorder": arrpathend,
         "Distance": arrpathdis,
@@ -1555,6 +1562,9 @@ export default {
 		for(let i=0;i<m.Nodenumclicked.length;i++){
 			this.nodenum=m.Nodenumclicked[i].nodenum;
 		}
+    for(let i = 0; i < m.Minlength.length; ++i){
+      this.minlength = m.Minlength[i].minlength;
+    }
 		this.pathstart_buffer=new Array();
 		for(let i=0;i<m.Startorder_buffer.length;i++){
 			this.pathstart_buffer[i]=m.Startorder_buffer[i].pathstart_buffer;
@@ -1563,6 +1573,7 @@ export default {
 		for(let i=0;i<m.Endorder_buffer.length;i++){
 			this.pathend_buffer[i]=m.Endorder_buffer[i].pathend_buffer;
 		}
+
 		this.pathdis_buffer=new Array();
 		for(let i=0;i<m.Distance_buffer.length;i++){
 			this.pathdis_buffer[i]=m.Distance_buffer[i].distance_buffer;
@@ -1599,7 +1610,7 @@ export default {
 
     },
     Save: function () {
-      alert(this.pathstart.length);
+
       var finallength = this.pathstart.length;
       //分离产生的非交点的indexnode为3 交点为2  新产生的线indexpath 为2
       //将超过1格的边分离
@@ -1689,7 +1700,7 @@ export default {
       }
 
       this.MapChange();
-
+      this.$store.dispatch('MinlChange',this.minlength);
       this.$router.push({path: '/Job'})
     }
 
