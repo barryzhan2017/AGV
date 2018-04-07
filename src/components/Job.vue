@@ -93,6 +93,12 @@
     name: 'JOB',
     data(){
       return{
+        pathflag:0,//变为1时表示系统开始后有新任务添加并传输到后台
+		newpath:[],//存储后台传过来的新的小车路径
+		index:1,//表格页码
+		jobnumber:null,//任务次数
+		jobnumberset:[],//任务次数集合
+		agvnum:0,//小车数目
         index:1,//表格页码
 		    jobnumber:null,//任务次数
 		    jobnumberset:[],//任务次数集合
@@ -150,7 +156,8 @@
         'Pathend_buffer',//终点被点击的序号
         'Pathstart_buffer',//起点被点击的序号
         'Pathdis_buffer',//路径长度
-        'Indexpath_buffer' //路线是否有效的标
+        'Indexpath_buffer', //路线是否有效的标
+        'Total_buffer'
       ]),
 	    pagetotal(){ //表格元组总个数
 		  return this.data.length
@@ -171,7 +178,6 @@
 
   },
     mounted:function(){
-      //alert(this.X);
     var width = window.innerWidth;
     var height = window.innerHeight;
     this.stage = new Konva.Stage({
@@ -271,6 +277,7 @@
         return;
       this.agvnum++;
       this.carsposition[this.agvnum-1]=this.carposition;
+	  //this.path=new Array();
 	  this.path[this.agvnum-1]=new Array();
 	  this.path[this.agvnum-1][0]=this.carposition;
 	  var rectnumber = new Konva.Text({
@@ -305,8 +312,32 @@
       this.num[this.agvnum-1]=-1;//初始化num数组
     },
     addjob:function(){
-      if(this.jobStart==null||this.jobEnd==null)
-        return;
+      /* let ppath=[
+			[	{"paths":1},
+				{"paths":2},
+				{"paths":3},
+				{"paths":4},
+				//{"paths":8},
+				{"paths":-1}
+
+			],
+			[
+				{"paths":10},
+				{"paths":1},
+				{"paths":5},
+				//{"paths":6},
+				{"paths":-1}
+			]
+		];
+		for(let i=0;i<ppath.length;i++){
+			this.path[i]=new Array();
+			for(let j=0;j<ppath[i].length;j++){
+				this.path[i][j]=ppath[i][j].paths;
+			}
+		}*/
+
+	  //if(this.jobStart==null||this.jobEnd==null)
+        //return;
       this.jobnum++;
       this.jobStartset[this.jobnum-1]=this.jobStart;
       this.jobEndset[this.jobnum-1]=this.jobEnd;
@@ -319,6 +350,7 @@
       if(this.Isbegin){
         let datapath=new Array();//传给志诚所写的后端的当前路径
         datapath=this.path;
+		this.newpath=this.path;
         for(let i=0;i<this.agvnum;i++){
           if(this.T[i]==-1)
             continue;
@@ -339,10 +371,14 @@
           }
           datapath[i]=dpath;
         }
-
-
-
-
+		//AjAx
+		//if(this.pathflag==0)
+		//传datapath
+		//else
+		//传newpath
+		this.pathflag=1;
+		//this.flag[i]=1;改变路径的小车的flag变为1
+		//this.newpath[1][2]=3;
         for(let i=0;i<this.agvnum;i++){
           if(this.T[i]==-1)
             this.move(i,0);
@@ -351,7 +387,11 @@
       }
     },
     move:function(i,j){
-      if(this.path[i][j]==-1){
+      if(this.pathflag==1){
+		this.pathflag=0;
+		this.path=this.newpath;
+	  }
+	  if(this.path[i][j]==-1){
         this.T[i]=-1;
         return;
       }
@@ -360,28 +400,29 @@
         time=Math.abs((this.Y[this.path[i][j]-1]-10-this.rects[i].getAbsolutePosition().y))/(this.V*20);
       else
         time=Math.abs((this.X[this.path[i][j]-1]-10-this.rects[i].getAbsolutePosition().x))/(this.V*20);
-      console.log(time);
+      console.log(i+" "+this.path[i][j]);
       this.rectgroup[i].to({
           x:this.X[this.path[i][j]-1]-10,
           y:this.Y[this.path[i][j]-1]-10,
           duration:time,
           onFinish:()=> {
-          if(j<this.path[i].length-1){
+          if(j<this.path[i].length-1){//this.pathflag=1;this.newpath=this.path;this.newpath[1][2]=3;
         this.num[i]=j;
         if(this.flag[i]==1){
           this.flag[i]=0;
           this.move(i,1);
         }
-        this.move(i,j+1);
+        else
+			this.move(i,j+1);
       }
     }
 
     });
     },
     start:function(){
-	  let sstart=[];
-	  let eend=[];
-	  let ddistance=[];
+	  let sstart=new Array();
+	  let eend=new Array();
+	  let ddistance=new Array();
       for (var i = 0; i < this.Indexpath.length; i++) {
        if(this.Indexpath[i]==0)
 		continue;
@@ -390,22 +431,23 @@
 		ddistance[i]=this.Pathdis[i];
       }
 	   var arrpathstart = [];
-      for (var i = 0; i < this.sstart.length; i++) {
+      for (var i = 0; i < sstart.length; i++) {
         var jsonobj1 = {};
-        jsonobj1["startNode"] = this.sstart[i];
+        jsonobj1["startNode"] = sstart[i];
         arrpathstart[i] = jsonobj1;
       }
 	  var arrpathend = [];
-      for (var i = 0; i < this.eend.length; i++) {
-        var jsonobj2 = {};
-        jsonobj2["endNode"] = this.eend[i];
+      for (var i = 0; i < eend.length; i++) {
+        let jsonobj2 = {};
+        jsonobj2["endNode"] = eend[i];
         arrpathend[i] = jsonobj2;
       }
 	  var arrpathdis = [];
-      for (var i = 0; i < this.ddistance.length; i++) {
+      for (var i = 0; i < ddistance.length; i++) {
         var jsonobj3 = {};
-        jsonobj3["nodeDistance"] = this.ddistance[i]/20;
+		jsonobj3["nodeDistance"] = ddistance[i]/20;
         arrpathdis[i] = jsonobj3;
+
       }
 	  let sstart_buffer=[];
 	  let eend_buffer=[];
@@ -419,28 +461,30 @@
 		ddistance_buffer[i]=this.Pathdis_buffer[i];
       }
 	  var arrpathstartbuffer=[];
-	  for (var i = 0; i < this.sstart_buffer.length; i++) {
+	  for (var i = 0; i < sstart_buffer.length; i++) {
         var jsonobj4 = {};
-        jsonobj4["Pathstartbuffer"] = this.sstart_buffer[i];
+        jsonobj4["Pathstartbuffer"] = sstart_buffer[i];
         arrpathstartbuffer[i] = jsonobj4;
       }
 	  var arrpathendbuffer = [];
-      for (var i = 0; i < this.eend.length; i++) {
+      for (var i = 0; i < eend.length; i++) {
         var jsonobj5 = {};
-        jsonobj5["Pathend"] = this.eend[i];
+        jsonobj5["Pathend"] = eend[i];
         arrpathendbuffer[i] = jsonobj5;
       }
 	  var arrpathdisbuffer = [];
-      for (var i = 0; i < this.ddistance.length; i++) {
+      for (var i = 0; i < ddistance.length; i++) {
         var jsonobj6 = {};
-        jsonobj6["distance"] = this.ddistance[i];
+        jsonobj6["distance"] = ddistance[i];
         arrpathdisbuffer[i] = jsonobj6;
       }
 	  var arrpath=[];
 	  for(let i=0;i<this.agvnum;i++){
 		let jsonobj7 = {};
-        jsonobj7["paths"] = this.path;
-        arrpath[i] = jsonobj7;
+        arrpath[i]=new Array();
+		this.path[i][0]=parseFloat(this.path[i][0]);
+		jsonobj7["paths"] = this.path[i][0];
+        arrpath[i][0] = jsonobj7;
 	  }
 	  let tasks=[];
 	  for(let i=0;i<this.jobnum;i++){
@@ -452,70 +496,128 @@
 	  var arrtasks=[];
 	  for(let i=0;i<tasks.length;i++){
 		let jsonobj8 = {};
-        jsonobj8["tasks"] = tasks[i];
+        jsonobj8["tasks"] = tasks[i][0].toString()+","+tasks[i][1].toString()+","+tasks[i][2].toString();
+		console.log(jsonobj8.tasks);
         arrtasks[i] = jsonobj8;
 	  }
-	  var arrv=[];
-	  let jsonobj9={};
-	  jsonobj9["speed"]=this.V;
-	  arrv[0]=jsonobj9;
 
-	  var arrpre=[];
-	  let jsonobj10={};
-	  jsonobj10["precision"]=this.Minlength;
-	  arrpre[0]=jsonobj10;
+	  let arrspeed=parseFloat(this.V);
+
+
+	  let arrpre=parseFloat(this.Minlength);
 	  var arrnodenum=[];
 	  let jsonobj11={};
-	  jsonobj11["numberOfGraphNode"]=this.Nodenum_real;
+	  jsonobj11["numberOfGraphNode"]=this.X.length;
 	  arrnodenum[0]=jsonobj11;
 	  var arrbufferset=[];//假数据
-	  let jsonobj12={};
-	  let bu=[[5,7,8,9,10,6],[2,11,12,13,14,3]]
-	  jsonboj12["bufferset"]=bu[0];
-	  arrbufferset[0]=jsonboj12;
-	  jsonboj12["bufferset"]=bu[0];
-	  arrbufferset[0]=jsonboj12;
-	  jsonboj12["bufferset"]=bu[1];
-	  arrbufferset[1]=jsonboj12;
+	  arrbufferset[0]=new Array();
+	  arrbufferset[1]=new Array();
+	  let js00={};
+	  js00["paths"]=5;
+	  let js01={};
+	  js01["paths"]=7;
+	  let js02={};
+	  js02["paths"]=8;
+	  let js03={};
+	  js03["paths"]=9;
+	  let js04={};
+	  js04["paths"]=10;
+	  let js05={};
+	  js05["paths"]=6;
+	  arrbufferset[0][0]=js00;
+	  arrbufferset[0][1]=js01;
+	  arrbufferset[0][2]=js02;
+	  arrbufferset[0][3]=js03;
+	  arrbufferset[0][4]=js04;
+	  arrbufferset[0][5]=js05;
+	  let js10={};
+	  js10["paths"]=2;
+	  let js11={};
+	  js11["paths"]=11;
+	  let js12={};
+	  js12["paths"]=12;
+	  let js13={};
+	  js13["paths"]=13;
+	  let js14={};
+	  js14["paths"]=14;
+	  let js15={};
+	  js15["paths"]=3;
+	  arrbufferset[1][0]=js10;
+	  arrbufferset[1][1]=js11;
+	  arrbufferset[1][2]=js12;
+	  arrbufferset[1][3]=js13;
+	  arrbufferset[1][4]=js14;
+	  arrbufferset[1][5]=js15;
+
 	  var arrcarset=[];//假数据
 	  let jsonobj13={};
-	  jsonboj13["bufferForAGV"]=0;
-	  arrcarset[0]=jsonboj13;
-	  jsonboj13["bufferForAGV"]=0;
-	  arrcarset[1]=jsonboj13;
-	  jsonboj13["bufferForAGV"]=1;
-	  arrcarset[2]=jsonboj13;
-	  jsonboj13["bufferForAGV"]=1;
-	  arrcarset[3]=jsonboj13;
+	  jsonobj13["bufferForAGV"]=0;
+	  arrcarset[0]=jsonobj13;
+	  jsonobj13["bufferForAGV"]=0;
+	  arrcarset[1]=jsonobj13;
+	  jsonobj13["bufferForAGV"]=1;
+	  arrcarset[2]=jsonobj13;
+	  jsonobj13["bufferForAGV"]=1;
+	  arrcarset[3]=jsonobj13;
 	  var arrtime=[];
 	  for(let i=0;i<this.T.length;i++){
 		let jsonobj14 = {};
         jsonobj14["time"] = this.T[i];
         arrtime[i] = jsonobj14;
 	  }
+
+	  		let ppath=[
+    			[	{"paths":9},
+    				{"paths":8},
+    				{"paths":1},
+    				{"paths":2},
+    				{"paths":-1}
+
+    			],
+    			[
+    				{"paths":3},
+    				{"paths":2},
+    				{"paths":1},
+    				{"paths":-1}
+    			]
+    		];
 	  var message={
 		"startNode":arrpathstart,
 		"endNode":arrpathend,
 		"nodeDistance":arrpathdis,
 		"paths":arrpath,
 		"tasks":arrtasks,
-		"speed":arrv,
+		"speed":arrspeed,
 		"precision":arrpre,
-		"numberOfGraphNode":arrnodenum,
-		"bufferset":arrbufferset,
+		"numberOfGraphNode":arrnodenum[0].numberOfGraphNode,
+		"bufferSet":arrbufferset,
 		"bufferForAGV":arrcarset,
 		"time":arrtime
 	  };
+		console.log(message);
+
+		for(let i=0;i<ppath.length;i++){
+			this.path[i]=new Array();
+			for(let j=0;j<ppath[i].length;j++){
+				this.path[i][j]=ppath[i][j].paths;
+			}
+		}
 
 	  this.Isbegin=true;
       for(let i=0;i<this.rects.length;i++)
         this.move(i,0);
-    axios.post('/api/genetic', {
-      data: message
-      })
-      .then(function (response) {
-        alert(response.data);
-      })
+
+
+      // Send a POST request
+      this.$axios.post('/api/genetic', {
+                data: message,
+              }).then(response => {
+               alert(response.data);
+              })
+
+
+
+
 
     },
 	pageChange:function(pageIndex){console.log(pageIndex);

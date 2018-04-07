@@ -1514,92 +1514,92 @@ export default {
       var selectedFile = document.getElementById("files").files[0];//获取读取的File对象
       var reader = new FileReader();//这里是核心！！！读取操作就是由它完成的。
       reader.readAsText(selectedFile);//读取文件的内容
-      reader.onload = function (f) {
-        this.strimport = this.result;
+      reader.onload = (f)=> {
+        this.strimport = reader.result;
         this.tagimport = 1;
-        let m=JSON.parse(this.strimport);
-        this.pathdis=new Array();
-        for(let i=0;i<m.Distance.length;i++){
-          this.pathdis[i]=m.Distance[i].distance;
-        }
-        this.pathstart=new Array();
-        for(let i=0;i<m.Startorder.length;i++){
-          this.pathstart[i]=m.Startorder[i].pathstart;
-        }
-        this.pathend=new Array();
-        for(let i=0;i<m.Endorder.length;i++){
-          this.pathend[i]=m.Endorder[i].pathend;
-        }
-        this.indexpath=new Array();
-        for(let i=0;i<m.Pathkind.length;i++){
-          this.indexpath[i]=m.Pathkind[i].indexpath;
-        }
-        this.nodename=new Array();
-        for(let i=0;i<m.Nodeorder.length;i++){
-          this.nodename[i]=m.Nodeorder[i].nodename;
-        }
-        this.x=new Array();
-        for(let i=0;i<m.Xpos.length;i++){
-          this.x[i]=m.Xpos[i].x;
-        }
-        this.y=new Array();
-        for(let i=0;i<m.Ypos.length;i++){
-          this.y[i]=m.Ypos[i].y;
-        }
-        this.indexnode=new Array();
-        for(let i=0;i<m.Nodekind.length;i++){
-          this.indexnode[i]=m.Nodekind[i].indexnode;
-        }
 
-        for(let i=0;i<m.Nodenumclicked.length;i++){
-          this.nodenum_real=m.Nodenumclicked[i].nodenum;
-        }
-        this.pathstart_buffer=new Array();
-        for(let i=0;i<m.Startorder_buffer.length;i++){
-          this.pathstart_buffer[i]=m.Startorder_buffer[i].pathstart_buffer;
-        }
-        this.pathend_buffer=new Array();
-        for(let i=0;i<m.Endorder_buffer.length;i++){
-          this.pathend_buffer[i]=m.Endorder_buffer[i].pathend_buffer;
-        }
-        this.pathdis_buffer=new Array();
-        for(let i=0;i<m.Distance_buffer.length;i++){
-          this.pathdis_buffer[i]=m.Distance_buffer[i].distance_buffer;
-        }
-        this.indexpath_buffer=new Array();
-        for(let i=0;i<m.Pathkind_buffer.length;i++){
-          this.indexpath_buffer[i]=m.Pathkind_buffer[i].indexpath_buffer;
-        }
-        this.nodename_buffer=new Array();
-        for(let i=0;i<m.Nodeorder_buffer.length;i++){
-          this.nodename_buffer[i]=m.Nodeorder_buffer[i].nodename_buffer;
-        }
-        this.x_buffer=new Array();
-        for(let i=0;i<m.Xpos_buffer.length;i++){
-          this.x_buffer[i]=m.Xpos_buffer[i].x_buffer;
-        }
-        this.y_buffer=new Array();
-        for(let i=0;i<m.Ypos_buffer.length;i++){
-          this.y_buffer[i]=m.Ypos_buffer[i].y_buffer;
-        }
-        this.indexnode_buffer=new Array();
-        for(let i=0;i<m.Nodekind_buffer.length;i++){
-          this.indexnode_buffer[i]=m.Nodekind_buffer[i].indexnode;
-        }
+		let m=JSON.parse(this.strimport);
+		this.pathdis=new Array();
+		for(let i=0;i<m.Distance.length;i++){
+			this.pathdis[i]=m.Distance[i].distance;
+		}
+		this.pathstart=new Array();
+		for(let i=0;i<m.Startorder.length;i++){
+			this.pathstart[i]=m.Startorder[i].pathstart;
+		}
+		this.pathend=new Array();
+		for(let i=0;i<m.Endorder.length;i++){
+			this.pathend[i]=m.Endorder[i].pathend;
+		}
+		this.indexpath=new Array();
+		for(let i=0;i<m.Pathkind.length;i++){
+			this.indexpath[i]=m.Pathkind[i].indexpath;
+		}
+		this.nodename=new Array();
+		for(let i=0;i<m.Nodeorder.length;i++){
+			this.nodename[i]=m.Nodeorder[i].nodename;
+		}
+		let aaa=new Array();
+		for(let i=0;i<m.Xpos.length;i++){
+			aaa[i]=m.Xpos[i].x;
+		}this.x=aaa;
+		this.y=new Array();
+		for(let i=0;i<m.Ypos.length;i++){
+			this.y[i]=m.Ypos[i].y;
+		}
+		this.indexnode=new Array();
+		for(let i=0;i<m.Nodekind.length;i++){
+			this.indexnode[i]=m.Nodekind[i].indexnode;
+		}
 
-        for(let i=0;i<m.Nodenumclicked_buffer.length;i++){
-          this.nodenum_realbuffer=m.Nodenumclicked_buffer[i].nodenum_buffer;
+		for(let i=0;i<m.Nodenumclicked.length;i++){
+			this.nodenum=m.Nodenumclicked[i].nodenum;
+		}
+		this.pathstart_buffer=new Array();
+		for(let i=0;i<m.Startorder_buffer.length;i++){
+			this.pathstart_buffer[i]=m.Startorder_buffer[i].pathstart_buffer;
+		}
+		this.pathend_buffer=new Array();
+		for(let i=0;i<m.Endorder_buffer.length;i++){
+			this.pathend_buffer[i]=m.Endorder_buffer[i].pathend_buffer;
+		}
+		this.pathdis_buffer=new Array();
+		for(let i=0;i<m.Distance_buffer.length;i++){
+			this.pathdis_buffer[i]=m.Distance_buffer[i].distance_buffer;
+		}
+		this.indexpath_buffer=new Array();
+		for(let i=0;i<m.Pathkind_buffer.length;i++){
+			this.indexpath_buffer[i]=m.Pathkind_buffer[i].indexpath_buffer;
+		}
+		this.nodename_buffer=new Array();
+		for(let i=0;i<m.Nodeorder_buffer.length;i++){
+			this.nodename_buffer[i]=m.Nodeorder_buffer[i].nodename_buffer;
+		}
+		this.x_buffer=new Array();
+		for(let i=0;i<m.Xpos_buffer.length;i++){
+			this.x_buffer[i]=m.Xpos_buffer[i].x_buffer;
+		}
+		this.y_buffer=new Array();
+		for(let i=0;i<m.Ypos_buffer.length;i++){
+			this.y_buffer[i]=m.Ypos_buffer[i].y_buffer;
+		}
+		this.indexnode_buffer=new Array();
+		for(let i=0;i<m.Nodekind_buffer.length;i++){
+			this.indexnode_buffer[i]=m.Nodekind_buffer[i].indexnode;
+		}
 
-        }
+		for(let i=0;i<m.Nodenumclicked_buffer.length;i++){
+			this.nodenum_realbuffer=m.Nodenumclicked_buffer[i].nodenum_buffer;
+		}
 
-
-        alert("读取完毕，保存地图即可！");
+	  alert("读取完毕，保存地图即可！");
       };
 
 
 
     },
     Save: function () {
+      alert(this.pathstart.length);
       var finallength = this.pathstart.length;
       //分离产生的非交点的indexnode为3 交点为2  新产生的线indexpath 为2
       //将超过1格的边分离
