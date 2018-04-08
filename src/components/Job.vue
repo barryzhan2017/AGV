@@ -178,7 +178,7 @@
 
   },
     mounted:function(){
-      alert(this.Minlength);
+
     var width = window.innerWidth;
     var height = window.innerHeight;
     this.stage = new Konva.Stage({

@@ -1273,86 +1273,103 @@ export default {
     },
     exportmap: function () {//导出map文件
 
-      var finallength = this.pathstart.length;
-      //分离产生的非交点的indexnode为3 交点为2  新产生的线indexpath 为2
-      //将超过1格的边分离
-      for (var i = 0; i < finallength; i++) {
+      var temp_length = this.pathstart.length;
+      for(var i = 0 ; i < temp_length; ++i){
+        if(this.y[this.pathstart[i]-1] == this.y[this.pathend[i]-1] && this.indexpath[i] == 1){
+          //横线则找竖线在其范围内且被该竖线穿过
 
-        if (this.indexpath[i] == 1) {
-          var n = 1;
-          var flag_devide = 0;
-          var next; //记录当前循环中线段的终点
-          var last = this.pathstart[i]; //记录上层循环中线段的终点
+          for(var j = 0; j < temp_length; ++j){
 
-          while (this.pathdis[i] > n * this.length) {
-            flag_devide = 1;
-            var flag_insert = 1;
-            var k; //若要新加入的点已经存在于删除点后的存储列表中则 获得该点序号
+            if(this.x[this.pathstart[j]-1] == this.x[this.pathend[j]-1] && this.indexpath[j] == 1
+              && ((this.x[this.pathstart[j]-1] > this.x[this.pathstart[i]-1] && this.x[this.pathstart[j]-1] < this.x[this.pathend[i]-1])
+              || (this.x[this.pathstart[j]-1] < this.x[this.pathstart[i]-1] && this.x[this.pathstart[j]-1] > this.x[this.pathend[i]-1]))
+              && ((this.y[this.pathstart[i]-1] > this.y[this.pathstart[j]-1] && this.y[this.pathstart[i]-1] < this.y[this.pathend[j]-1])
+              || (this.y[this.pathstart[i]-1] < this.y[this.pathstart[j]-1] && this.y[this.pathstart[i]-1] > this.y[this.pathend[j]-1]))){
 
-            if (this.x[this.pathstart[i] - 1] == this.x[this.pathend[i] - 1]) { //竖线的情况，查看该分点是否已被存（交点）
-              for (k = 0; k < this.x.length; ++k) {
-                if (this.indexnode[k] == 3 && (this.y[this.pathstart[i] - 1] + n * this.length) == this.y[k] && this.x[k] == this.x[this.pathstart[i] - 1]) {
-                  flag_insert = 0;
-                  next = this.nodename[k];
-                  this.indexnode[k] = 2;
-                  break;
-                }
+              this.x[this.nodenum] = this.x[this.pathstart[j]-1];
+              this.y[this.nodenum] = this.y[this.pathstart[i]-1];
 
-              }
-
-              if (k == this.x.length) {
-
-                this.x[k] = this.x[this.pathstart[i] - 1];
-                this.y[k] = this.y[this.pathstart[i] - 1] + n * this.length;
-                this.indexnode[k] = 3;
-              }
-            }
-            else if (this.y[this.pathstart[i] - 1] == this.y[this.pathend[i] - 1]) {  //横线的情况
-              for (k = 0; k < this.y.length; ++k) {
-
-                if (this.indexnode[k] == 1 && (this.x[this.pathstart[i] - 1] + n * this.length) == this.x[k] && this.y[k] == this.y[this.pathstart[i] - 1]) {
-                  flag_insert = 0;
-                  next = this.nodename[k];
-                  this.indexnode[k] = 2;
-                  break;
-                }
-
-
-              }
-              if (k == this.y.length) {
-                this.x[k] = this.x[this.pathstart[i] - 1] + n * this.length;
-                this.y[k] = this.y[this.pathstart[i] - 1];
-                this.indexnode[k] = 3;
-              }
-            }
-
-            if (flag_insert == 1) {
-              this.nodename[this.nodenum] = this.nodenum + 1;
+              this.indexnode[this.nodenum] = 2;
+              this.nodename[this.nodenum] = this.nodenum+1;
               ++this.nodenum;
-              next = this.nodenum;
+
+              this.pathstart[this.pathstart.length] = this.pathstart[i];
+              this.pathend[this.pathend.length] = this.nodenum;
+              if(this.x[this.pathstart[i]-1] > this.x[this.pathstart[j]-1]){
+                this.pathdis[this.pathdis.length] = this.x[this.pathstart[i]-1] - this.x[this.pathstart[j]-1];
+              }
+              else{
+                this.pathdis[this.pathdis.length] = this.x[this.pathstart[j]-1] - this.x[this.pathstart[i]-1];
+              }
+              this.indexpath[this.indexpath.length] = 2;
+              this.pathstart[this.pathstart.length] = this.nodenum;
+              this.pathend[this.pathend.length] = this.pathend[i];
+              if(this.x[this.pathstart[j]-1] > this.x[this.pathend[i]-1]){
+                this.pathdis[this.pathdis.length] = this.x[this.pathstart[j]-1] - this.x[this.pathend[i]-1];
+              }
+              else{
+                this.pathdis[this.pathdis.length] = this.x[this.pathend[i]-1] - this.x[this.pathstart[j]-1];
+              }
+              this.indexpath[this.indexpath.length] = 2;
+              this.pathstart[this.pathstart.length] = this.pathstart[j];
+              this.pathend[this.pathend.length] = this.nodenum;
+              if(this.y[this.pathstart[j]-1] > this.y[this.pathstart[i]-1]){
+                this.pathdis[this.pathdis.length] = this.y[this.pathstart[j]-1] - this.y[this.pathstart[i]-1];
+              }
+              else {
+                this.pathdis[this.pathdis.length] = this.y[this.pathstart[i]-1] -  this.y[this.pathstart[j]-1];
+              }
+              this.indexpath[this.indexpath.length] = 2;
+              this.pathstart[this.pathstart.length] = this.nodenum;
+              this.pathend[this.pathend.length] = this.pathend[j];
+              if(this.y[this.pathend[j]-1] > this.y[this.pathstart[i]-1]){
+                this.pathdis[this.pathdis.length] = this.y[this.pathend[j]-1] - this.y[this.pathstart[i]-1];
+              }
+              else {
+                this.pathdis[this.pathdis.length] = this.y[this.pathstart[i]-1] -  this.y[this.pathend[j]-1];
+              }
+              this.indexpath[this.indexpath.length] = 2;
+
+              for(var k = 0; k < this.x.length-1 ; ++k){
+
+                if(this.indexnode[k] == 2 ){
+                  if(this.x[k] == this.x[this.pathstart[j]-1]
+                    && ((this.y[k] > this.y[this.pathstart[j]-1] && this.y[k] < this.y[this.pathend[j]-1])
+                    || this.y[k] < this.y[this.pathstart[j]-1] && this.y[k] > this.y[this.pathend[j]-1])){
+
+                    this.pathstart[this.pathstart.length] = this.nodenum;
+                    this.pathend[this.pathend.length] = this.nodename[k];
+                    if(this.y[k] > this.y[this.pathstart[i]-1]){
+                      this.pathdis[this.pathdis.length] = this.y[k] - this.y[this.pathstart[i]-1];
+                    }
+                    else {
+                      this.pathdis[this.pathdis.length] = this.y[this.pathstart[i]-1] -  this.y[k];
+                    }
+                    this.indexpath[this.indexpath.length] = 3;
+                  }
+                  if(this.y[k] == this.y[this.pathstart[i]-1]
+                    && ((this.x[k] > this.x[this.pathstart[i]-1] && this.x[k] < this.x[this.pathend[i]-1])
+                    || this.x[k] < this.x[this.pathstart[i]-1] && this.x[k] > this.x[this.pathend[i]-1])){
+
+                    this.pathstart[this.pathstart.length] = this.nodenum;
+                    this.pathend[this.pathend.length] = this.nodename[k];
+                    if(this.x[k] > this.x[this.pathstart[j]-1]){
+                      this.pathdis[this.pathdis.length] = this.x[k] - this.x[this.pathstart[j]-1];
+                    }
+                    else{
+                      this.pathdis[this.pathdis.length] = this.x[this.pathstart[j]-1] -  this.x[k];
+                    }
+                    this.indexpath[this.indexpath.length] = 3;
+                  }
+                }
+              }
+
+
+
             }
-
-
-            this.pathstart[this.pathstart.length] = last;
-            this.pathend[this.pathend.length] = next;
-            this.pathdis[this.pathdis.length] = this.length;
-            this.indexpath[this.indexpath.length] = 2;
-
-            n++;
-            last = next;
-          }
-
-          if (flag_devide) {
-            this.pathstart[this.pathstart.length] = last;
-            this.pathend[this.pathend.length] = this.pathend[i];
-            this.pathdis[this.pathdis.length] = this.length;
-            this.indexpath[this.indexpath.length] = 2;
           }
         }
-
-
       }
-
 
 
       var arrpathstart = [];
@@ -1611,92 +1628,102 @@ export default {
     },
     Save: function () {
 
-      var finallength = this.pathstart.length;
-      //分离产生的非交点的indexnode为3 交点为2  新产生的线indexpath 为2
-      //将超过1格的边分离
-      for (var i = 0; i < finallength; i++) {
+      var temp_length = this.pathstart.length;
+      for(var i = 0 ; i < temp_length; ++i){
+        if(this.y[this.pathstart[i]-1] == this.y[this.pathend[i]-1] && this.indexpath[i] == 1){
+          //横线则找竖线在其范围内且被该竖线穿过
 
-        if (this.indexpath[i] == 1) {
-          var n = 1;
-          var flag_devide = 0;
-          var next; //记录当前循环中线段的终点
-          var last = this.pathstart[i]; //记录上层循环中线段的终点
+          for(var j = 0; j < temp_length; ++j){
 
-          while (this.pathdis[i] > n * this.length) {
-            flag_devide = 1;
-            var flag_insert = 1;
-            var k; //若要新加入的点已经存在于删除点后的存储列表中则 获得该点序号
+            if(this.x[this.pathstart[j]-1] == this.x[this.pathend[j]-1] && this.indexpath[j] == 1
+              && ((this.x[this.pathstart[j]-1] > this.x[this.pathstart[i]-1] && this.x[this.pathstart[j]-1] < this.x[this.pathend[i]-1])
+              || (this.x[this.pathstart[j]-1] < this.x[this.pathstart[i]-1] && this.x[this.pathstart[j]-1] > this.x[this.pathend[i]-1]))
+              && ((this.y[this.pathstart[i]-1] > this.y[this.pathstart[j]-1] && this.y[this.pathstart[i]-1] < this.y[this.pathend[j]-1])
+              || (this.y[this.pathstart[i]-1] < this.y[this.pathstart[j]-1] && this.y[this.pathstart[i]-1] > this.y[this.pathend[j]-1]))){
 
-            if (this.x[this.pathstart[i] - 1] == this.x[this.pathend[i] - 1]) { //竖线的情况，查看该分点是否已被存（交点）
-              for (k = 0; k < this.x.length; ++k) {
-                if (this.indexnode[k] == 3 && (this.y[this.pathstart[i] - 1] + n * this.length) == this.y[k] && this.x[k] == this.x[this.pathstart[i] - 1]) {
-                  flag_insert = 0;
-                  next = this.nodename[k];
-                  this.indexnode[k] = 2;
-                  break;
-                }
+              this.x[this.nodenum] = this.x[this.pathstart[j]-1];
+              this.y[this.nodenum] = this.y[this.pathstart[i]-1];
 
-              }
-
-              if (k == this.x.length) {
-
-                this.x[k] = this.x[this.pathstart[i] - 1];
-                this.y[k] = this.y[this.pathstart[i] - 1] + n * this.length;
-                this.indexnode[k] = 3;
-              }
-            }
-            else if (this.y[this.pathstart[i] - 1] == this.y[this.pathend[i] - 1]) {  //横线的情况
-              for (k = 0; k < this.y.length; ++k) {
-
-                if (this.indexnode[k] == 1 && (this.x[this.pathstart[i] - 1] + n * this.length) == this.x[k] && this.y[k] == this.y[this.pathstart[i] - 1]) {
-                  flag_insert = 0;
-                  next = this.nodename[k];
-                  this.indexnode[k] = 2;
-                  break;
-                }
-
-
-              }
-              if (k == this.y.length) {
-                this.x[k] = this.x[this.pathstart[i] - 1] + n * this.length;
-                this.y[k] = this.y[this.pathstart[i] - 1];
-                this.indexnode[k] = 3;
-              }
-            }
-
-            if (flag_insert == 1) {
-              this.nodename[this.nodenum] = this.nodenum + 1;
+              this.indexnode[this.nodenum] = 2;
+              this.nodename[this.nodenum] = this.nodenum+1;
               ++this.nodenum;
-              next = this.nodenum;
+
+              this.pathstart[this.pathstart.length] = this.pathstart[i];
+              this.pathend[this.pathend.length] = this.nodenum;
+              if(this.x[this.pathstart[i]-1] > this.x[this.pathstart[j]-1]){
+                this.pathdis[this.pathdis.length] = this.x[this.pathstart[i]-1] - this.x[this.pathstart[j]-1];
+              }
+              else{
+                this.pathdis[this.pathdis.length] = this.x[this.pathstart[j]-1] - this.x[this.pathstart[i]-1];
+              }
+              this.indexpath[this.indexpath.length] = 2;
+              this.pathstart[this.pathstart.length] = this.nodenum;
+              this.pathend[this.pathend.length] = this.pathend[i];
+              if(this.x[this.pathstart[j]-1] > this.x[this.pathend[i]-1]){
+                this.pathdis[this.pathdis.length] = this.x[this.pathstart[j]-1] - this.x[this.pathend[i]-1];
+              }
+              else{
+                this.pathdis[this.pathdis.length] = this.x[this.pathend[i]-1] - this.x[this.pathstart[j]-1];
+              }
+              this.indexpath[this.indexpath.length] = 2;
+              this.pathstart[this.pathstart.length] = this.pathstart[j];
+              this.pathend[this.pathend.length] = this.nodenum;
+              if(this.y[this.pathstart[j]-1] > this.y[this.pathstart[i]-1]){
+                this.pathdis[this.pathdis.length] = this.y[this.pathstart[j]-1] - this.y[this.pathstart[i]-1];
+              }
+              else {
+                this.pathdis[this.pathdis.length] = this.y[this.pathstart[i]-1] -  this.y[this.pathstart[j]-1];
+              }
+              this.indexpath[this.indexpath.length] = 2;
+              this.pathstart[this.pathstart.length] = this.nodenum;
+              this.pathend[this.pathend.length] = this.pathend[j];
+              if(this.y[this.pathend[j]-1] > this.y[this.pathstart[i]-1]){
+                this.pathdis[this.pathdis.length] = this.y[this.pathend[j]-1] - this.y[this.pathstart[i]-1];
+              }
+              else {
+                this.pathdis[this.pathdis.length] = this.y[this.pathstart[i]-1] -  this.y[this.pathend[j]-1];
+              }
+              this.indexpath[this.indexpath.length] = 2;
+
+              for(var k = 0; k < this.x.length-1 ; ++k){
+
+                if(this.indexnode[k] == 2 ){
+                  if(this.x[k] == this.x[this.pathstart[j]-1]
+                    && ((this.y[k] > this.y[this.pathstart[j]-1] && this.y[k] < this.y[this.pathend[j]-1])
+                    || this.y[k] < this.y[this.pathstart[j]-1] && this.y[k] > this.y[this.pathend[j]-1])){
+
+                    this.pathstart[this.pathstart.length] = this.nodenum;
+                    this.pathend[this.pathend.length] = this.nodename[k];
+                    if(this.y[k] > this.y[this.pathstart[i]-1]){
+                      this.pathdis[this.pathdis.length] = this.y[k] - this.y[this.pathstart[i]-1];
+                    }
+                    else {
+                      this.pathdis[this.pathdis.length] = this.y[this.pathstart[i]-1] -  this.y[k];
+                    }
+                    this.indexpath[this.indexpath.length] = 3;
+                  }
+                  if(this.y[k] == this.y[this.pathstart[i]-1]
+                    && ((this.x[k] > this.x[this.pathstart[i]-1] && this.x[k] < this.x[this.pathend[i]-1])
+                    || this.x[k] < this.x[this.pathstart[i]-1] && this.x[k] > this.x[this.pathend[i]-1])){
+
+                    this.pathstart[this.pathstart.length] = this.nodenum;
+                    this.pathend[this.pathend.length] = this.nodename[k];
+                    if(this.x[k] > this.x[this.pathstart[j]-1]){
+                      this.pathdis[this.pathdis.length] = this.x[k] - this.x[this.pathstart[j]-1];
+                    }
+                    else{
+                      this.pathdis[this.pathdis.length] = this.x[this.pathstart[j]-1] -  this.x[k];
+                    }
+                    this.indexpath[this.indexpath.length] = 3;
+                  }
+                }
+              }
+
+
+
             }
-
-
-            this.pathstart[this.pathstart.length] = last;
-            this.pathend[this.pathend.length] = next;
-            this.pathdis[this.pathdis.length] = this.length;
-            this.indexpath[this.indexpath.length] = 2;
-
-            n++;
-            last = next;
-          }
-
-          if (flag_devide) {
-            this.pathstart[this.pathstart.length] = last;
-            this.pathend[this.pathend.length] = this.pathend[i];
-            this.pathdis[this.pathdis.length] = this.length;
-            this.indexpath[this.indexpath.length] = 2;
           }
         }
-
-
-      }
-      for (var i = 0; i < this.indexnode.length; i++) {
-        if (this.indexnode[i] == 1)
-          this.nodenum_real++;
-      }
-      for (var i = 0; i < this.indexnode_buffer.length; i++) {
-        if (this.indexnode_buffer[i] == 1)
-          this.nodenum_realbuffer++;
       }
 
       this.MapChange();
@@ -1712,3 +1739,90 @@ export default {
 <style scoped>
 @import '../css/bootstrap.min.css'
 </style>
+/*var finallength = this.pathstart.length;
+//分离产生的非交点的indexnode为3 交点为2  新产生的线indexpath 为2
+//将超过1格的边分离
+for (var i = 0; i < finallength; i++) {
+
+if (this.indexpath[i] == 1) {
+var n = 1;
+var flag_devide = 0;
+var next; //记录当前循环中线段的终点
+var last = this.pathstart[i]; //记录上层循环中线段的终点
+
+while (this.pathdis[i] > n * this.length) {
+flag_devide = 1;
+var flag_insert = 1;
+var k; //若要新加入的点已经存在于删除点后的存储列表中则 获得该点序号
+
+if (this.x[this.pathstart[i] - 1] == this.x[this.pathend[i] - 1]) { //竖线的情况，查看该分点是否已被存（交点）
+for (k = 0; k < this.x.length; ++k) {
+if (this.indexnode[k] == 3 && (this.y[this.pathstart[i] - 1] + n * this.length) == this.y[k] && this.x[k] == this.x[this.pathstart[i] - 1]) {
+flag_insert = 0;
+next = this.nodename[k];
+this.indexnode[k] = 2;
+break;
+}
+
+}
+
+if (k == this.x.length) {
+
+this.x[k] = this.x[this.pathstart[i] - 1];
+this.y[k] = this.y[this.pathstart[i] - 1] + n * this.length;
+this.indexnode[k] = 3;
+}
+}
+else if (this.y[this.pathstart[i] - 1] == this.y[this.pathend[i] - 1]) {  //横线的情况
+for (k = 0; k < this.y.length; ++k) {
+
+if (this.indexnode[k] == 1 && (this.x[this.pathstart[i] - 1] + n * this.length) == this.x[k] && this.y[k] == this.y[this.pathstart[i] - 1]) {
+flag_insert = 0;
+next = this.nodename[k];
+this.indexnode[k] = 2;
+break;
+}
+
+
+}
+if (k == this.y.length) {
+this.x[k] = this.x[this.pathstart[i] - 1] + n * this.length;
+this.y[k] = this.y[this.pathstart[i] - 1];
+this.indexnode[k] = 3;
+}
+}
+
+if (flag_insert == 1) {
+this.nodename[this.nodenum] = this.nodenum + 1;
+++this.nodenum;
+next = this.nodenum;
+}
+
+
+this.pathstart[this.pathstart.length] = last;
+this.pathend[this.pathend.length] = next;
+this.pathdis[this.pathdis.length] = this.length;
+this.indexpath[this.indexpath.length] = 2;
+
+n++;
+last = next;
+}
+
+if (flag_devide) {
+this.pathstart[this.pathstart.length] = last;
+this.pathend[this.pathend.length] = this.pathend[i];
+this.pathdis[this.pathdis.length] = this.length;
+this.indexpath[this.indexpath.length] = 2;
+}
+}
+
+
+}
+for (var i = 0; i < this.indexnode.length; i++) {
+if (this.indexnode[i] == 1)
+this.nodenum_real++;
+}
+for (var i = 0; i < this.indexnode_buffer.length; i++) {
+if (this.indexnode_buffer[i] == 1)
+this.nodenum_realbuffer++;
+}*/
