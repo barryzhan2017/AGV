@@ -248,13 +248,17 @@
       var numname = this.Nodename_buffer[i];
       ctx.fillText(numname, numx, numy);
     }
-	for (var i = 0; i < this.Indexpath_buffer.length; i++) {
-      if(this.Indexpath_buffer[i]==0)
-        continue;
-      var startx = this.X_buffer[this.Pathstart_buffer[i]-1];
-      var starty = this.Y_buffer[this.Pathstart_buffer[i]-1];
-      var endx = this.X_buffer[this.Pathend_buffer[i]-1];
-      var endy = this.Y_buffer[this.Pathend_buffer[i]-1];
+	for (var i = 0; i < this.Total_buffer.length; i++) {
+	  let j=0;
+      let k=2;
+	  while(true){
+	  if(j==this.Total_buffer[i][0].length-1){
+		k=1;
+	  }
+	  var startx = this.Total_buffer[i][0][j];
+      var starty = this.Total_buffer[i][1][j];
+      var endx = this.Total_buffer[i][0][k];
+      var endy = this.Total_buffer[i][1][k];
       //设置直线参数
       ctx.globalAlpha = 0.2;
       ctx.lineWidth = 4;
@@ -267,8 +271,13 @@
       ctx.lineTo(endx, endy);
       ctx.stroke();
       ctx.closePath();
-    }
-
+	  if(j==this.Total_buffer[i][0].length-1)
+		break;
+	  j=k;
+	  k++;
+	  
+     }
+	}
   },
   methods:{
 
@@ -510,45 +519,25 @@
 	  let jsonobj11={};
 	  jsonobj11["numberOfGraphNode"]=this.X.length;
 	  arrnodenum[0]=jsonobj11;
-	  var arrbufferset=[];//假数据
-	  arrbufferset[0]=new Array();
-	  arrbufferset[1]=new Array();
-	  let js00={};
-	  js00["paths"]=5;
-	  let js01={};
-	  js01["paths"]=7;
-	  let js02={};
-	  js02["paths"]=8;
-	  let js03={};
-	  js03["paths"]=9;
-	  let js04={};
-	  js04["paths"]=10;
-	  let js05={};
-	  js05["paths"]=6;
-	  arrbufferset[0][0]=js00;
-	  arrbufferset[0][1]=js01;
-	  arrbufferset[0][2]=js02;
-	  arrbufferset[0][3]=js03;
-	  arrbufferset[0][4]=js04;
-	  arrbufferset[0][5]=js05;
-	  let js10={};
-	  js10["paths"]=2;
-	  let js11={};
-	  js11["paths"]=11;
-	  let js12={};
-	  js12["paths"]=12;
-	  let js13={};
-	  js13["paths"]=13;
-	  let js14={};
-	  js14["paths"]=14;
-	  let js15={};
-	  js15["paths"]=3;
-	  arrbufferset[1][0]=js10;
-	  arrbufferset[1][1]=js11;
-	  arrbufferset[1][2]=js12;
-	  arrbufferset[1][3]=js13;
-	  arrbufferset[1][4]=js14;
-	  arrbufferset[1][5]=js15;
+	  var arrbufferset=[];
+	  for(let i=0;i<this.Total_buffer.length;i++){
+		arrbufferset[i]=new Array();
+		for(let j=0,k=0;j<this.Total_buffer[i][3].length;j++,k++){
+			if(j==1){
+				k--;
+				continue;
+			}
+			let jsonobj={};
+			jsonobj["paths"]=this.Total_buffer[i][3][j];
+			arrbufferset[i][k]=jsonobj;
+			if(j==this.Total_buffer[i][3].length-1){
+				let jsonobjj={};
+				jsonobjj["paths"]=this.Total_buffer[i][3][1];
+				arrbufferset[i][k+1]=jsonobjj;
+			}
+		}
+	  }
+	  
 
 	  var arrcarset=[];//假数据
 	  let jsonobj13={};
