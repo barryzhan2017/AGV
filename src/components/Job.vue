@@ -85,6 +85,7 @@
 
     </div>
 <pre><code id="json"></code></pre>
+
   </div>
 </template>
 <script>
@@ -272,7 +273,7 @@
 		break;
 	  j=k;
 	  k++;
-
+	  
      }
 	}
   },
@@ -287,7 +288,7 @@
 			break;
 		if(i==this.Total_buffer.length-1)
 			{alert('请输入正确的缓冲区序号');this.carposition=null;return;}
-	  }
+	  } 
 	  this.carbuff[i]++;
 	  if(this.carbuff[i]>=this.Total_buffer[i][3].length)
 		{
@@ -300,7 +301,7 @@
 	  this.arrcarset[this.arrcarset.length]=jsonobj13;
       this.agvnum++;
       this.carsposition[this.agvnum-1]=this.carposition;
-
+	 
 	  //this.path=new Array();
 	  this.path[this.agvnum-1]=new Array();
 	  this.path[this.agvnum-1][0]=this.Total_buffer[i-1][3][this.carbuff[i-1]];
@@ -322,7 +323,7 @@
         stroke: 'red'
         //strokeWidth: 4
       });
-      var group = new Konva.Group({x:this.Total_buffer[i-1][0][this.carbuff[i-1]]-10,y:this.Total_buffer[i-1][1][this.carbuff[i-1]]-10});
+      var group = new Konva.Group({x:this.Total_buffer[i-1][0][this.Total_buffer[i-1][2].length+1-this.carbuff[i-1]]-10,y:this.Total_buffer[i-1][1][this.Total_buffer[i-1][2].length+1-this.carbuff[i-1]]-10});
 	  group.add(rect);
 	  group.add(rectnumber);
 	  //this.layer.add(rectnumber);
@@ -400,7 +401,7 @@
 			arrpath[i][0] = jsonobj7;
 			}
 		}
-		this.Send(this.arrpathstart,this.arrpathend,this.arrpathdis,arrpath,arrtasks,this.arrspeed,this.arrnodenum,this.arrbufferset,this.arrcarset,arrtime);
+		this.Send(this.arrpathstart,this.arrpathend,this.arrpathdis,arrpath,arrtasks,this.arrspeed,this.arrpre,this.arrnodenum,this.arrbufferset,this.arrcarset,arrtime);
 
         for(let i=0;i<this.agvnum;i++){
           if(this.T[i]==-1)
@@ -499,13 +500,13 @@
 
 	  this.arrspeed=parseFloat(this.V);
 	  this.arrpre=parseFloat(this.Minlength);
-
+	  
 	  for (var i = 0; i < this.Indexpath.length; i++) {
       if(this.Indexpath[i]==0)
         continue;
       this.arrnodenum++;
 	}
-
+	  
 	  for(let i=0;i<this.Total_buffer.length;i++){
 		this.arrbufferset[i]=new Array();
 		for(let j=0,k=0;j<this.Total_buffer[i][3].length;j++,k++){
@@ -523,7 +524,7 @@
 			}
 		}
 	  }
-
+	  
 	  let arrtime=[];
 	  for(let i=0;i<this.T.length;i++){
 		let jsonobj14 = {};
@@ -531,7 +532,7 @@
         arrtime[i] = jsonobj14;
 	  }
 
-	 this.Send(this.arrpathstart,this.arrpathend,this.arrpathdis,arrpath,arrtasks,this.arrspeed,this.arrpre,this.arrnodenum,this.arrbufferset,this.arrcarset,arrtime);
+	  this.Send(this.arrpathstart,this.arrpathend,this.arrpathdis,arrpath,arrtasks,this.arrspeed,this.arrpre,this.arrnodenum,this.arrbufferset,this.arrcarset,arrtime);
 	  this.Isbegin=true;
       for(let i=0;i<this.rects.length;i++)
         this.move(i,0);
@@ -563,18 +564,23 @@
 		"bufferForAGV":carbuff,
 		"time":arrT
 	  };
-		console.log(message);
 		let btn = document.querySelector('#json');
     let data = message;
     btn.textContent = JSON.stringify(data, null, '  ');
+		for(let i=0;i<message.paths.length;i++){
+			this.newpath[i]=new Array();
+			for(let j=0;j<message.paths[i].length;j++){
+				this.newpath[i][j]=message.paths[i][j].paths;
+			}
+		}
+		console.log(this.newpath);
+		 this.$axios.post('/api/genetic', {
+                data: message,
+              }).then(response => {
+               alert(response.data);
+              })
 
-//		 this.$axios.post('/api/genetic', {
-//                data: message,
-//              }).then(response => {
-//               alert(response.data);
-//              })
-
-
+		
 	},
 	pageChange:function(pageIndex){console.log(pageIndex);
 		this.index=pageIndex;
