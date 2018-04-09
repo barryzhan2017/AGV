@@ -303,7 +303,7 @@
 	 
 	  //this.path=new Array();
 	  this.path[this.agvnum-1]=new Array();
-	  this.path[this.agvnum-1][0]=this.carposition;
+	  this.path[this.agvnum-1][0]=this.Total_buffer[i-1][3][this.carbuff[i-1]];
 	  var rectnumber = new Konva.Text({
       x: 0,
       y: -20,
