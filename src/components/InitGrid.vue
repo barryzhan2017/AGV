@@ -1440,71 +1440,9 @@ export default {
       arrminlength[0] = jsonobj0;
 
       //buffer数据的传出
-      var arrpathstart_buffer = [];
-      for (var i = 0; i < this.pathstart_buffer.length; i++) {
-        var jsonobj1_buffer = {};
-        jsonobj1_buffer["pathstart_buffer"] = this.pathstart_buffer[i];
-        arrpathstart_buffer[i] = jsonobj1_buffer;
-      }
-      var arrpathend_buffer = [];
-      for (var i = 0; i < this.pathend_buffer.length; i++) {
-        var jsonobj2_buffer = {};
-        jsonobj2_buffer["pathend_buffer"] = this.pathend_buffer[i];
-        arrpathend_buffer[i] = jsonobj2_buffer;
-      }
-
-      var arrpathdis_buffer = [];
-      for (var i = 0; i < this.pathdis_buffer.length; i++) {
-        var jsonobj3_buffer = {};
-        jsonobj3_buffer["distance_buffer"] = this.pathdis_buffer[i];
-        arrpathdis_buffer[i] = jsonobj3_buffer;
-      }
-
-      var arrindexpath_buffer = [];
-      for (var i = 0; i < this.indexpath_buffer.length; i++) {
-        var jsonobj7_buffer = {};
-        jsonobj7_buffer["indexpath_buffer"] = this.indexpath_buffer[i];
-        arrindexpath_buffer[i] = jsonobj7_buffer;
-      }
-
-      var arrnodename_buffer = [];
-      for (var i = 0; i < this.nodename_buffer.length; i++) {
-        var jsonobj4_buffer = {};
-        jsonobj4_buffer["nodename_buffer"] = this.nodename_buffer[i];
-        arrnodename_buffer[i] = jsonobj4_buffer;
-      }
-
-      var arrx_buffer = [];
-      for (var i = 0; i < this.x_buffer.length; i++) {
-        var jsonobj5_buffer = {};
-        jsonobj5_buffer["x_buffer"] = this.x_buffer[i];
-        arrx_buffer[i] = jsonobj5_buffer;
-      }
-
-      var arry_buffer = [];
-      for (var i = 0; i < this.y_buffer.length; i++) {
-        var jsonobj6_buffer = {};
-        jsonobj6_buffer["y_buffer"] = this.y_buffer[i];
-        arry_buffer[i] = jsonobj6_buffer;
-      }
-
-      var arrindexnode_buffer = [];
-      for (var i = 0; i < this.indexnode_buffer.length; i++) {
-        if (this.indexnode_buffer[i] == 1)
-          this.nodenum_realbuffer++;
-        var jsonobj8_buffer = {};
-        jsonobj8_buffer["indexnode"] = this.indexnode_buffer[i];
-        arrindexnode_buffer[i] = jsonobj8_buffer;
-      }
-
-      var arrnodenum_buffer = [];
-      var jsonobj9_buffer = {};
-      jsonobj9_buffer["nodenum_buffer"] = this.nodenum_realbuffer;
-      arrnodenum_buffer[0] = jsonobj9_buffer;
-      //console.dir(arrpathstart);
-      //console.dir(arrpathend);
-      //console.dir(arrpathdis);
-      //alert(arr1);
+      var arrtotalbuffer={};
+	  arrtotalbuffer["total_buffer"]=this.total_buffer;
+	  
       var arrxx = {
         "Minlength" : arrminlength,
         "Startorder": arrpathstart,
@@ -1516,15 +1454,7 @@ export default {
         "Ypos": arry,
         "Nodekind": arrindexnode,
         "Nodenumclicked": arrnodenum,
-        "Startorder_buffer": arrpathstart_buffer,
-        "Endorder_buffer": arrpathend_buffer,
-        "Distance_buffer": arrpathdis_buffer,
-        "Pathkind_buffer": arrindexpath_buffer,
-        "Nodeorder_buffer": arrnodename_buffer,
-        "Xpos_buffer": arrx_buffer,
-        "Ypos_buffer": arry_buffer,
-        "Nodekind_buffer": arrindexnode_buffer,
-        "Nodenumclicked_buffer": arrnodenum_buffer
+        "total_buffer": arrtotalbuffer
       };
       //对VUEX的state操作
       this.MapChange();
@@ -1543,6 +1473,7 @@ export default {
         this.tagimport = 1;
 
 		let m=JSON.parse(this.strimport);
+		this.total_buffer=m.total_buffer.total_buffer;
 		this.pathdis=new Array();
 		for(let i=0;i<m.Distance.length;i++){
 			this.pathdis[i]=m.Distance[i].distance;
@@ -1582,44 +1513,6 @@ export default {
     for(let i = 0; i < m.Minlength.length; ++i){
       this.minlength = m.Minlength[i].minlength;
     }
-		this.pathstart_buffer=new Array();
-		for(let i=0;i<m.Startorder_buffer.length;i++){
-			this.pathstart_buffer[i]=m.Startorder_buffer[i].pathstart_buffer;
-		}
-		this.pathend_buffer=new Array();
-		for(let i=0;i<m.Endorder_buffer.length;i++){
-			this.pathend_buffer[i]=m.Endorder_buffer[i].pathend_buffer;
-		}
-
-		this.pathdis_buffer=new Array();
-		for(let i=0;i<m.Distance_buffer.length;i++){
-			this.pathdis_buffer[i]=m.Distance_buffer[i].distance_buffer;
-		}
-		this.indexpath_buffer=new Array();
-		for(let i=0;i<m.Pathkind_buffer.length;i++){
-			this.indexpath_buffer[i]=m.Pathkind_buffer[i].indexpath_buffer;
-		}
-		this.nodename_buffer=new Array();
-		for(let i=0;i<m.Nodeorder_buffer.length;i++){
-			this.nodename_buffer[i]=m.Nodeorder_buffer[i].nodename_buffer;
-		}
-		this.x_buffer=new Array();
-		for(let i=0;i<m.Xpos_buffer.length;i++){
-			this.x_buffer[i]=m.Xpos_buffer[i].x_buffer;
-		}
-		this.y_buffer=new Array();
-		for(let i=0;i<m.Ypos_buffer.length;i++){
-			this.y_buffer[i]=m.Ypos_buffer[i].y_buffer;
-		}
-		this.indexnode_buffer=new Array();
-		for(let i=0;i<m.Nodekind_buffer.length;i++){
-			this.indexnode_buffer[i]=m.Nodekind_buffer[i].indexnode;
-		}
-
-		for(let i=0;i<m.Nodenumclicked_buffer.length;i++){
-			this.nodenum_realbuffer=m.Nodenumclicked_buffer[i].nodenum_buffer;
-		}
-
 	  alert("读取完毕，保存地图即可！");
       };
 
