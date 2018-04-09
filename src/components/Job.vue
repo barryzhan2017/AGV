@@ -275,7 +275,7 @@
 		break;
 	  j=k;
 	  k++;
-	  
+
      }
 	}
   },
@@ -537,7 +537,7 @@
 			}
 		}
 	  }
-	  
+
 
 	  var arrcarset=[];//假数据
 	  let jsonobj13={};
@@ -556,21 +556,7 @@
         arrtime[i] = jsonobj14;
 	  }
 
-	  		let ppath=[
-    			[	{"paths":9},
-    				{"paths":8},
-    				{"paths":1},
-    				{"paths":2},
-    				{"paths":-1}
 
-    			],
-    			[
-    				{"paths":3},
-    				{"paths":2},
-    				{"paths":1},
-    				{"paths":-1}
-    			]
-    		];
 	  var message={
 		"startNode":arrpathstart,
 		"endNode":arrpathend,
@@ -586,12 +572,6 @@
 	  };
 		console.log(message);
 
-		for(let i=0;i<ppath.length;i++){
-			this.path[i]=new Array();
-			for(let j=0;j<ppath[i].length;j++){
-				this.path[i][j]=ppath[i][j].paths;
-			}
-		}
 
 	  this.Isbegin=true;
       for(let i=0;i<this.rects.length;i++)
