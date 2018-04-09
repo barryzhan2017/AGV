@@ -231,16 +231,17 @@ export default {
         if(begin_x == end_x){//竖线
           var dis;
           var temp = deep;
+
           while(temp > 1){
             if(begin_x == min_x){
-              this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+              this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + (this.count_buffer+1)*100;
               this.y_buffer[this.nodenum_buffer] = begin_y;
               this.x_buffer[this.nodenum_buffer] = begin_x - (deep - temp +1)*this.length;
               this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
               this.nodenum_buffer++;
             }
             else{
-              this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+              this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + (this.count_buffer+1)*100;
               this.y_buffer[this.nodenum_buffer] = begin_y;
               this.x_buffer[this.nodenum_buffer] = begin_x + (deep - temp + 1)*this.length;
               this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
@@ -259,7 +260,7 @@ export default {
           }
           while(n <= dis/this.length){
 
-            this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+            this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + (this.count_buffer+1)*100;
             if(begin_y > end_y){
               this.y_buffer[this.nodenum_buffer] = begin_y - n*this.length;
               if(begin_x == min_x){
@@ -286,14 +287,14 @@ export default {
           temp = deep;
           while(temp > 1){
             if(begin_x == min_x){
-              this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+              this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + (this.count_buffer+1)*100;
               this.y_buffer[this.nodenum_buffer] = end_y;
               this.x_buffer[this.nodenum_buffer] = end_x - (temp - 1 )*this.length;
               this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
               this.nodenum_buffer++;
             }
             else{
-              this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+              this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + (this.count_buffer+1)*100;
               this.y_buffer[this.nodenum_buffer] = end_y;
               this.x_buffer[this.nodenum_buffer] = end_x + (temp - 1)*this.length;
               this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
@@ -309,14 +310,15 @@ export default {
           var temp = deep;
           while(temp > 1){
             if(begin_y == max_y){
-              this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+
+              this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + (this.count_buffer+1)*100;
               this.x_buffer[this.nodenum_buffer] = begin_x;
               this.y_buffer[this.nodenum_buffer] = begin_y + (deep - temp +1)*this.length;
               this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
               this.nodenum_buffer++;
             }
             else{
-              this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+              this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + (this.count_buffer+1)*100;
               this.x_buffer[this.nodenum_buffer] = begin_x;
               this.y_buffer[this.nodenum_buffer] = begin_y - (deep - temp + 1)*this.length;
               this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
@@ -335,7 +337,7 @@ export default {
           }
           while(n <= dis/this.length){
 
-            this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+            this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + (this.count_buffer+1)*100;
             if(begin_x > end_x){
               this.x_buffer[this.nodenum_buffer] = begin_x - n*this.length;
               if(begin_y == max_y){
@@ -362,14 +364,14 @@ export default {
           temp = deep;
           while(temp > 1){
             if(begin_y == max_y){
-              this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+              this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + (this.count_buffer+1)*100;
               this.x_buffer[this.nodenum_buffer] = end_x;
               this.y_buffer[this.nodenum_buffer] = end_y + (temp - 1 )*this.length;
               this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
               this.nodenum_buffer++;
             }
             else{
-              this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+              this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + (this.count_buffer+1)*100;
               this.x_buffer[this.nodenum_buffer] = end_x;
               this.y_buffer[this.nodenum_buffer] = end_y - (temp - 1)*this.length;
               this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
@@ -387,14 +389,14 @@ export default {
             var temp = deep;
             while(temp > 1){
               if(begin_x == min_x){
-                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + (this.count_buffer+1)*100;
                 this.y_buffer[this.nodenum_buffer] = begin_y;
                 this.x_buffer[this.nodenum_buffer] = begin_x - (deep - temp +1)*this.length;
                 this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
                 this.nodenum_buffer++;
               }
               else{
-                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + (this.count_buffer+1)*100;
                 this.y_buffer[this.nodenum_buffer] = begin_y;
                 this.x_buffer[this.nodenum_buffer] = begin_x + (deep - temp + 1)*this.length;
                 this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
@@ -413,7 +415,7 @@ export default {
             }
             while(n <= (dis+deep*this.length)/this.length){
 
-              this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+              this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + (this.count_buffer+1)*100;
               if(begin_y > end_y){
                 this.y_buffer[this.nodenum_buffer] = begin_y - n*this.length;
                 if(begin_x == min_x){
@@ -439,7 +441,7 @@ export default {
 
             if(begin_x == min_x){
               while(this.x_buffer[this.nodenum_buffer-1] + this.length <= end_x){
-                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + (this.count_buffer+1)*100;
                 this.x_buffer[this.nodenum_buffer] =  this.x_buffer[this.nodenum_buffer-1] + this.length;
                 this.y_buffer[this.nodenum_buffer] = this.y_buffer[this.nodenum_buffer-1] ;
                 this.indexnode_buffer[this.nodenum_buffer] = 3;
@@ -448,7 +450,7 @@ export default {
             }
             else{
               while(this.x_buffer[this.nodenum_buffer-1] - this.length >= end_x){
-                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + (this.count_buffer+1)*100;
                 this.x_buffer[this.nodenum_buffer] = this.x_buffer[this.nodenum_buffer-1] - this.length;
                 this.y_buffer[this.nodenum_buffer] = this.y_buffer[this.nodenum_buffer-1] ;
                 this.indexnode_buffer[this.nodenum_buffer] = 3;
@@ -459,14 +461,14 @@ export default {
             temp = deep;
             while(temp > 2){
               if(begin_y == max_y){
-                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + (this.count_buffer+1)*100;
                 this.x_buffer[this.nodenum_buffer] = end_x;
                 this.y_buffer[this.nodenum_buffer] = end_y + (temp - 1 )*this.length;
                 this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
                 this.nodenum_buffer++;
               }
               else{
-                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + (this.count_buffer+1)*100;
                 this.x_buffer[this.nodenum_buffer] = end_x;
                 this.y_buffer[this.nodenum_buffer] = end_y - (temp - 1)*this.length;
                 this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
@@ -482,14 +484,14 @@ export default {
             var temp = deep;
             while(temp > 1){
               if(begin_y == max_y){
-                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer +(this.count_buffer+1)*100;
                 this.x_buffer[this.nodenum_buffer] = begin_x;
                 this.y_buffer[this.nodenum_buffer] = begin_y + (deep - temp +1)*this.length;
                 this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
                 this.nodenum_buffer++;
               }
               else{
-                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + (this.count_buffer+1)*100;
                 this.x_buffer[this.nodenum_buffer] = begin_x;
                 this.y_buffer[this.nodenum_buffer] = begin_y - (deep - temp + 1)*this.length;
                 this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
@@ -508,7 +510,7 @@ export default {
             }
             while(n <= (dis+deep*this.length)/this.length){
 
-              this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+              this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + (this.count_buffer+1)*100;
               if(begin_x > end_x){
                 this.x_buffer[this.nodenum_buffer] = begin_x - n*this.length;
                 if(begin_y == max_y){
@@ -534,7 +536,7 @@ export default {
 
             if(begin_y == min_y){
               while(this.y_buffer[this.nodenum_buffer-1] + this.length <= end_y){
-                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + (this.count_buffer+1)*100;
                 this.x_buffer[this.nodenum_buffer] = this.x_buffer[this.nodenum_buffer-1];
                 this.y_buffer[this.nodenum_buffer] = this.y_buffer[this.nodenum_buffer-1] + this.length;
                 this.indexnode_buffer[this.nodenum_buffer] = 3;
@@ -543,7 +545,7 @@ export default {
             }
             else{
               while(this.y_buffer[this.nodenum_buffer-1] - this.length >= end_y){
-                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + (this.count_buffer+1)*100;
                 this.x_buffer[this.nodenum_buffer] = this.x_buffer[this.nodenum_buffer - 1];
                 this.y_buffer[this.nodenum_buffer] = this.y_buffer[this.nodenum_buffer - 1] - this.length;
                 this.indexnode_buffer[this.nodenum_buffer] = 3;
@@ -553,14 +555,14 @@ export default {
             temp = deep;
             while(temp > 1){
               if(begin_x == min_x){
-                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + (this.count_buffer+1)*100;
                 this.y_buffer[this.nodenum_buffer] = end_y;
                 this.x_buffer[this.nodenum_buffer] = end_x - (temp - 1 )*this.length;
                 this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
                 this.nodenum_buffer++;
               }
               else{
-                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + (this.count_buffer+1)*100;
                 this.y_buffer[this.nodenum_buffer] = end_y;
                 this.x_buffer[this.nodenum_buffer] = end_x + (temp - 1)*this.length;
                 this.indexnode_buffer[this.nodenum_buffer] = 3;//非起点非终点
@@ -598,7 +600,7 @@ export default {
           }
           while(n <= dis/this.length){
 
-            this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+            this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + (this.count_buffer+1)*100;
             if(begin_y > end_y){
               this.y_buffer[this.nodenum_buffer] = begin_y - n*this.length;
               if(begin_x == min_x){
@@ -633,7 +635,7 @@ export default {
           }
           while(n <= dis/this.length){
 
-            this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+            this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + (this.count_buffer+1)*100;
             if(begin_x > end_x){
               this.x_buffer[this.nodenum_buffer] = begin_x - n*this.length;
               if(begin_y == max_y){
@@ -694,7 +696,7 @@ export default {
             }
             if(begin_x == min_x){
               while(this.x_buffer[this.nodenum_buffer-1] + this.length <= end_x){
-                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + (this.count_buffer+1)*100;
                 this.x_buffer[this.nodenum_buffer] = this.x_buffer[this.nodenum_buffer - 1] + this.length;
                 this.y_buffer[this.nodenum_buffer] = this.y_buffer[this.nodenum_buffer-1] ;
                 this.indexnode_buffer[this.nodenum_buffer] = 3;
@@ -703,7 +705,7 @@ export default {
             }
             else{
               while(this.x_buffer[this.nodenum_buffer-1] - this.length >= end_x){
-                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + (this.count_buffer+1)*100;
                 this.x_buffer[this.nodenum_buffer] = this.x_buffer[this.nodenum_buffer - 1] - this.length;
                 this.y_buffer[this.nodenum_buffer] = this.y_buffer[this.nodenum_buffer - 1] ;
                 this.indexnode_buffer[this.nodenum_buffer] = 3;
@@ -721,7 +723,7 @@ export default {
             }
             while(n <= dis/this.length){
 
-              this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+              this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer +(this.count_buffer+1)*100;
               if(begin_x > end_x){
                 this.x_buffer[this.nodenum_buffer] = begin_x - n*this.length;
                 if(begin_y == max_y){
@@ -746,7 +748,7 @@ export default {
             }
             if(begin_y == min_y){
               while(this.y_buffer[this.nodenum_buffer-1] + this.length <= end_y){
-                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + (this.count_buffer+1)*100;
                 this.x_buffer[this.nodenum_buffer] = this.x_buffer[this.nodenum_buffer-1];
                 this.y_buffer[this.nodenum_buffer] = this.y_buffer[this.nodenum_buffer] + this.length;
                 this.indexnode_buffer[this.nodenum_buffer] = 3;
@@ -755,7 +757,7 @@ export default {
             }
             else {
               while (this.y_buffer[this.nodenum_buffer - 1] - this.length >= end_y) {
-                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + this.nodenum;
+                this.nodename_buffer[this.nodenum_buffer] = this.nodenum_buffer + (this.count_buffer+1)*100;
                 this.x_buffer[this.nodenum_buffer] = this.x_buffer[this.nodenum_buffer - 1];
                 this.y_buffer[this.nodenum_buffer] = this.y_buffer[this.nodenum_buffer - 1] - this.length;
                 this.indexnode_buffer[this.nodenum_buffer] = 3;
@@ -1273,86 +1275,103 @@ export default {
     },
     exportmap: function () {//导出map文件
 
-      var finallength = this.pathstart.length;
-      //分离产生的非交点的indexnode为3 交点为2  新产生的线indexpath 为2
-      //将超过1格的边分离
-      for (var i = 0; i < finallength; i++) {
+      var temp_length = this.pathstart.length;
+      for(var i = 0 ; i < temp_length; ++i){
+        if(this.y[this.pathstart[i]-1] == this.y[this.pathend[i]-1] && this.indexpath[i] == 1){
+          //横线则找竖线在其范围内且被该竖线穿过
 
-        if (this.indexpath[i] == 1) {
-          var n = 1;
-          var flag_devide = 0;
-          var next; //记录当前循环中线段的终点
-          var last = this.pathstart[i]; //记录上层循环中线段的终点
+          for(var j = 0; j < temp_length; ++j){
 
-          while (this.pathdis[i] > n * this.length) {
-            flag_devide = 1;
-            var flag_insert = 1;
-            var k; //若要新加入的点已经存在于删除点后的存储列表中则 获得该点序号
+            if(this.x[this.pathstart[j]-1] == this.x[this.pathend[j]-1] && this.indexpath[j] == 1
+              && ((this.x[this.pathstart[j]-1] > this.x[this.pathstart[i]-1] && this.x[this.pathstart[j]-1] < this.x[this.pathend[i]-1])
+              || (this.x[this.pathstart[j]-1] < this.x[this.pathstart[i]-1] && this.x[this.pathstart[j]-1] > this.x[this.pathend[i]-1]))
+              && ((this.y[this.pathstart[i]-1] > this.y[this.pathstart[j]-1] && this.y[this.pathstart[i]-1] < this.y[this.pathend[j]-1])
+              || (this.y[this.pathstart[i]-1] < this.y[this.pathstart[j]-1] && this.y[this.pathstart[i]-1] > this.y[this.pathend[j]-1]))){
 
-            if (this.x[this.pathstart[i] - 1] == this.x[this.pathend[i] - 1]) { //竖线的情况，查看该分点是否已被存（交点）
-              for (k = 0; k < this.x.length; ++k) {
-                if (this.indexnode[k] == 3 && (this.y[this.pathstart[i] - 1] + n * this.length) == this.y[k] && this.x[k] == this.x[this.pathstart[i] - 1]) {
-                  flag_insert = 0;
-                  next = this.nodename[k];
-                  this.indexnode[k] = 2;
-                  break;
-                }
+              this.x[this.nodenum] = this.x[this.pathstart[j]-1];
+              this.y[this.nodenum] = this.y[this.pathstart[i]-1];
 
-              }
-
-              if (k == this.x.length) {
-
-                this.x[k] = this.x[this.pathstart[i] - 1];
-                this.y[k] = this.y[this.pathstart[i] - 1] + n * this.length;
-                this.indexnode[k] = 3;
-              }
-            }
-            else if (this.y[this.pathstart[i] - 1] == this.y[this.pathend[i] - 1]) {  //横线的情况
-              for (k = 0; k < this.y.length; ++k) {
-
-                if (this.indexnode[k] == 1 && (this.x[this.pathstart[i] - 1] + n * this.length) == this.x[k] && this.y[k] == this.y[this.pathstart[i] - 1]) {
-                  flag_insert = 0;
-                  next = this.nodename[k];
-                  this.indexnode[k] = 2;
-                  break;
-                }
-
-
-              }
-              if (k == this.y.length) {
-                this.x[k] = this.x[this.pathstart[i] - 1] + n * this.length;
-                this.y[k] = this.y[this.pathstart[i] - 1];
-                this.indexnode[k] = 3;
-              }
-            }
-
-            if (flag_insert == 1) {
-              this.nodename[this.nodenum] = this.nodenum + 1;
+              this.indexnode[this.nodenum] = 2;
+              this.nodename[this.nodenum] = this.nodenum+1;
               ++this.nodenum;
-              next = this.nodenum;
+
+              this.pathstart[this.pathstart.length] = this.pathstart[i];
+              this.pathend[this.pathend.length] = this.nodenum;
+              if(this.x[this.pathstart[i]-1] > this.x[this.pathstart[j]-1]){
+                this.pathdis[this.pathdis.length] = this.x[this.pathstart[i]-1] - this.x[this.pathstart[j]-1];
+              }
+              else{
+                this.pathdis[this.pathdis.length] = this.x[this.pathstart[j]-1] - this.x[this.pathstart[i]-1];
+              }
+              this.indexpath[this.indexpath.length] = 2;
+              this.pathstart[this.pathstart.length] = this.nodenum;
+              this.pathend[this.pathend.length] = this.pathend[i];
+              if(this.x[this.pathstart[j]-1] > this.x[this.pathend[i]-1]){
+                this.pathdis[this.pathdis.length] = this.x[this.pathstart[j]-1] - this.x[this.pathend[i]-1];
+              }
+              else{
+                this.pathdis[this.pathdis.length] = this.x[this.pathend[i]-1] - this.x[this.pathstart[j]-1];
+              }
+              this.indexpath[this.indexpath.length] = 2;
+              this.pathstart[this.pathstart.length] = this.pathstart[j];
+              this.pathend[this.pathend.length] = this.nodenum;
+              if(this.y[this.pathstart[j]-1] > this.y[this.pathstart[i]-1]){
+                this.pathdis[this.pathdis.length] = this.y[this.pathstart[j]-1] - this.y[this.pathstart[i]-1];
+              }
+              else {
+                this.pathdis[this.pathdis.length] = this.y[this.pathstart[i]-1] -  this.y[this.pathstart[j]-1];
+              }
+              this.indexpath[this.indexpath.length] = 2;
+              this.pathstart[this.pathstart.length] = this.nodenum;
+              this.pathend[this.pathend.length] = this.pathend[j];
+              if(this.y[this.pathend[j]-1] > this.y[this.pathstart[i]-1]){
+                this.pathdis[this.pathdis.length] = this.y[this.pathend[j]-1] - this.y[this.pathstart[i]-1];
+              }
+              else {
+                this.pathdis[this.pathdis.length] = this.y[this.pathstart[i]-1] -  this.y[this.pathend[j]-1];
+              }
+              this.indexpath[this.indexpath.length] = 2;
+
+              for(var k = 0; k < this.x.length-1 ; ++k){
+
+                if(this.indexnode[k] == 2 ){
+                  if(this.x[k] == this.x[this.pathstart[j]-1]
+                    && ((this.y[k] > this.y[this.pathstart[j]-1] && this.y[k] < this.y[this.pathend[j]-1])
+                    || this.y[k] < this.y[this.pathstart[j]-1] && this.y[k] > this.y[this.pathend[j]-1])){
+
+                    this.pathstart[this.pathstart.length] = this.nodenum;
+                    this.pathend[this.pathend.length] = this.nodename[k];
+                    if(this.y[k] > this.y[this.pathstart[i]-1]){
+                      this.pathdis[this.pathdis.length] = this.y[k] - this.y[this.pathstart[i]-1];
+                    }
+                    else {
+                      this.pathdis[this.pathdis.length] = this.y[this.pathstart[i]-1] -  this.y[k];
+                    }
+                    this.indexpath[this.indexpath.length] = 3;
+                  }
+                  if(this.y[k] == this.y[this.pathstart[i]-1]
+                    && ((this.x[k] > this.x[this.pathstart[i]-1] && this.x[k] < this.x[this.pathend[i]-1])
+                    || this.x[k] < this.x[this.pathstart[i]-1] && this.x[k] > this.x[this.pathend[i]-1])){
+
+                    this.pathstart[this.pathstart.length] = this.nodenum;
+                    this.pathend[this.pathend.length] = this.nodename[k];
+                    if(this.x[k] > this.x[this.pathstart[j]-1]){
+                      this.pathdis[this.pathdis.length] = this.x[k] - this.x[this.pathstart[j]-1];
+                    }
+                    else{
+                      this.pathdis[this.pathdis.length] = this.x[this.pathstart[j]-1] -  this.x[k];
+                    }
+                    this.indexpath[this.indexpath.length] = 3;
+                  }
+                }
+              }
+
+
+
             }
-
-
-            this.pathstart[this.pathstart.length] = last;
-            this.pathend[this.pathend.length] = next;
-            this.pathdis[this.pathdis.length] = this.length;
-            this.indexpath[this.indexpath.length] = 2;
-
-            n++;
-            last = next;
-          }
-
-          if (flag_devide) {
-            this.pathstart[this.pathstart.length] = last;
-            this.pathend[this.pathend.length] = this.pathend[i];
-            this.pathdis[this.pathdis.length] = this.length;
-            this.indexpath[this.indexpath.length] = 2;
           }
         }
-
-
       }
-
 
 
       var arrpathstart = [];
@@ -1423,71 +1442,9 @@ export default {
       arrminlength[0] = jsonobj0;
 
       //buffer数据的传出
-      var arrpathstart_buffer = [];
-      for (var i = 0; i < this.pathstart_buffer.length; i++) {
-        var jsonobj1_buffer = {};
-        jsonobj1_buffer["pathstart_buffer"] = this.pathstart_buffer[i];
-        arrpathstart_buffer[i] = jsonobj1_buffer;
-      }
-      var arrpathend_buffer = [];
-      for (var i = 0; i < this.pathend_buffer.length; i++) {
-        var jsonobj2_buffer = {};
-        jsonobj2_buffer["pathend_buffer"] = this.pathend_buffer[i];
-        arrpathend_buffer[i] = jsonobj2_buffer;
-      }
-
-      var arrpathdis_buffer = [];
-      for (var i = 0; i < this.pathdis_buffer.length; i++) {
-        var jsonobj3_buffer = {};
-        jsonobj3_buffer["distance_buffer"] = this.pathdis_buffer[i];
-        arrpathdis_buffer[i] = jsonobj3_buffer;
-      }
-
-      var arrindexpath_buffer = [];
-      for (var i = 0; i < this.indexpath_buffer.length; i++) {
-        var jsonobj7_buffer = {};
-        jsonobj7_buffer["indexpath_buffer"] = this.indexpath_buffer[i];
-        arrindexpath_buffer[i] = jsonobj7_buffer;
-      }
-
-      var arrnodename_buffer = [];
-      for (var i = 0; i < this.nodename_buffer.length; i++) {
-        var jsonobj4_buffer = {};
-        jsonobj4_buffer["nodename_buffer"] = this.nodename_buffer[i];
-        arrnodename_buffer[i] = jsonobj4_buffer;
-      }
-
-      var arrx_buffer = [];
-      for (var i = 0; i < this.x_buffer.length; i++) {
-        var jsonobj5_buffer = {};
-        jsonobj5_buffer["x_buffer"] = this.x_buffer[i];
-        arrx_buffer[i] = jsonobj5_buffer;
-      }
-
-      var arry_buffer = [];
-      for (var i = 0; i < this.y_buffer.length; i++) {
-        var jsonobj6_buffer = {};
-        jsonobj6_buffer["y_buffer"] = this.y_buffer[i];
-        arry_buffer[i] = jsonobj6_buffer;
-      }
-
-      var arrindexnode_buffer = [];
-      for (var i = 0; i < this.indexnode_buffer.length; i++) {
-        if (this.indexnode_buffer[i] == 1)
-          this.nodenum_realbuffer++;
-        var jsonobj8_buffer = {};
-        jsonobj8_buffer["indexnode"] = this.indexnode_buffer[i];
-        arrindexnode_buffer[i] = jsonobj8_buffer;
-      }
-
-      var arrnodenum_buffer = [];
-      var jsonobj9_buffer = {};
-      jsonobj9_buffer["nodenum_buffer"] = this.nodenum_realbuffer;
-      arrnodenum_buffer[0] = jsonobj9_buffer;
-      //console.dir(arrpathstart);
-      //console.dir(arrpathend);
-      //console.dir(arrpathdis);
-      //alert(arr1);
+      var arrtotalbuffer={};
+	  arrtotalbuffer["total_buffer"]=this.total_buffer;
+	  
       var arrxx = {
         "Minlength" : arrminlength,
         "Startorder": arrpathstart,
@@ -1499,15 +1456,7 @@ export default {
         "Ypos": arry,
         "Nodekind": arrindexnode,
         "Nodenumclicked": arrnodenum,
-        "Startorder_buffer": arrpathstart_buffer,
-        "Endorder_buffer": arrpathend_buffer,
-        "Distance_buffer": arrpathdis_buffer,
-        "Pathkind_buffer": arrindexpath_buffer,
-        "Nodeorder_buffer": arrnodename_buffer,
-        "Xpos_buffer": arrx_buffer,
-        "Ypos_buffer": arry_buffer,
-        "Nodekind_buffer": arrindexnode_buffer,
-        "Nodenumclicked_buffer": arrnodenum_buffer
+        "total_buffer": arrtotalbuffer
       };
       //对VUEX的state操作
       this.MapChange();
@@ -1526,6 +1475,7 @@ export default {
         this.tagimport = 1;
 
 		let m=JSON.parse(this.strimport);
+		this.total_buffer=m.total_buffer.total_buffer;
 		this.pathdis=new Array();
 		for(let i=0;i<m.Distance.length;i++){
 			this.pathdis[i]=m.Distance[i].distance;
@@ -1565,44 +1515,6 @@ export default {
     for(let i = 0; i < m.Minlength.length; ++i){
       this.minlength = m.Minlength[i].minlength;
     }
-		this.pathstart_buffer=new Array();
-		for(let i=0;i<m.Startorder_buffer.length;i++){
-			this.pathstart_buffer[i]=m.Startorder_buffer[i].pathstart_buffer;
-		}
-		this.pathend_buffer=new Array();
-		for(let i=0;i<m.Endorder_buffer.length;i++){
-			this.pathend_buffer[i]=m.Endorder_buffer[i].pathend_buffer;
-		}
-
-		this.pathdis_buffer=new Array();
-		for(let i=0;i<m.Distance_buffer.length;i++){
-			this.pathdis_buffer[i]=m.Distance_buffer[i].distance_buffer;
-		}
-		this.indexpath_buffer=new Array();
-		for(let i=0;i<m.Pathkind_buffer.length;i++){
-			this.indexpath_buffer[i]=m.Pathkind_buffer[i].indexpath_buffer;
-		}
-		this.nodename_buffer=new Array();
-		for(let i=0;i<m.Nodeorder_buffer.length;i++){
-			this.nodename_buffer[i]=m.Nodeorder_buffer[i].nodename_buffer;
-		}
-		this.x_buffer=new Array();
-		for(let i=0;i<m.Xpos_buffer.length;i++){
-			this.x_buffer[i]=m.Xpos_buffer[i].x_buffer;
-		}
-		this.y_buffer=new Array();
-		for(let i=0;i<m.Ypos_buffer.length;i++){
-			this.y_buffer[i]=m.Ypos_buffer[i].y_buffer;
-		}
-		this.indexnode_buffer=new Array();
-		for(let i=0;i<m.Nodekind_buffer.length;i++){
-			this.indexnode_buffer[i]=m.Nodekind_buffer[i].indexnode;
-		}
-
-		for(let i=0;i<m.Nodenumclicked_buffer.length;i++){
-			this.nodenum_realbuffer=m.Nodenumclicked_buffer[i].nodenum_buffer;
-		}
-
 	  alert("读取完毕，保存地图即可！");
       };
 
@@ -1611,92 +1523,102 @@ export default {
     },
     Save: function () {
 
-      var finallength = this.pathstart.length;
-      //分离产生的非交点的indexnode为3 交点为2  新产生的线indexpath 为2
-      //将超过1格的边分离
-      for (var i = 0; i < finallength; i++) {
+      var temp_length = this.pathstart.length;
+      for(var i = 0 ; i < temp_length; ++i){
+        if(this.y[this.pathstart[i]-1] == this.y[this.pathend[i]-1] && this.indexpath[i] == 1){
+          //横线则找竖线在其范围内且被该竖线穿过
 
-        if (this.indexpath[i] == 1) {
-          var n = 1;
-          var flag_devide = 0;
-          var next; //记录当前循环中线段的终点
-          var last = this.pathstart[i]; //记录上层循环中线段的终点
+          for(var j = 0; j < temp_length; ++j){
 
-          while (this.pathdis[i] > n * this.length) {
-            flag_devide = 1;
-            var flag_insert = 1;
-            var k; //若要新加入的点已经存在于删除点后的存储列表中则 获得该点序号
+            if(this.x[this.pathstart[j]-1] == this.x[this.pathend[j]-1] && this.indexpath[j] == 1
+              && ((this.x[this.pathstart[j]-1] > this.x[this.pathstart[i]-1] && this.x[this.pathstart[j]-1] < this.x[this.pathend[i]-1])
+              || (this.x[this.pathstart[j]-1] < this.x[this.pathstart[i]-1] && this.x[this.pathstart[j]-1] > this.x[this.pathend[i]-1]))
+              && ((this.y[this.pathstart[i]-1] > this.y[this.pathstart[j]-1] && this.y[this.pathstart[i]-1] < this.y[this.pathend[j]-1])
+              || (this.y[this.pathstart[i]-1] < this.y[this.pathstart[j]-1] && this.y[this.pathstart[i]-1] > this.y[this.pathend[j]-1]))){
 
-            if (this.x[this.pathstart[i] - 1] == this.x[this.pathend[i] - 1]) { //竖线的情况，查看该分点是否已被存（交点）
-              for (k = 0; k < this.x.length; ++k) {
-                if (this.indexnode[k] == 3 && (this.y[this.pathstart[i] - 1] + n * this.length) == this.y[k] && this.x[k] == this.x[this.pathstart[i] - 1]) {
-                  flag_insert = 0;
-                  next = this.nodename[k];
-                  this.indexnode[k] = 2;
-                  break;
-                }
+              this.x[this.nodenum] = this.x[this.pathstart[j]-1];
+              this.y[this.nodenum] = this.y[this.pathstart[i]-1];
 
-              }
-
-              if (k == this.x.length) {
-
-                this.x[k] = this.x[this.pathstart[i] - 1];
-                this.y[k] = this.y[this.pathstart[i] - 1] + n * this.length;
-                this.indexnode[k] = 3;
-              }
-            }
-            else if (this.y[this.pathstart[i] - 1] == this.y[this.pathend[i] - 1]) {  //横线的情况
-              for (k = 0; k < this.y.length; ++k) {
-
-                if (this.indexnode[k] == 1 && (this.x[this.pathstart[i] - 1] + n * this.length) == this.x[k] && this.y[k] == this.y[this.pathstart[i] - 1]) {
-                  flag_insert = 0;
-                  next = this.nodename[k];
-                  this.indexnode[k] = 2;
-                  break;
-                }
-
-
-              }
-              if (k == this.y.length) {
-                this.x[k] = this.x[this.pathstart[i] - 1] + n * this.length;
-                this.y[k] = this.y[this.pathstart[i] - 1];
-                this.indexnode[k] = 3;
-              }
-            }
-
-            if (flag_insert == 1) {
-              this.nodename[this.nodenum] = this.nodenum + 1;
+              this.indexnode[this.nodenum] = 2;
+              this.nodename[this.nodenum] = this.nodenum+1;
               ++this.nodenum;
-              next = this.nodenum;
+
+              this.pathstart[this.pathstart.length] = this.pathstart[i];
+              this.pathend[this.pathend.length] = this.nodenum;
+              if(this.x[this.pathstart[i]-1] > this.x[this.pathstart[j]-1]){
+                this.pathdis[this.pathdis.length] = this.x[this.pathstart[i]-1] - this.x[this.pathstart[j]-1];
+              }
+              else{
+                this.pathdis[this.pathdis.length] = this.x[this.pathstart[j]-1] - this.x[this.pathstart[i]-1];
+              }
+              this.indexpath[this.indexpath.length] = 2;
+              this.pathstart[this.pathstart.length] = this.nodenum;
+              this.pathend[this.pathend.length] = this.pathend[i];
+              if(this.x[this.pathstart[j]-1] > this.x[this.pathend[i]-1]){
+                this.pathdis[this.pathdis.length] = this.x[this.pathstart[j]-1] - this.x[this.pathend[i]-1];
+              }
+              else{
+                this.pathdis[this.pathdis.length] = this.x[this.pathend[i]-1] - this.x[this.pathstart[j]-1];
+              }
+              this.indexpath[this.indexpath.length] = 2;
+              this.pathstart[this.pathstart.length] = this.pathstart[j];
+              this.pathend[this.pathend.length] = this.nodenum;
+              if(this.y[this.pathstart[j]-1] > this.y[this.pathstart[i]-1]){
+                this.pathdis[this.pathdis.length] = this.y[this.pathstart[j]-1] - this.y[this.pathstart[i]-1];
+              }
+              else {
+                this.pathdis[this.pathdis.length] = this.y[this.pathstart[i]-1] -  this.y[this.pathstart[j]-1];
+              }
+              this.indexpath[this.indexpath.length] = 2;
+              this.pathstart[this.pathstart.length] = this.nodenum;
+              this.pathend[this.pathend.length] = this.pathend[j];
+              if(this.y[this.pathend[j]-1] > this.y[this.pathstart[i]-1]){
+                this.pathdis[this.pathdis.length] = this.y[this.pathend[j]-1] - this.y[this.pathstart[i]-1];
+              }
+              else {
+                this.pathdis[this.pathdis.length] = this.y[this.pathstart[i]-1] -  this.y[this.pathend[j]-1];
+              }
+              this.indexpath[this.indexpath.length] = 2;
+
+              for(var k = 0; k < this.x.length-1 ; ++k){
+
+                if(this.indexnode[k] == 2 ){
+                  if(this.x[k] == this.x[this.pathstart[j]-1]
+                    && ((this.y[k] > this.y[this.pathstart[j]-1] && this.y[k] < this.y[this.pathend[j]-1])
+                    || this.y[k] < this.y[this.pathstart[j]-1] && this.y[k] > this.y[this.pathend[j]-1])){
+
+                    this.pathstart[this.pathstart.length] = this.nodenum;
+                    this.pathend[this.pathend.length] = this.nodename[k];
+                    if(this.y[k] > this.y[this.pathstart[i]-1]){
+                      this.pathdis[this.pathdis.length] = this.y[k] - this.y[this.pathstart[i]-1];
+                    }
+                    else {
+                      this.pathdis[this.pathdis.length] = this.y[this.pathstart[i]-1] -  this.y[k];
+                    }
+                    this.indexpath[this.indexpath.length] = 3;
+                  }
+                  if(this.y[k] == this.y[this.pathstart[i]-1]
+                    && ((this.x[k] > this.x[this.pathstart[i]-1] && this.x[k] < this.x[this.pathend[i]-1])
+                    || this.x[k] < this.x[this.pathstart[i]-1] && this.x[k] > this.x[this.pathend[i]-1])){
+
+                    this.pathstart[this.pathstart.length] = this.nodenum;
+                    this.pathend[this.pathend.length] = this.nodename[k];
+                    if(this.x[k] > this.x[this.pathstart[j]-1]){
+                      this.pathdis[this.pathdis.length] = this.x[k] - this.x[this.pathstart[j]-1];
+                    }
+                    else{
+                      this.pathdis[this.pathdis.length] = this.x[this.pathstart[j]-1] -  this.x[k];
+                    }
+                    this.indexpath[this.indexpath.length] = 3;
+                  }
+                }
+              }
+
+
+
             }
-
-
-            this.pathstart[this.pathstart.length] = last;
-            this.pathend[this.pathend.length] = next;
-            this.pathdis[this.pathdis.length] = this.length;
-            this.indexpath[this.indexpath.length] = 2;
-
-            n++;
-            last = next;
-          }
-
-          if (flag_devide) {
-            this.pathstart[this.pathstart.length] = last;
-            this.pathend[this.pathend.length] = this.pathend[i];
-            this.pathdis[this.pathdis.length] = this.length;
-            this.indexpath[this.indexpath.length] = 2;
           }
         }
-
-
-      }
-      for (var i = 0; i < this.indexnode.length; i++) {
-        if (this.indexnode[i] == 1)
-          this.nodenum_real++;
-      }
-      for (var i = 0; i < this.indexnode_buffer.length; i++) {
-        if (this.indexnode_buffer[i] == 1)
-          this.nodenum_realbuffer++;
       }
 
       this.MapChange();
@@ -1710,5 +1632,92 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-@import '../css/bootstrap.min.css'
+@import '../css/bootstrap.min.css';
 </style>
+/*var finallength = this.pathstart.length;
+//分离产生的非交点的indexnode为3 交点为2  新产生的线indexpath 为2
+//将超过1格的边分离
+for (var i = 0; i < finallength; i++) {
+
+if (this.indexpath[i] == 1) {
+var n = 1;
+var flag_devide = 0;
+var next; //记录当前循环中线段的终点
+var last = this.pathstart[i]; //记录上层循环中线段的终点
+
+while (this.pathdis[i] > n * this.length) {
+flag_devide = 1;
+var flag_insert = 1;
+var k; //若要新加入的点已经存在于删除点后的存储列表中则 获得该点序号
+
+if (this.x[this.pathstart[i] - 1] == this.x[this.pathend[i] - 1]) { //竖线的情况，查看该分点是否已被存（交点）
+for (k = 0; k < this.x.length; ++k) {
+if (this.indexnode[k] == 3 && (this.y[this.pathstart[i] - 1] + n * this.length) == this.y[k] && this.x[k] == this.x[this.pathstart[i] - 1]) {
+flag_insert = 0;
+next = this.nodename[k];
+this.indexnode[k] = 2;
+break;
+}
+
+}
+
+if (k == this.x.length) {
+
+this.x[k] = this.x[this.pathstart[i] - 1];
+this.y[k] = this.y[this.pathstart[i] - 1] + n * this.length;
+this.indexnode[k] = 3;
+}
+}
+else if (this.y[this.pathstart[i] - 1] == this.y[this.pathend[i] - 1]) {  //横线的情况
+for (k = 0; k < this.y.length; ++k) {
+
+if (this.indexnode[k] == 1 && (this.x[this.pathstart[i] - 1] + n * this.length) == this.x[k] && this.y[k] == this.y[this.pathstart[i] - 1]) {
+flag_insert = 0;
+next = this.nodename[k];
+this.indexnode[k] = 2;
+break;
+}
+
+
+}
+if (k == this.y.length) {
+this.x[k] = this.x[this.pathstart[i] - 1] + n * this.length;
+this.y[k] = this.y[this.pathstart[i] - 1];
+this.indexnode[k] = 3;
+}
+}
+
+if (flag_insert == 1) {
+this.nodename[this.nodenum] = this.nodenum + 1;
+++this.nodenum;
+next = this.nodenum;
+}
+
+
+this.pathstart[this.pathstart.length] = last;
+this.pathend[this.pathend.length] = next;
+this.pathdis[this.pathdis.length] = this.length;
+this.indexpath[this.indexpath.length] = 2;
+
+n++;
+last = next;
+}
+
+if (flag_devide) {
+this.pathstart[this.pathstart.length] = last;
+this.pathend[this.pathend.length] = this.pathend[i];
+this.pathdis[this.pathdis.length] = this.length;
+this.indexpath[this.indexpath.length] = 2;
+}
+}
+
+
+}
+for (var i = 0; i < this.indexnode.length; i++) {
+if (this.indexnode[i] == 1)
+this.nodenum_real++;
+}
+for (var i = 0; i < this.indexnode_buffer.length; i++) {
+if (this.indexnode_buffer[i] == 1)
+this.nodenum_realbuffer++;
+}*/
