@@ -547,17 +547,6 @@
 	  }
 
 	  this.Send(this.arrpathstart,this.arrpathend,this.arrpathdis,arrpath,arrtasks,this.arrspeed,this.arrpre,this.arrnodenum,this.arrbufferset,this.arrcarset,arrtime);
-	  this.Isbegin=true;
-      for(let i=0;i<this.rects.length;i++)
-        this.move(i,0);
-
-
-      // Send a POST request
-      this.$axios.post('/api/genetic', {
-                data: message,
-              }).then(response => {
-               alert(response.data);
-              })
 
 
 
@@ -592,16 +581,19 @@
                 data: message,
               }).then(response => {
              		btn.textContent = JSON.stringify(response.data, null, '  ');
-             		for(let i=0;i<response.data.length;i++){
+
+             		for(let i=0;i<response.data.path.length;i++){
              			this.newpath[i]=new Array();
-             			for(let j=0;j<response.data[i].length;j++){
-             				this.newpath[i][j]=response.data.paths[i][j].paths;
+             			for(let j=0;j<response.data.path[i].length;j++){
+             				this.newpath[i][j]=response.data.path[i][j].path;
              			}
              		}
-             		this.pathflag=1;this.flag[i]=1;
+             		this.pathflag=1;
              			//改变路径的小车的flag变为1
+             			this.Isbegin=true;
+             			console.log(this.newpath);
              		for(let i=0;i<this.rects.length;i++)
-                        this.move(i,0);
+                        this.move(i,1);
 
               })
 
