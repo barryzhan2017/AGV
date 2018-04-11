@@ -304,7 +304,7 @@
 	 
 	  //this.path=new Array();
 	  this.path[this.agvnum-1]=new Array();
-	  this.path[this.agvnum-1][0]=this.Total_buffer[i-1][3][this.carbuff[i-1]];
+	  this.path[this.agvnum-1][0]=this.Total_buffer[i-1][3][this.Total_buffer[i-1][2].length+1-this.carbuff[i-1]];
 	  var rectnumber = new Konva.Text({
       x: 0,
       y: -20,
@@ -422,14 +422,27 @@
         return;
       }
       let time=0;//小车从当前位置运行到下个点所需时间
-      if(this.rects[i].getAbsolutePosition().x==this.X[this.path[i][j]-1]-10)
-        time=Math.abs((this.Y[this.path[i][j]-1]-10-this.rects[i].getAbsolutePosition().y))/(this.V*20);
+      let ypos=0;
+	  let xpos=0;
+	  if(this.path[i][j]<100)
+		{
+			ypos=this.Y[this.path[i][j]-1];
+			xpos=this.X[this.path[i][j]-1];
+		}
+	  else
+		{
+			let k=parseInt(this.path[i][j]/100);
+			ypos=this.Total_buffer[k-1][1][this.path[i][j]-100*k];
+			xpos=this.Total_buffer[k-1][0][this.path[i][j]-100*k];
+		}
+	  if(this.rects[i].getAbsolutePosition().x==this.X[this.path[i][j]-1]-10)
+        time=Math.abs((ypos-10-this.rects[i].getAbsolutePosition().y))/(this.V*20);
       else
-        time=Math.abs((this.X[this.path[i][j]-1]-10-this.rects[i].getAbsolutePosition().x))/(this.V*20);
+        time=Math.abs((xpos-10-this.rects[i].getAbsolutePosition().x))/(this.V*20);
       console.log(i+" "+this.path[i][j]);
       this.rectgroup[i].to({
-          x:this.X[this.path[i][j]-1]-10,
-          y:this.Y[this.path[i][j]-1]-10,
+          x:xpos,
+          y:ypos,
           duration:time,
           onFinish:()=> {
           if(j<this.path[i].length-1){//this.pathflag=1;this.newpath=this.path;this.newpath[1][2]=3;
