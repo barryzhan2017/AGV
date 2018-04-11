@@ -427,14 +427,14 @@
 	  let xpos=0;
 	  if(this.path[i][j]<100)
 		{
-			ypos=this.Y[this.path[i][j]-1];
-			xpos=this.X[this.path[i][j]-1];
+			ypos=this.Y[this.path[i][j]-1]-10;
+			xpos=this.X[this.path[i][j]-1]-10;
 		}
 	  else
 		{
 			let k=parseInt(this.path[i][j]/100);
-			ypos=this.Total_buffer[k-1][1][this.path[i][j]-100*k];
-			xpos=this.Total_buffer[k-1][0][this.path[i][j]-100*k];
+			ypos=this.Total_buffer[k-1][1][this.path[i][j]-100*k]-10;
+			xpos=this.Total_buffer[k-1][0][this.path[i][j]-100*k]-10;
 		}
 	  if(this.rects[i].getAbsolutePosition().x==this.X[this.path[i][j]-1]-10)
         time=Math.abs((ypos-10-this.rects[i].getAbsolutePosition().y))/(this.V*20);
