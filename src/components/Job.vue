@@ -427,14 +427,14 @@
 	  let xpos=0;
 	  if(this.path[i][j]<100)
 		{
-			ypos=this.Y[this.path[i][j]-1];
-			xpos=this.X[this.path[i][j]-1];
+			ypos=this.Y[this.path[i][j]-1]-10;
+			xpos=this.X[this.path[i][j]-1]-10;
 		}
 	  else
 		{
 			let k=parseInt(this.path[i][j]/100);
-			ypos=this.Total_buffer[k-1][1][this.path[i][j]-100*k];
-			xpos=this.Total_buffer[k-1][0][this.path[i][j]-100*k];
+			ypos=this.Total_buffer[k-1][1][this.path[i][j]-100*k]-10;
+			xpos=this.Total_buffer[k-1][0][this.path[i][j]-100*k]-10;
 		}
 	  if(this.rects[i].getAbsolutePosition().x==this.X[this.path[i][j]-1]-10)
         time=Math.abs((ypos-10-this.rects[i].getAbsolutePosition().y))/(this.V*20);
@@ -446,7 +446,7 @@
           y:ypos,
           duration:time,
           onFinish:()=> {
-          if(j<this.path[i].length-1){//this.pathflag=1;this.newpath=this.path;this.newpath[1][2]=3;
+          if(j<this.path[i].length-1){
         this.num[i]=j;
         if(this.flag[i]==1){
           this.flag[i]=0;
@@ -460,6 +460,15 @@
     });
     },
     start:function(){
+	 
+	 /* this.path[0]=new Array();
+	  this.path[1]=new Array();
+	  this.path[0]=[2,1,2,1,-1];
+	  this.path[1]=[3,4,3,4,-1];
+	  this.move(0,0);
+	  this.move(1,0);*/
+	  
+	  
 	  let sstart=new Array();
 	  let eend=new Array();
 	  let ddistance=new Array();
@@ -547,9 +556,9 @@
 	  }
 
 	  this.Send(this.arrpathstart,this.arrpathend,this.arrpathdis,arrpath,arrtasks,this.arrspeed,this.arrpre,this.arrnodenum,this.arrbufferset,this.arrcarset,arrtime);
-	  this.Isbegin=true;
-      for(let i=0;i<this.rects.length;i++)
-        this.move(i,0);
+	  //this.Isbegin=true;
+      //for(let i=0;i<this.rects.length;i++)
+        //this.move(i,0);
 
 
       // Send a POST request
@@ -600,7 +609,8 @@
              		}
              		this.pathflag=1;this.flag[i]=1;
              			//改变路径的小车的flag变为1
-             		for(let i=0;i<this.rects.length;i++)
+             		this.Isbegin=true;
+					for(let i=0;i<this.rects.length;i++)
                         this.move(i,0);
 
               })
