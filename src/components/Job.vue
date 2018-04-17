@@ -436,7 +436,7 @@
 			ypos=this.Total_buffer[k-1][1][this.path[i][j]-100*k]-10;
 			xpos=this.Total_buffer[k-1][0][this.path[i][j]-100*k]-10;
 		}
-	  if(this.rects[i].getAbsolutePosition().x==this.X[this.path[i][j]-1]-10)
+	  if(this.rects[i].getAbsolutePosition().x==xpos)
         time=Math.abs((ypos-10-this.rects[i].getAbsolutePosition().y))/(this.V*20);
       else
         time=Math.abs((xpos-10-this.rects[i].getAbsolutePosition().x))/(this.V*20);
