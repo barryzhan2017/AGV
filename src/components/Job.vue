@@ -515,8 +515,8 @@
 	  this.arrspeed=parseFloat(this.V);
 	  this.arrpre=parseFloat(this.Minlength);
 
-	  for (var i = 0; i < this.Indexpath.length; i++) {
-      if(this.Indexpath[i]==0)
+	  for (var i = 0; i < this.Indexnode.length; i++) {
+      if(this.Indexnode[i]==0)
         continue;
       this.arrnodenum++;
 	}
