@@ -1372,7 +1372,7 @@ export default {
           }
         }
       }
-
+      this.Deduplication();
 
       var arrpathstart = [];
       for (var i = 0; i < this.pathstart.length; i++) {
@@ -1727,11 +1727,118 @@ export default {
           }
         }
       }
-
+      this.Deduplication();
       this.MapChange();
       this.$store.dispatch('MinlChange',this.minlength);
       this.$router.push({path: '/Job'})
+    },
+    HorizonOrvertical:function(start,end){//判断是横线还是竖线，如果是横线则返回0，是竖线则返回1
+      if(this.x[start-1] == this.x[end-1])
+        return 1;
+      else return 0;
+    },
+    PosBig:function(start,end,kind){//判断起点终点的坐标大小，如果起点大于终点则返回1，否则返回0；
+      if(kind == 1){
+        if(this.y[start-1] < this.y[end-1]){
+          return 0;
+        }
+        return 1;
+      }
+      else{
+        if(this.x[start-1] < this.x[end-1]){
+          return 0;
+        }
+        return 1;
+
+      }
+    },
+    Deduplication:function(){
+      var vertical = -1;
+      var big = -1;
+      for(var i = 0 ; i < this.pathstart.length ; ++i){
+        if(this.indexpath[i] != 0){
+          if(this.indexnode[this.pathstart[i]-1] == 2){ // 如果该条直线的起点是交点
+
+            vertical = this.HorizonOrvertical(this.pathstart[i],this.pathend[i]);
+            big = this.PosBig(this.pathstart[i],this.pathend[i],vertical);
+            for(var j = 0 ; j < this.pathstart.length ; ++j){
+              if(j == i || this.indexpath[j] == 0){//跳过本身
+                continue;
+              }
+              else {//寻找是否有同侧且同端点的边
+                if(this.pathend[i] == this.pathstart[j] ){ //如果该点是起点
+
+                  if(big == 1){//如果起点比终点坐标大
+
+                    if(this.PosBig(this.pathend[j],this.pathstart[i],vertical)){
+                      this.indexpath[j] = 0;
+                    }
+                  }
+                  else{//如果起点比终点坐标小
+
+                    if(this.PosBig(this.pathstart[i],this.pathend[j],vertical)){
+                      this.indexpath[j] = 0;
+                    }
+                  }
+                }
+                else if(this.pathend[i] == this.pathend[j]){//如果该点是终点
+
+                  if(big == 1){//如果起点比终点坐标大
+
+                    if(this.PosBig(this.pathstart[j],this.pathstart[i],vertical)){
+                      this.indexpath[j] = 0;
+                    }
+                  }
+                  else{//如果起点比终点坐标小
+
+                    if(this.PosBig(this.pathstart[i],this.pathstart[j],vertical)){
+                      this.indexpath[j] = 0;
+                    }
+                  }
+                }
+              }
+            }
+          }
+          if(this.indexnode[this.pathend[i]-1] == 2){//如果该条直线的终点是交点
+            vertical = this.HorizonOrvertical(this.pathstart[i],this.pathend[i]);
+            big = this.PosBig(this.pathend[i],this.pathstart[i],vertical);
+            for(var j = 0 ; j < this.pathstart.length ; ++j){
+              if(j == i || this.indexpath[j] == 0){//跳过本身
+                continue;
+              }
+              else {//寻找是否有同侧且同端点的边
+                if(this.pathstart[i] == this.pathstart[j] ){ //如果该点是起点
+                  if(big == 1){//如果起点比交点坐标大
+                    if(this.PosBig(this.pathend[j],this.pathend[i],vertical)){
+                      this.indexpath[j] = 0;
+                    }
+                  }
+                  else{//如果起点比交点坐标小
+                    if(this.PosBig(this.pathend[i],this.pathend[j],vertical)){
+                      this.indexpath[j] = 0;
+                    }
+                  }
+                }
+                else if(this.pathstart[i] == this.pathend[j]){//如果该点是终点
+                  if(big == 1){//如果起点比终点坐标大
+                    if(this.PosBig(this.pathstart[j],this.pathend[i],vertical)){
+                      this.indexpath[j] = 0;
+                    }
+                  }
+                  else{//如果起点比终点坐标小
+                    if(this.PosBig(this.pathend[i],this.pathstart[j],vertical)){
+                      this.indexpath[j] = 0;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+
+      }
     }
+
 
   }
 }
