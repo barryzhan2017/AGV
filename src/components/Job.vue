@@ -206,8 +206,6 @@
     for (var i = 0; i < this.Indexnode.length; i++) {
       if(this.Indexnode[i]==0)
         continue;
-      if(this.Indexnode[i]==2||this.Indexnode[i]==3)
-        break;
       var xx = this.X[i];
       var yy = this.Y[i];
       //开始绘制节点
@@ -225,8 +223,6 @@
     for (var i = 0; i < this.Indexpath.length; i++) {
       if(this.Indexpath[i]==0)
         continue;
-      if(this.Indexpath[i]==2)
-        break;
       var startx = this.X[this.Pathstart[i]-1];
       var starty = this.Y[this.Pathstart[i]-1];
       var endx = this.X[this.Pathend[i]-1];
@@ -464,29 +460,45 @@
 	  let eend=new Array();
 	  let ddistance=new Array();
       for (var i = 0; i < this.Indexpath.length; i++) {
-       if(this.Indexpath[i]==0)
+       if(this.Indexpath[i]==0){
+		sstart[i]=0;
+		eend[i]=0;
+		ddistance[i]=0;
 		continue;
+		}
 		sstart[i]=this.Pathstart[i];
 		eend[i]=this.Pathend[i];
 		ddistance[i]=this.Pathdis[i];
       }
 
-      for (var i = 0; i < sstart.length; i++) {
+      for (var i = 0,j=0; i < sstart.length; i++,j++) {
         var jsonobj1 = {};
+		if(sstart[i]==0){
+			j--;
+			continue;
+		}
         jsonobj1["startNode"] = sstart[i];
-        this.arrpathstart[i] = jsonobj1;
+        this.arrpathstart[j] = jsonobj1;
       }
 
-      for (var i = 0; i < eend.length; i++) {
+      for (var i = 0,j=0; i < eend.length; i++,j++) {
         let jsonobj2 = {};
+		if(eend[i]==0){
+			j--;
+			continue;
+		}
         jsonobj2["endNode"] = eend[i];
-        this.arrpathend[i] = jsonobj2;
+        this.arrpathend[j] = jsonobj2;
       }
 
-      for (var i = 0; i < ddistance.length; i++) {
+      for (var i = 0,j=0; i < ddistance.length; i++,j++) {
         var jsonobj3 = {};
+		if(ddistance[i]==0){
+			j--;
+			continue;
+		}
 		jsonobj3["nodeDistance"] = ddistance[i]/20;
-        this.arrpathdis[i] = jsonobj3;
+        this.arrpathdis[j] = jsonobj3;
 
       }
 
