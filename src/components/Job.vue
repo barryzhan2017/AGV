@@ -94,7 +94,9 @@
     name: 'JOB',
     data(){
       return{
-        arrpathstart:[],//传给后端的起点格式
+	    taskindex:[],//小车执行到第几个任务
+        tasksassign:[],//小车的任务分配
+		arrpathstart:[],//传给后端的起点格式
 		arrpathend:[],//传给后端的终点格式
 		arrpathdis:[],//传给后端的距离格式
 		arrspeed:0,//传给后端的速度格式
@@ -110,9 +112,6 @@
 		jobnumberset:[],//任务次数集合
 		agvnum:0,//小车数目
         index:1,//表格页码
-		    jobnumber:null,//任务次数
-		    jobnumberset:[],//任务次数集合
-		    agvnum:0,//小车数目
         carposition:null,//小车初始位置
         carsposition:[],//小车初始位置集合
         stage:null,
@@ -340,7 +339,7 @@
       this.jobnum++;
       this.jobStartset[this.jobnum-1]=this.jobStart;
       this.jobEndset[this.jobnum-1]=this.jobEnd;
-	  this.data.push({"number":this.pagetotal+1,"start":this.jobStart,"end":this.jobEnd,"remain":this.jobnumber,"car":"1,3"});
+	  this.data.push({"number":this.jobnum,"start":this.jobStart,"end":this.jobEnd,"remain":this.jobnumber,"car":""});
       this.tableData=this.tableDatas[this.index-1];
 	  this.jobnumberset[this.jobnum-1]=this.jobnumber;
       if(this.Isbegin){
@@ -359,7 +358,7 @@
         }
         for(let i=0;i<this.agvnum;i++){
           let dpath;
-          if(datapath[i].length==-1)//该小车没有指派任务
+          if(datapath[i].length==0)//该小车没有指派任务
             continue;
           for(let j=this.num[i],m=0;j<datapath[i].length;j++,m++){
             dpath=new Array();
@@ -381,21 +380,26 @@
 		if(this.pathflag==0){
 		    //传datapath
 			for(let i=0;i<this.agvnum;i++){
-			let jsonobj7 = {};
-			arrpath[i]=new Array();
-			datapath[i][0]=parseFloat(datapath);
-			jsonobj7["paths"] = datapath[i][0];
-			arrpath[i][0] = jsonobj7;
+			 arrpath[i]=new Array();
+				for(let j=0;j<datapath[i].length;j++){
+					let jsonobj7 = {};
+					datapath[i][j]=parseFloat(datapath[i][j]);
+					jsonobj7["paths"] = datapath[i][j];
+					arrpath[i][j] = jsonobj7;
+				}
 	  }
 		}
 		else{
 		//传newpath
 			for(let i=0;i<this.agvnum;i++){
-			let jsonobj7 = {};
-			arrpath[i]=new Array();
-			newpath[i][0]=parseFloat(newpath);
-			jsonobj7["paths"] = newpath[i][0];
-			arrpath[i][0] = jsonobj7;
+			 arrpath[i]=new Array();
+				for(let j=0;j<this.newpath[i].length;j++){
+					let jsonobj7 = {};
+					newpath[i][j]=parseFloat(newpath[i][j]);
+					jsonobj7["paths"] = newpath[i][j];
+					arrpath[i][j] = jsonobj7;
+				}
+			
 			}
 		}
 		this.Send(this.arrpathstart,this.arrpathend,this.arrpathdis,arrpath,arrtasks,this.arrspeed,this.arrpre,this.arrnodenum,this.arrbufferset,this.arrcarset,arrtime);
@@ -456,6 +460,10 @@
     });
     },
     start:function(){
+	  for(let i=0;i<this.agvnum;i++){
+		this.tasksassign[i]=new Array();
+		this.taskindex[i]=0;
+		}
 	  let sstart=new Array();
 	  let eend=new Array();
 	  let ddistance=new Array();
@@ -600,10 +608,36 @@
              				this.newpath[i][j]=response.data.path[i][j].path;
              			}
              		}
+					for(let i=0;i<response.data.record.length;i++){
+						for(let j=0;j<response.data.record[i].length;j++){
+							let obj={
+								"tasksNum":response.data.record[i][j].record.taskNum,
+								"times":response.data.record[i][j].record.times
+							};
+								this.tasksassign[i][this.tasksassign[i].length]=obj;							
+							
+						}
+					}
              		this.pathflag=1;
-             			//改变路径的小车的flag变为1
-             			this.Isbegin=true;
-             			console.log(this.newpath);
+					if(this.Isbegin==true){
+					for(let i=0;i<response.data.record.length;i++){
+						if(response.data.record[i].length!=0){//表示这辆小车没有新增路径
+							this.path[i]=1;//改变路径的小车的flag变为1
+						}
+					}
+				}
+					else{
+						for(let i=0;i<this.tasksassign.length;i++){
+							if(tasksassign[i].length!=0){
+								let item=this.data[tasksassign[i][0]];
+								item.car+=","+i;
+								this.data.splice(tasksassign[i][0].taskNum,1,item);							
+						}
+					}
+					}
+             		
+					this.Isbegin=true;
+             		
              		for(let i=0;i<this.rects.length;i++)
                         this.move(i,1);
 
