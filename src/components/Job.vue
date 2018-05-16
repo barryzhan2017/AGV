@@ -94,7 +94,8 @@
     name: 'JOB',
     data(){
       return{
-	    taskindex:[],//小车执行到第几个任务
+	    tasksflag:[],//记录每辆小车是否开始执行某个任务，0代表开始执行，1代表完成
+		taskindex:[],//小车执行到第几个任务
         tasksassign:[],//小车的任务分配
 		arrpathstart:[],//传给后端的起点格式
 		arrpathend:[],//传给后端的终点格式
@@ -437,7 +438,7 @@
 			xpos=this.Total_buffer[k-1][0][this.path[i][j]-100*k]-10;
 		}
 	  if(this.rects[i].getAbsolutePosition().x==xpos)
-        time=Math.abs((ypos-10-this.rects[i].getAbsolutePosition().y))/(this.V*20);
+        time=Math.abs((ypos-10-this.rects[i].getAbsolutePosition().y))/(this.V*20);//地图1m20像素
       else
         time=Math.abs((xpos-10-this.rects[i].getAbsolutePosition().x))/(this.V*20);
       console.log(i+" "+this.path[i][j]);
@@ -446,7 +447,30 @@
           y:ypos,
           duration:time,
           onFinish:()=> {
-          if(j<this.path[i].length-1){//this.pathflag=1;this.newpath=this.path;this.newpath[1][2]=3;
+          if(this.tasksflag[i]==0){//判断是否到达任务终点
+			if(xpos+10==this.X[this.jobEndset[this.tasksassign[i][this.taskindex[i]].taskNum]-1]&&ypos+10==this.Y[this.jobEndset[this.tasksassign[i][this.taskindex[i]].taskNum]-1]){
+				this.tasksassign[i][this.taskindex[i]].times--;
+				let item=this.data[tasksassign[i][this.taskindex[i]].tasksNum];
+				item.remain--;
+				this.data.splice(tasksassign[i][this.taskindex[i]].taskNum,1,item);//更新列表，剩余任务次数减一
+				if(this.tasksassign[i][this.taskindex[i]].times==0){//此类型任务全部执行完毕，开始执行下一类型任务
+					this.taskindex[i]++;
+					item=this.data[tasksassign[i][this.taskindex[i]].tasksNum];
+					item.car+=" "+i;
+					this.data.splice(tasksassign[i][this.taskindex[i]].taskNum,1,item);//更新列表
+				}
+				this.tasksflag[i]=1;
+				if(xpos+10==this.X[this.jobStartset[this.tasksassign[i][this.taskindex[i]].taskNum]-1]&&ypos+10==this.Y[this.jobStartset[this.tasksassign[i][this.taskindex[i]].taskNum]-1]){
+					this.tasksflag[i]=0;//开始执行下一个任务
+			}
+			}			
+		  }
+		  else{//开始执行下一个任务
+			if(xpos==this.X[this.jobStartset[this.tasksassign[i][this.taskindex[i]].taskNum]-1]&&ypos==this.Y[this.jobStartset[this.tasksassign[i][this.taskindex[i]].taskNum]-1]){
+				this.tasksflag[i]=0;
+			}
+		  }
+		  if(j<this.path[i].length-1){//this.pathflag=1;this.newpath=this.path;this.newpath[1][2]=3;
         this.num[i]=j;
         if(this.flag[i]==1){
           this.flag[i]=0;
@@ -463,6 +487,7 @@
 	  for(let i=0;i<this.agvnum;i++){
 		this.tasksassign[i]=new Array();
 		this.taskindex[i]=0;
+		this.tasksflag[i]=0;
 		}
 	  let sstart=new Array();
 	  let eend=new Array();
@@ -629,8 +654,8 @@
 					else{
 						for(let i=0;i<this.tasksassign.length;i++){
 							if(tasksassign[i].length!=0){
-								let item=this.data[tasksassign[i][0]];
-								item.car+=","+i;
+								let item=this.data[tasksassign[i][0].tasksNum];
+								item.car+=" "+i;
 								this.data.splice(tasksassign[i][0].taskNum,1,item);							
 						}
 					}
