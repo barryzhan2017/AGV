@@ -1023,7 +1023,7 @@
                 this.indexnode[this.nodenum-1] = 2;
                 var temp = this.pathstart.length;
                 for(var i = 0 ; i < temp; ++i){
-                  if(this.indexpath[this.pathstart[i]-1] != 0 &&
+                  if(this.indexpath[i] != 0 &&
                     numxx == this.x[this.pathstart[i]-1] &&
                     ((numyy <= this.y[(this.pathstart[i]-1)] && numyy >= this.y[(this.pathend[i]-1)])
                     || (numyy >= this.y[(this.pathstart[i]-1)] && numyy <= this.y[(this.pathend[i]-1)]))){
@@ -1035,10 +1035,10 @@
                     this.pathend[this.pathend.length] = this.pathend[i];
                     this.pathdis[this.pathdis.length] = this.abs(this.y[this.pathstart[i]-1] - numyy);
                     this.indexpath[this.indexpath.length] = 1;
-
+                    this.Deduplication();
                   }
 
-                  else if(this.indexpath[this.pathstart[i]-1] != 0 &&
+                  else if(this.indexpath[i] != 0 &&
                     numyy == this.y[(this.pathstart[i]-1)] &&
                     ((numxx <= this.x[(this.pathstart[i]-1)] && numxx >= this.x[(this.pathend[i]-1)])
                     || (numxx >= this.x[(this.pathstart[i]-1)] && numxx <= this.x[(this.pathend[i]-1)]))){
@@ -1050,7 +1050,7 @@
                     this.pathend[this.pathend.length] = this.pathend[i];
                     this.pathdis[this.pathdis.length] = this.abs(this.x[this.pathstart[i]-1] - numxx);
                     this.indexpath[this.indexpath.length] = 1;
-
+                    this.Deduplication();
                   }
 
 
@@ -1783,14 +1783,14 @@
       Lineinclude:function(posx,posy){
 
         for(var i = 0 ; i < this.pathstart.length; ++i){
-          if(this.indexpath[this.pathstart[i]-1] != 0 &&
+          if(this.indexpath[i] != 0 &&
             posx == this.x[this.pathstart[i]-1] &&
             ((posy <= this.y[(this.pathstart[i]-1)] && posy >= this.y[(this.pathend[i]-1)])
             || (posy >= this.y[(this.pathstart[i]-1)] && posy <= this.y[(this.pathend[i]-1)]))){
             return 1;
           }
 
-          else if(this.indexpath[this.pathstart[i]-1] != 0 &&
+          else if(this.indexpath[i] != 0 &&
             posy == this.y[(this.pathstart[i]-1)] &&
             ((posx <= this.x[(this.pathstart[i]-1)] && posx >= this.x[(this.pathend[i]-1)])
             || (posx >= this.x[(this.pathstart[i]-1)] && posy <= this.x[(this.pathend[i]-1)]))){
