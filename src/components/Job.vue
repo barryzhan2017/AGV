@@ -94,7 +94,7 @@
     name: 'JOB',
     data(){
       return{
-	    tasksflag:[],//记录每辆小车是否开始执行某个任务，0代表开始执行，1代表完成
+	    tasksflag:[],//记录每辆小车是否开始执行某个任务，0代表开始执行，1代表完成,-1表示前往执行下一任务的途中
 		taskindex:[],//小车执行到第几个任务
         tasksassign:[],//小车的任务分配
 		arrpathstart:[],//传给后端的起点格式
@@ -345,32 +345,42 @@
 	  this.jobnumberset[this.jobnum-1]=this.jobnumber;
       if(this.Isbegin){
         let datapath=new Array();//传给志诚所写的后端的当前路径
-        datapath=this.path;
-		this.newpath=this.path;
+        for(let i=0;i<this.path.length;i++){
+			datapath[i]=new Array();
+			for(let j=0;j<this.path[i].length;j++){
+				datapath[i][j]=this.path[i][j];
+			}
+		}
+		
         for(let i=0;i<this.agvnum;i++){
           if(this.T[i]==-1)
             continue;
-          let time=0;
-          if(this.rects[i].getAbsolutePosition().x==this.X[this.path[i][j]-1]-10)
-            time=Math.abs((this.Y[this.path[i][this.num[i]]]-10-this.rects[i].getAbsolutePosition().y))/(this.V*20);
+          let time=0.0;
+          if(this.rects[i].getAbsolutePosition().x==this.X[this.path[i][this.num[i]]-1]-10)
+            time=Math.abs((this.Y[this.path[i][this.num[i]]-1]-10-this.rects[i].getAbsolutePosition().y))/(this.V*20);
           else
-            time=Math.abs((this.X[this.path[i][this.num[i]]]-10-this.rects[i].getAbsolutePosition().x))/(this.V*20);
-          this.T[i]=time;
+            time=Math.abs((this.X[this.path[i][this.num[i]]-1]-10-this.rects[i].getAbsolutePosition().x))/(this.V*20);
+          
+		  console.log(Math.abs((this.X[this.path[i][this.num[i]]-1]-10-this.rects[i].getAbsolutePosition().x))+"ddd");
+		  this.T[i]=time;console.log(this.T[i]+"time");
         }
         for(let i=0;i<this.agvnum;i++){
-          let dpath;
+          let dpath=new Array();
           if(datapath[i].length==0)//该小车没有指派任务
             continue;
           for(let j=this.num[i],m=0;j<datapath[i].length;j++,m++){
-            dpath=new Array();
-            dpath[m]=datapath[j];
+          
+            dpath[m]=datapath[i][j];console.log(dpath[m]+"bbb");
           }
-          datapath[i]=dpath;
-        }
+          datapath[i]=new Array();
+		  for(let n=0;n<dpath.length;n++)
+			datapath[i][n]=dpath[n];
+		  
+        }console.log(datapath[0][0]+"aaaaa");
 		let arrtasks=[];
 		let jsontask = {};
         jsontask["tasks"] = this.jobStart.toString()+","+this.jobEnd.toString()+","+this.jobnumber.toString();
-		arrtasks=jsontask;
+		arrtasks[0]=jsontask;
 		let arrtime=[];
 		for(let i=0;i<this.T.length;i++){
 		let jsonT = {};
@@ -380,11 +390,13 @@
 		let arrpath=[];
 		if(this.pathflag==0){
 		    //传datapath
+			
 			for(let i=0;i<this.agvnum;i++){
 			 arrpath[i]=new Array();
 				for(let j=0;j<datapath[i].length;j++){
-					let jsonobj7 = {};
-					datapath[i][j]=parseFloat(datapath[i][j]);
+					let jsonobj7 = {};console.log(datapath[0][0]+"cccc");
+					//datapath[i][j]=parseFloat(datapath[i][j]);
+					console.log(datapath[i][j]);
 					jsonobj7["paths"] = datapath[i][j];
 					arrpath[i][j] = jsonobj7;
 				}
@@ -419,6 +431,8 @@
 		this.pathflag=0;
 		this.path=this.newpath;
 	  }
+	  if(this.path[i][1]!=-1)
+		this.T[i]=0;//表示小车不为闲置，只要不是-1就行，这里取0
 	  if(this.path[i][j]==-1){
         this.T[i]=-1;
         return;
@@ -459,10 +473,12 @@
 					item.car+=" "+i;
 					this.data.splice(tasksassign[i][this.taskindex[i]].taskNum,1,item);//更新列表
 				}
-				this.tasksflag[i]=1;
-				if(xpos+10==this.X[this.jobStartset[this.tasksassign[i][this.taskindex[i]].taskNum]-1]&&ypos+10==this.Y[this.jobStartset[this.tasksassign[i][this.taskindex[i]].taskNum]-1]){
-					this.tasksflag[i]=0;//开始执行下一个任务
-			}
+				//this.tasksflag[i]=1;
+				if(xpos+10==this.X[this.jobStartset[this.tasksassign[i][this.taskindex[i]].taskNum]-1]&&ypos+10==this.Y[this.jobStartset[this.tasksassign[i][this.taskindex[i]].taskNum]-1])
+					this.tasksflag[i]=0;//执行下一个任务
+				else
+					this.tasksflag[i]=-1;//前往执行下一个任务
+			
 			}			
 		  }
 		  else{//开始执行下一个任务
@@ -487,7 +503,7 @@
 	  for(let i=0;i<this.agvnum;i++){
 		this.tasksassign[i]=new Array();
 		this.taskindex[i]=0;
-		this.tasksflag[i]=0;
+		this.tasksflag[i]=-1;
 		}
 	  let sstart=new Array();
 	  let eend=new Array();
@@ -594,9 +610,6 @@
 	  this.Send(this.arrpathstart,this.arrpathend,this.arrpathdis,arrpath,arrtasks,this.arrspeed,this.arrpre,this.arrnodenum,this.arrbufferset,this.arrcarset,arrtime);
 
 
-
-
-
     },
 	Send:function(start,end,dis,pat,tas,spee,pre,nodenum,buff,carbuff,arrT){
 		var message={
@@ -621,7 +634,7 @@
 //				this.newpath[i][j]=message.paths[i][j].paths;
 //			}
 //		}
-		console.log(this.newpath);
+		//console.log(this.newpath);
 		 this.$axios.post('/api/genetic', {
                 data: message,
               }).then(response => {
@@ -646,17 +659,20 @@
              		this.pathflag=1;
 					if(this.Isbegin==true){
 					for(let i=0;i<response.data.record.length;i++){
-						if(response.data.record[i].length!=0){//表示这辆小车没有新增路径
-							this.path[i]=1;//改变路径的小车的flag变为1
+						if(response.data.record[i].length!=0){//表示这辆小车有新增路径
+							this.T[i]=0;
+							
+							this.flag[i]=1;//改变路径的小车的flag变为1
 						}
 					}
 				}
 					else{
+						
 						for(let i=0;i<this.tasksassign.length;i++){
-							if(tasksassign[i].length!=0){
-								let item=this.data[tasksassign[i][0].tasksNum];
+							if(this.tasksassign[i].length!=0){
+								let item=this.data[this.tasksassign[i][0].tasksNum];
 								item.car+=" "+i;
-								this.data.splice(tasksassign[i][0].taskNum,1,item);							
+								this.data.splice(this.tasksassign[i][0].taskNum,1,item);							
 						}
 					}
 					}
@@ -667,8 +683,6 @@
                         this.move(i,1);
 
               })
-
-
 	},
 	pageChange:function(pageIndex){console.log(pageIndex);
 		this.index=pageIndex;
