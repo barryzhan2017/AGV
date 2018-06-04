@@ -400,7 +400,7 @@
 					jsonobj7["paths"] = newpath[i][j];
 					arrpath[i][j] = jsonobj7;
 				}
-			
+
 			}
 		}
 		this.Send(this.arrpathstart,this.arrpathend,this.arrpathdis,arrpath,arrtasks,this.arrspeed,this.arrpre,this.arrnodenum,this.arrbufferset,this.arrcarset,arrtime);
@@ -463,7 +463,7 @@
 				if(xpos+10==this.X[this.jobStartset[this.tasksassign[i][this.taskindex[i]].taskNum]-1]&&ypos+10==this.Y[this.jobStartset[this.tasksassign[i][this.taskindex[i]].taskNum]-1]){
 					this.tasksflag[i]=0;//开始执行下一个任务
 			}
-			}			
+			}
 		  }
 		  else{//开始执行下一个任务
 			if(xpos==this.X[this.jobStartset[this.tasksassign[i][this.taskindex[i]].taskNum]-1]&&ypos==this.Y[this.jobStartset[this.tasksassign[i][this.taskindex[i]].taskNum]-1]){
@@ -532,7 +532,7 @@
 		}
 		jsonobj3["nodeDistance"] = ddistance[i]/20;
         this.arrpathdis[j] = jsonobj3;
-
+    
       }
 
       let arrpath=[];
@@ -639,8 +639,8 @@
 								"tasksNum":response.data.record[i][j].record.taskNum,
 								"times":response.data.record[i][j].record.times
 							};
-								this.tasksassign[i][this.tasksassign[i].length]=obj;							
-							
+								this.tasksassign[i][this.tasksassign[i].length]=obj;
+
 						}
 					}
              		this.pathflag=1;
@@ -653,16 +653,16 @@
 				}
 					else{
 						for(let i=0;i<this.tasksassign.length;i++){
-							if(tasksassign[i].length!=0){
-								let item=this.data[tasksassign[i][0].tasksNum];
+							if(this.tasksassign[i].length!=0){
+								let item=this.data[this.tasksassign[i][0].tasksNum];
 								item.car+=" "+i;
-								this.data.splice(tasksassign[i][0].taskNum,1,item);							
+								this.data.splice(this.tasksassign[i][0].taskNum,1,item);
 						}
 					}
 					}
-             		
+
 					this.Isbegin=true;
-             		
+
              		for(let i=0;i<this.rects.length;i++)
                         this.move(i,1);
 

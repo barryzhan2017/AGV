@@ -95,7 +95,7 @@ export default {
       mapwidth:null,  //地图总宽度
 	    mapheight:null,  //地图总高度
 	    minlength:null, //精度即一个网格的边长
-	    v:null,  //AGV小车的速度
+	    v:2,  //AGV小车的速度
 
       allx:[], //网格每个点的横坐标
 	    ally:[], //网格每个点的纵坐标
@@ -1444,7 +1444,7 @@ export default {
       //buffer数据的传出
       var arrtotalbuffer={};
 	  arrtotalbuffer["total_buffer"]=this.total_buffer;
-	  
+
       var arrxx = {
         "Minlength" : arrminlength,
         "Startorder": arrpathstart,
