@@ -94,7 +94,8 @@
     name: 'JOB',
     data(){
       return{
-	    tasksflag:[],//记录每辆小车是否开始执行某个任务，0代表开始执行，1代表完成,-1表示前往执行下一任务的途中
+	    back:[],//0代表小车继续执行任务，1代表小车返回缓冲区，-1代表小车回到缓冲区，初始化时都为0
+		tasksflag:[],//记录每辆小车是否开始执行某个任务，0代表开始执行，1代表完成,-1表示前往执行下一任务的途中
 		taskindex:[],//小车执行到第几个任务
         tasksassign:[],//小车的任务分配
 		arrpathstart:[],//传给后端的起点格式
@@ -361,8 +362,8 @@
           else
             time=Math.abs((this.X[this.path[i][this.num[i]]-1]-10-this.rects[i].getAbsolutePosition().x))/(this.V*20);
           
-		  console.log(Math.abs((this.X[this.path[i][this.num[i]]-1]-10-this.rects[i].getAbsolutePosition().x))+"ddd");
-		  this.T[i]=time;console.log(this.T[i]+"time");
+		  //console.log(Math.abs((this.X[this.path[i][this.num[i]]-1]-10-this.rects[i].getAbsolutePosition().x))+"ddd");
+		  this.T[i]=time;//console.log(this.T[i]+"time");
         }
         for(let i=0;i<this.agvnum;i++){
           let dpath=new Array();
@@ -370,13 +371,13 @@
             continue;
           for(let j=this.num[i],m=0;j<datapath[i].length;j++,m++){
           
-            dpath[m]=datapath[i][j];console.log(dpath[m]+"bbb");
+            dpath[m]=datapath[i][j];//console.log(dpath[m]+"bbb");
           }
           datapath[i]=new Array();
 		  for(let n=0;n<dpath.length;n++)
 			datapath[i][n]=dpath[n];
 		  
-        }console.log(datapath[0][0]+"aaaaa");
+        }//console.log(datapath[0][0]+"aaaaa");
 		let arrtasks=[];
 		let jsontask = {};
         jsontask["tasks"] = this.jobStart.toString()+","+this.jobEnd.toString()+","+this.jobnumber.toString();
@@ -394,9 +395,9 @@
 			for(let i=0;i<this.agvnum;i++){
 			 arrpath[i]=new Array();
 				for(let j=0;j<datapath[i].length;j++){
-					let jsonobj7 = {};console.log(datapath[0][0]+"cccc");
+					let jsonobj7 = {};//console.log(datapath[0][0]+"cccc");
 					//datapath[i][j]=parseFloat(datapath[i][j]);
-					console.log(datapath[i][j]);
+					//console.log(datapath[i][j]);
 					jsonobj7["paths"] = datapath[i][j];
 					arrpath[i][j] = jsonobj7;
 				}
@@ -444,51 +445,64 @@
 		{
 			ypos=this.Y[this.path[i][j]-1]-10;
 			xpos=this.X[this.path[i][j]-1]-10;
+			if(this.back[i]==-1)
+				this.back[i]=0;//此次终点为普通区的点，说明开始触发，置为0
 		}
 	  else
 		{
 			let k=parseInt(this.path[i][j]/100);
 			ypos=this.Total_buffer[k-1][1][this.path[i][j]-100*k]-10;
 			xpos=this.Total_buffer[k-1][0][this.path[i][j]-100*k]-10;
+			this.back[i]=-1;//此次终点为缓冲区的点，说明已经回到缓冲区置为-1
 		}
 	  if(this.rects[i].getAbsolutePosition().x==xpos)
         time=Math.abs((ypos-10-this.rects[i].getAbsolutePosition().y))/(this.V*20);//地图1m20像素
       else
         time=Math.abs((xpos-10-this.rects[i].getAbsolutePosition().x))/(this.V*20);
-      console.log(i+" "+this.path[i][j]);
+      //console.log(i+" "+this.path[i][j]);
       this.rectgroup[i].to({
           x:xpos,
           y:ypos,
           duration:time,
           onFinish:()=> {
-          if(this.tasksflag[i]==0){//判断是否到达任务终点
-			if(xpos+10==this.X[this.jobEndset[this.tasksassign[i][this.taskindex[i]].taskNum]-1]&&ypos+10==this.Y[this.jobEndset[this.tasksassign[i][this.taskindex[i]].taskNum]-1]){
+          if(this.back[i]==0){
+		  if(this.tasksflag[i]==0){//判断是否到达任务终点
+			console.log(xpos+"  "+ypos);
+			console.log(this.X[this.jobEndset[this.tasksassign[i][this.taskindex[i]].tasksNum]-1]+"   "+this.Y[this.jobEndset[this.tasksassign[i][this.taskindex[i]].tasksNum]-1]);
+			if(xpos+10==this.X[this.jobEndset[this.tasksassign[i][this.taskindex[i]].tasksNum]-1]&&ypos+10==this.Y[this.jobEndset[this.tasksassign[i][this.taskindex[i]].tasksNum]-1]){
 				this.tasksassign[i][this.taskindex[i]].times--;
-				let item=this.data[tasksassign[i][this.taskindex[i]].tasksNum];
+				let item=this.data[this.tasksassign[i][this.taskindex[i]].tasksNum];
 				item.remain--;
-				this.data.splice(tasksassign[i][this.taskindex[i]].taskNum,1,item);//更新列表，剩余任务次数减一
-				if(this.tasksassign[i][this.taskindex[i]].times==0){//此类型任务全部执行完毕，开始执行下一类型任务
+				this.data.splice(this.tasksassign[i][this.taskindex[i]].tasksNum,1,item);//更新列表，剩余任务次数减一
+			  if(this.tasksassign[i][this.taskindex[i]].times==0){//此类型任务全部执行完毕，开始执行下一类型任务
 					this.taskindex[i]++;
-					item=this.data[tasksassign[i][this.taskindex[i]].tasksNum];
+					if(this.tasksassign[i].length>this.taskindex[i]){
+					item=this.data[this.tasksassign[i][this.taskindex[i]].tasksNum];
 					item.car+=" "+i;
-					this.data.splice(tasksassign[i][this.taskindex[i]].taskNum,1,item);//更新列表
+					this.data.splice(this.tasksassign[i][this.taskindex[i]].tasksNum,1,item);//更新列表
+					}
+					else
+						this.back[i]=1;
 				}
-				//this.tasksflag[i]=1;
-				if(xpos+10==this.X[this.jobStartset[this.tasksassign[i][this.taskindex[i]].taskNum]-1]&&ypos+10==this.Y[this.jobStartset[this.tasksassign[i][this.taskindex[i]].taskNum]-1])
-					this.tasksflag[i]=0;//执行下一个任务
-				else
-					this.tasksflag[i]=-1;//前往执行下一个任务
-			
+					if(this.back[i]==0){
+						if(xpos+10==this.X[this.jobStartset[this.tasksassign[i][this.taskindex[i]].tasksNum]-1]&&ypos+10==this.Y[this.jobStartset[this.tasksassign[i][this.taskindex[i]].tasksNum]-1])
+							this.tasksflag[i]=0;//执行下一个任务
+						else
+							this.tasksflag[i]=-1;//前往执行下一个任务
+					}
 			}			
 		  }
 		  else{//开始执行下一个任务
-			if(xpos==this.X[this.jobStartset[this.tasksassign[i][this.taskindex[i]].taskNum]-1]&&ypos==this.Y[this.jobStartset[this.tasksassign[i][this.taskindex[i]].taskNum]-1]){
+		  //console.log(xpos+"  "+ypos);
+		  //console.log(this.X[this.jobStartset[this.tasksassign[i][this.taskindex[i]].tasksNum]-1]);
+			if(xpos+10==this.X[this.jobStartset[this.tasksassign[i][this.taskindex[i]].tasksNum]-1]&&ypos+10==this.Y[this.jobStartset[this.tasksassign[i][this.taskindex[i]].tasksNum]-1]){
 				this.tasksflag[i]=0;
 			}
 		  }
+		  }
 		  if(j<this.path[i].length-1){//this.pathflag=1;this.newpath=this.path;this.newpath[1][2]=3;
         this.num[i]=j;
-        if(this.flag[i]==1){
+        if(this.flag[i]==1){console.log("asdsadaasddas");
           this.flag[i]=0;
           this.move(i,1);
         }
@@ -501,6 +515,7 @@
     },
     start:function(){
 	  for(let i=0;i<this.agvnum;i++){
+		this.back[i]=0;
 		this.tasksassign[i]=new Array();
 		this.taskindex[i]=0;
 		this.tasksflag[i]=-1;
@@ -672,7 +687,7 @@
 							if(this.tasksassign[i].length!=0){
 								let item=this.data[this.tasksassign[i][0].tasksNum];
 								item.car+=" "+i;
-								this.data.splice(this.tasksassign[i][0].taskNum,1,item);							
+								this.data.splice(this.tasksassign[i][0].tasksNum,1,item);							
 						}
 					}
 					}
