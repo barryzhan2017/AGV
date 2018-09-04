@@ -3,9 +3,9 @@
     <div class="navbar navbar-inverse" role="navigation">
       <div class="container-fluid">
         <div class="navbar-header">
-          <button class="navbar-toggle collapsed" data-toggle="collapsed" data-target=".navbar-collapse">
-            <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
-          </button>
+          <!--<button class="navbar-toggle collapsed" data-toggle="collapsed" data-target=".navbar-collapse">-->
+            <!--<span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>-->
+          <!--</button>-->
           <a href="#" class="navbar-brand">agv小车调度系统</a>
         </div>
         <div class="navbar-collapse collapse">
@@ -127,12 +127,13 @@
         tag:0, //变数的计数器
         tag_buffer:0,
         count_buffer:0,
+        bffinish:0,
 
         strimport:null,
         tagimport:0,
         flag:0,//用来判断画布是否已经初始化
 
-        roadOrbuffer:0  // 1是路线建立 2 是缓冲区建立
+        roadOrbuffer:1  // 1是路线建立 2 是缓冲区建立
 
       }
     },
@@ -150,19 +151,6 @@
 
     },
     methods: {
-      UpdateWidth:function(e){
-        this.$store.dispatch('MapwChange',e.target.value);
-
-      },
-      UpdateHeight:function(e){
-        this.$store.dispatch('MaphChange',e.target.value);
-      },
-      UpdateMinl:function(e){
-        this.$store.dispatch('MinlChange',e.target.value);
-      },
-      UpdateV:function(e){
-        this.$store.dispatch('VChange', e.target.value);
-      },
       MapChange: function () {
         //road change
 
@@ -197,6 +185,8 @@
         var max_y = -1,max_x = -1,min_x = 9999999,min_y = 9999999;
         var end_x,end_y;
         var n = 0,j;
+
+        this.bffinish = 1;
 
         for(var i = 0 ; i < this.x.length;++i){
           if(this.x[i] < min_x){
@@ -852,7 +842,8 @@
         var canvas2 = document.getElementById("myCanvas2");
         var ctx2 = canvas2.getContext("2d");
         var ctx=myCanvas.getContext("2d");
-        this.roadOrbuffer = 0;
+        this.roadOrbuffer = 1;
+        this.bffinish = 0;
         this.pxv = 20 * this.v;
         if (this.flag == 1) {       //如果网格已经构建过一次，那么重新建立网格时应该初始化所有的存储变量
           ctx2.clearRect(0, 0, this.canvaswidth, this.canvasheight);
@@ -1485,10 +1476,16 @@
         jsonobj9["nodenum"] = this.nodenum_real;
         arrnodenum[0] = jsonobj9;
 
+        var arrv = [];
+        var jsonobj10 = {};
+        jsonobj10["v"] = this.v;
+        arrv[0] = jsonobj10;
+
         var arrminlength = [];
         var jsonobj0 = {};
         jsonobj0["minlength"] = this.minlength;
         arrminlength[0] = jsonobj0;
+
 
         //buffer数据的传出
         var arrtotalbuffer={};
@@ -1505,7 +1502,9 @@
           "Ypos": arry,
           "Nodekind": arrindexnode,
           "Nodenumclicked": arrnodenum,
+          "Velocity": arrv,
           "total_buffer": arrtotalbuffer
+
         };
         //对VUEX的state操作
         this.MapChange();
@@ -1522,7 +1521,7 @@
         reader.onload = (f)=> {
           this.strimport = reader.result;
           this.tagimport = 1;
-
+          this.roadOrbuffer = 1;
           let m=JSON.parse(this.strimport);
           this.total_buffer=m.total_buffer.total_buffer;
           this.pathdis=new Array();
@@ -1561,6 +1560,9 @@
           for(let i=0;i<m.Nodenumclicked.length;i++){
             this.nodenum=m.Nodenumclicked[i].nodenum;
           }
+          for(let i=0;i<m.Velocity.length;i++){
+            this.v=m.Velocity[i].v;
+          }
           for(let i = 0; i < m.Minlength.length; ++i){
             this.minlength = m.Minlength[i].minlength;
           }
@@ -1571,108 +1573,115 @@
 
       },
       Save: function () {
+        if(this.bffinish == 0)
+          alert("必须构建一个缓冲区");
+        else{
+          var temp_length = this.pathstart.length;
+          for(var i = 0 ; i < temp_length; ++i){
+            if(this.y[this.pathstart[i]-1] == this.y[this.pathend[i]-1] && this.indexpath[i] == 1){
+              //横线则找竖线在其范围内且被该竖线穿过
 
-        var temp_length = this.pathstart.length;
-        for(var i = 0 ; i < temp_length; ++i){
-          if(this.y[this.pathstart[i]-1] == this.y[this.pathend[i]-1] && this.indexpath[i] == 1){
-            //横线则找竖线在其范围内且被该竖线穿过
+              for(var j = 0; j < temp_length; ++j){
 
-            for(var j = 0; j < temp_length; ++j){
+                if(this.x[this.pathstart[j]-1] == this.x[this.pathend[j]-1] && this.indexpath[j] == 1
+                  && ((this.x[this.pathstart[j]-1] > this.x[this.pathstart[i]-1] && this.x[this.pathstart[j]-1] < this.x[this.pathend[i]-1])
+                  || (this.x[this.pathstart[j]-1] < this.x[this.pathstart[i]-1] && this.x[this.pathstart[j]-1] > this.x[this.pathend[i]-1]))
+                  && ((this.y[this.pathstart[i]-1] > this.y[this.pathstart[j]-1] && this.y[this.pathstart[i]-1] < this.y[this.pathend[j]-1])
+                  || (this.y[this.pathstart[i]-1] < this.y[this.pathstart[j]-1] && this.y[this.pathstart[i]-1] > this.y[this.pathend[j]-1]))){
 
-              if(this.x[this.pathstart[j]-1] == this.x[this.pathend[j]-1] && this.indexpath[j] == 1
-                && ((this.x[this.pathstart[j]-1] > this.x[this.pathstart[i]-1] && this.x[this.pathstart[j]-1] < this.x[this.pathend[i]-1])
-                || (this.x[this.pathstart[j]-1] < this.x[this.pathstart[i]-1] && this.x[this.pathstart[j]-1] > this.x[this.pathend[i]-1]))
-                && ((this.y[this.pathstart[i]-1] > this.y[this.pathstart[j]-1] && this.y[this.pathstart[i]-1] < this.y[this.pathend[j]-1])
-                || (this.y[this.pathstart[i]-1] < this.y[this.pathstart[j]-1] && this.y[this.pathstart[i]-1] > this.y[this.pathend[j]-1]))){
+                  this.x[this.nodenum] = this.x[this.pathstart[j]-1];
+                  this.y[this.nodenum] = this.y[this.pathstart[i]-1];
 
-                this.x[this.nodenum] = this.x[this.pathstart[j]-1];
-                this.y[this.nodenum] = this.y[this.pathstart[i]-1];
+                  this.indexnode[this.nodenum] = 2;
+                  this.nodename[this.nodenum] = this.nodenum+1;
+                  ++this.nodenum;
 
-                this.indexnode[this.nodenum] = 2;
-                this.nodename[this.nodenum] = this.nodenum+1;
-                ++this.nodenum;
+                  this.pathstart[this.pathstart.length] = this.pathstart[i];
+                  this.pathend[this.pathend.length] = this.nodenum;
+                  if(this.x[this.pathstart[i]-1] > this.x[this.pathstart[j]-1]){
+                    this.pathdis[this.pathdis.length] = this.x[this.pathstart[i]-1] - this.x[this.pathstart[j]-1];
+                  }
+                  else{
+                    this.pathdis[this.pathdis.length] = this.x[this.pathstart[j]-1] - this.x[this.pathstart[i]-1];
+                  }
+                  this.indexpath[this.indexpath.length] = 2;
+                  this.pathstart[this.pathstart.length] = this.nodenum;
+                  this.pathend[this.pathend.length] = this.pathend[i];
+                  if(this.x[this.pathstart[j]-1] > this.x[this.pathend[i]-1]){
+                    this.pathdis[this.pathdis.length] = this.x[this.pathstart[j]-1] - this.x[this.pathend[i]-1];
+                  }
+                  else{
+                    this.pathdis[this.pathdis.length] = this.x[this.pathend[i]-1] - this.x[this.pathstart[j]-1];
+                  }
+                  this.indexpath[this.indexpath.length] = 2;
+                  this.pathstart[this.pathstart.length] = this.pathstart[j];
+                  this.pathend[this.pathend.length] = this.nodenum;
+                  if(this.y[this.pathstart[j]-1] > this.y[this.pathstart[i]-1]){
+                    this.pathdis[this.pathdis.length] = this.y[this.pathstart[j]-1] - this.y[this.pathstart[i]-1];
+                  }
+                  else {
+                    this.pathdis[this.pathdis.length] = this.y[this.pathstart[i]-1] -  this.y[this.pathstart[j]-1];
+                  }
+                  this.indexpath[this.indexpath.length] = 2;
+                  this.pathstart[this.pathstart.length] = this.nodenum;
+                  this.pathend[this.pathend.length] = this.pathend[j];
+                  if(this.y[this.pathend[j]-1] > this.y[this.pathstart[i]-1]){
+                    this.pathdis[this.pathdis.length] = this.y[this.pathend[j]-1] - this.y[this.pathstart[i]-1];
+                  }
+                  else {
+                    this.pathdis[this.pathdis.length] = this.y[this.pathstart[i]-1] -  this.y[this.pathend[j]-1];
+                  }
+                  this.indexpath[this.indexpath.length] = 2;
 
-                this.pathstart[this.pathstart.length] = this.pathstart[i];
-                this.pathend[this.pathend.length] = this.nodenum;
-                if(this.x[this.pathstart[i]-1] > this.x[this.pathstart[j]-1]){
-                  this.pathdis[this.pathdis.length] = this.x[this.pathstart[i]-1] - this.x[this.pathstart[j]-1];
-                }
-                else{
-                  this.pathdis[this.pathdis.length] = this.x[this.pathstart[j]-1] - this.x[this.pathstart[i]-1];
-                }
-                this.indexpath[this.indexpath.length] = 2;
-                this.pathstart[this.pathstart.length] = this.nodenum;
-                this.pathend[this.pathend.length] = this.pathend[i];
-                if(this.x[this.pathstart[j]-1] > this.x[this.pathend[i]-1]){
-                  this.pathdis[this.pathdis.length] = this.x[this.pathstart[j]-1] - this.x[this.pathend[i]-1];
-                }
-                else{
-                  this.pathdis[this.pathdis.length] = this.x[this.pathend[i]-1] - this.x[this.pathstart[j]-1];
-                }
-                this.indexpath[this.indexpath.length] = 2;
-                this.pathstart[this.pathstart.length] = this.pathstart[j];
-                this.pathend[this.pathend.length] = this.nodenum;
-                if(this.y[this.pathstart[j]-1] > this.y[this.pathstart[i]-1]){
-                  this.pathdis[this.pathdis.length] = this.y[this.pathstart[j]-1] - this.y[this.pathstart[i]-1];
-                }
-                else {
-                  this.pathdis[this.pathdis.length] = this.y[this.pathstart[i]-1] -  this.y[this.pathstart[j]-1];
-                }
-                this.indexpath[this.indexpath.length] = 2;
-                this.pathstart[this.pathstart.length] = this.nodenum;
-                this.pathend[this.pathend.length] = this.pathend[j];
-                if(this.y[this.pathend[j]-1] > this.y[this.pathstart[i]-1]){
-                  this.pathdis[this.pathdis.length] = this.y[this.pathend[j]-1] - this.y[this.pathstart[i]-1];
-                }
-                else {
-                  this.pathdis[this.pathdis.length] = this.y[this.pathstart[i]-1] -  this.y[this.pathend[j]-1];
-                }
-                this.indexpath[this.indexpath.length] = 2;
+                  for(var k = 0; k < this.x.length-1 ; ++k){
 
-                for(var k = 0; k < this.x.length-1 ; ++k){
+                    if(this.indexnode[k] == 2 ){
+                      if(this.x[k] == this.x[this.pathstart[j]-1]
+                        && ((this.y[k] > this.y[this.pathstart[j]-1] && this.y[k] < this.y[this.pathend[j]-1])
+                        || this.y[k] < this.y[this.pathstart[j]-1] && this.y[k] > this.y[this.pathend[j]-1])){
 
-                  if(this.indexnode[k] == 2 ){
-                    if(this.x[k] == this.x[this.pathstart[j]-1]
-                      && ((this.y[k] > this.y[this.pathstart[j]-1] && this.y[k] < this.y[this.pathend[j]-1])
-                      || this.y[k] < this.y[this.pathstart[j]-1] && this.y[k] > this.y[this.pathend[j]-1])){
-
-                      this.pathstart[this.pathstart.length] = this.nodenum;
-                      this.pathend[this.pathend.length] = this.nodename[k];
-                      if(this.y[k] > this.y[this.pathstart[i]-1]){
-                        this.pathdis[this.pathdis.length] = this.y[k] - this.y[this.pathstart[i]-1];
+                        this.pathstart[this.pathstart.length] = this.nodenum;
+                        this.pathend[this.pathend.length] = this.nodename[k];
+                        if(this.y[k] > this.y[this.pathstart[i]-1]){
+                          this.pathdis[this.pathdis.length] = this.y[k] - this.y[this.pathstart[i]-1];
+                        }
+                        else {
+                          this.pathdis[this.pathdis.length] = this.y[this.pathstart[i]-1] -  this.y[k];
+                        }
+                        this.indexpath[this.indexpath.length] = 3;
                       }
-                      else {
-                        this.pathdis[this.pathdis.length] = this.y[this.pathstart[i]-1] -  this.y[k];
-                      }
-                      this.indexpath[this.indexpath.length] = 3;
-                    }
-                    if(this.y[k] == this.y[this.pathstart[i]-1]
-                      && ((this.x[k] > this.x[this.pathstart[i]-1] && this.x[k] < this.x[this.pathend[i]-1])
-                      || this.x[k] < this.x[this.pathstart[i]-1] && this.x[k] > this.x[this.pathend[i]-1])){
+                      if(this.y[k] == this.y[this.pathstart[i]-1]
+                        && ((this.x[k] > this.x[this.pathstart[i]-1] && this.x[k] < this.x[this.pathend[i]-1])
+                        || this.x[k] < this.x[this.pathstart[i]-1] && this.x[k] > this.x[this.pathend[i]-1])){
 
-                      this.pathstart[this.pathstart.length] = this.nodenum;
-                      this.pathend[this.pathend.length] = this.nodename[k];
-                      if(this.x[k] > this.x[this.pathstart[j]-1]){
-                        this.pathdis[this.pathdis.length] = this.x[k] - this.x[this.pathstart[j]-1];
+                        this.pathstart[this.pathstart.length] = this.nodenum;
+                        this.pathend[this.pathend.length] = this.nodename[k];
+                        if(this.x[k] > this.x[this.pathstart[j]-1]){
+                          this.pathdis[this.pathdis.length] = this.x[k] - this.x[this.pathstart[j]-1];
+                        }
+                        else{
+                          this.pathdis[this.pathdis.length] = this.x[this.pathstart[j]-1] -  this.x[k];
+                        }
+                        this.indexpath[this.indexpath.length] = 3;
                       }
-                      else{
-                        this.pathdis[this.pathdis.length] = this.x[this.pathstart[j]-1] -  this.x[k];
-                      }
-                      this.indexpath[this.indexpath.length] = 3;
                     }
                   }
+
+
+
                 }
-
-
-
               }
             }
           }
+          this.Deduplication();
+          this.MapChange();
+          this.$store.dispatch('MapwChange',this.mapwidth);
+          this.$store.dispatch('MaphChange',this.mapheight);
+          this.$store.dispatch('MinlChange',this.minlength);
+          this.$store.dispatch('VChange',this.v);
+          this.$router.push({path: '/Job'})
         }
-        this.Deduplication();
-        this.MapChange();
-        this.$store.dispatch('MinlChange',this.minlength);
-        this.$router.push({path: '/Job'})
+
       },
       HorizonOrvertical:function(start,end){//判断是横线还是竖线，如果是横线则返回0，是竖线则返回1
         if(this.x[start-1] == this.x[end-1])
@@ -1802,8 +1811,7 @@
 
         return 0;
       },
-      abs:function(a)
-      {
+      abs:function(a) {
         return a>0? a:-a;
       }
     }
