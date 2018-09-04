@@ -12,9 +12,6 @@ export default{
   MaphChange({commit},mapheight){
     commit('MaphChange',mapheight);
   },
-  MinlChange({commit},minlength){
-    commit('MinlChange',minlength);
-  },
   VChange({commit},V){
     commit('VChange',V);
   },
