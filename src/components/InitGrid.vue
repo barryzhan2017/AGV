@@ -84,7 +84,7 @@
     </div>
   </div>
 </template>
-//在线上选定点后的删除操作有bug，因为无法消去生成的线
+
 <script>
   import {saveAs} from '../js/FileSaver.js'
   import {mapGetters, mapActions} from 'vuex'
@@ -1010,6 +1010,7 @@
               this.indexnode[this.nodenum] = 1;
               this.nodenum = this.nodenum + 1;
 
+              //如果某个点在生成的线中被点击 则相当于插入该点并重新最小划分线
               if(this.Lineinclude(numxx,numyy)){
                 this.indexnode[this.nodenum-1] = 2;
                 var temp = this.pathstart.length;
@@ -1316,6 +1317,7 @@
       exportmap: function () {//导出map文件
 
         var temp_length = this.pathstart.length;
+        // 将现阶段的线段最小划分处理
         for(var i = 0 ; i < temp_length; ++i){
           if(this.y[this.pathstart[i]-1] == this.y[this.pathend[i]-1] && this.indexpath[i] == 1){
             //横线则找竖线在其范围内且被该竖线穿过
@@ -1412,6 +1414,7 @@
             }
           }
         }
+        //线段与端点去重
         this.Deduplication();
 
         var arrpathstart = [];
@@ -1568,7 +1571,7 @@
           }
           alert("读取完毕，保存地图即可！");
         };
-
+        this.bffinish = 1;
 
 
       },
@@ -1790,7 +1793,7 @@
         }
       },
       Lineinclude:function(posx,posy){
-
+        //用于点击一个点后的重新最小划分
         for(var i = 0 ; i < this.pathstart.length; ++i){
           if(this.indexpath[i] != 0 &&
             posx == this.x[this.pathstart[i]-1] &&
