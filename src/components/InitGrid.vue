@@ -1317,6 +1317,10 @@
       exportmap: function () {//导出map文件
 
         var temp_length = this.pathstart.length;
+        var nodename_real = [];
+        var x_real = [];
+        var y_real = [];
+        var index_real = [];
         // 将现阶段的线段最小划分处理
         for(var i = 0 ; i < temp_length; ++i){
           if(this.y[this.pathstart[i]-1] == this.y[this.pathend[i]-1] && this.indexpath[i] == 1){
@@ -1416,7 +1420,57 @@
         }
         //线段与端点去重
         this.Deduplication();
+        for (var i = 0; i < this.indexnode.length; i++) {
+          if (this.indexnode[i] != 0)
+            this.nodenum_real++;
+        }
+        for(var i = 0,j = 0 ; i < this.nodenum_real;){
+          if(this.indexnode[j] == 0){
+            j++;
+          }
+          else{
+            if(i == j){
+              i++;
+              j++;
+            }
+            else{
+              for(var k = 0 ; k < this.pathstart.length; ++k){
 
+                if(this.pathstart[k] == this.nodename[j]){
+                  this.pathstart[k] = i+1;
+                }
+
+                if(this.pathend[k] == this.nodename[j]){
+                  this.pathend[k] = i+1;
+                }
+
+              }
+
+              this.nodename[j] = i+1;
+              i++;
+              j++;
+            }
+          }
+        }
+        for(var i = 0,j = 0 ; j < this.nodename.length ; ){
+            if (this.indexnode[j] == 0){
+              ++j;
+              continue;
+            }
+            else{
+              nodename_real[i] = this.nodename[j];
+              index_real[i] = this.indexnode[j];
+              x_real[i] = this.x[j];
+              y_real[i] = this.y[j];
+              ++i;
+              ++j;
+            }
+
+        }
+        this.nodename = nodename_real;
+        this.x = x_real;
+        this.y = y_real;
+        this.indexnode = index_real;
         var arrpathstart = [];
         for (var i = 0; i < this.pathstart.length; i++) {
           var jsonobj1 = {};
@@ -1467,8 +1521,6 @@
 
         var arrindexnode = [];
         for (var i = 0; i < this.indexnode.length; i++) {
-          if (this.indexnode[i] == 1)
-            this.nodenum_real++;
           var jsonobj8 = {};
           jsonobj8["indexnode"] = this.indexnode[i];
           arrindexnode[i] = jsonobj8;
@@ -1510,6 +1562,7 @@
 
         };
         //对VUEX的state操作
+
         this.MapChange();
 
         var arr = JSON.stringify(arrxx);
@@ -1579,7 +1632,12 @@
         if(this.bffinish == 0)
           alert("必须构建一个缓冲区");
         else{
+          this.nodenum_real = 0;
           var temp_length = this.pathstart.length;
+          var nodename_real = [];
+          var x_real = [];
+          var y_real = [];
+          var index_real = [];
           for(var i = 0 ; i < temp_length; ++i){
             if(this.y[this.pathstart[i]-1] == this.y[this.pathend[i]-1] && this.indexpath[i] == 1){
               //横线则找竖线在其范围内且被该竖线穿过
@@ -1677,6 +1735,57 @@
             }
           }
           this.Deduplication();
+          for (var i = 0; i < this.indexnode.length; i++) {
+            if (this.indexnode[i] != 0)
+              this.nodenum_real++;
+
+          }
+          for(var i = 0,j = 0 ; i < this.nodenum_real;){
+            if(this.indexnode[j] == 0){
+              j++;
+            }
+            else{
+              if(i == j){
+                i++;
+                j++;
+              }
+              else{
+                for(var k = 0 ; k < this.pathstart.length; ++k){
+                  if(this.pathstart[k] == this.nodename[j]){
+                    this.pathstart[k] = i+1;
+                  }
+
+                  if(this.pathend[k] == this.nodename[j]){
+                    this.pathend[k] = i+1;
+                  }
+
+                }
+
+                this.nodename[j] = i+1;
+                i++;
+                j++;
+              }
+            }
+          }
+          for(var i = 0,j = 0 ; j < this.nodename.length ; ){
+            if (this.indexnode[j] == 0){
+              ++j;
+              continue;
+            }
+            else{
+              nodename_real[i] = this.nodename[j];
+              index_real[i] = this.indexnode[j];
+              x_real[i] = this.x[j];
+              y_real[i] = this.y[j];
+              ++i;
+              ++j;
+            }
+
+          }
+          this.nodename = nodename_real;
+          this.x = x_real;
+          this.y = y_real;
+          this.indexnode = index_real;
           this.MapChange();
           this.$store.dispatch('MapwChange',this.mapwidth);
           this.$store.dispatch('MaphChange',this.mapheight);
