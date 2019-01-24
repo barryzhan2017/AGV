@@ -81,7 +81,7 @@
       <div id="container" style="position:absolute;left:320px;top:40px;">
 
       </div>
-      <canvas id="Canvas" width="800px" height="400px" style="position: absolute; left:320px; top:40px; z-index: 0;"></canvas>
+      <canvas id="Canvas" :width="Mapwidth" :height="Mapheight" style="position: absolute; left:320px; top:40px; z-index: 0;"></canvas>
 
     </div>
 <pre><code id="json"></code></pre>
@@ -94,7 +94,7 @@
     name: 'JOB',
     data(){
       return{
-	    back:[],//0代表小车继续执行任务，1代表小车返回缓冲区，-1代表小车回到缓冲区，初始化时都为0
+		back:[],//0代表小车继续执行任务，1代表小车返回缓冲区，-1代表小车回到缓冲区，初始化时都为0
 		tasksflag:[],//记录每辆小车是否开始执行某个任务，0代表开始执行，1代表完成,-1表示前往执行下一任务的途中
 		taskindex:[],//小车执行到第几个任务
         tasksassign:[],//小车的任务分配
