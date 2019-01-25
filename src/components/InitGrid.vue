@@ -1535,7 +1535,17 @@
         var jsonobj10 = {};
         jsonobj10["v"] = this.v;
         arrv[0] = jsonobj10;
-
+		
+		var arrwidth = [];
+		var jsonobjwidth = {};
+		jsonobjwidth["width"] = this.mapwidth;
+		arrwidth[0]=jsonobjwidth;
+		
+		var arrheight = [];
+		var jsonobjheight = {};
+		jsonobjheight["height"] = this.mapheight;
+		arrheight[0]=jsonobjheight;
+		
         var arrminlength = [];
         var jsonobj0 = {};
         jsonobj0["minlength"] = this.minlength;
@@ -1547,7 +1557,9 @@
         arrtotalbuffer["total_buffer"]=this.total_buffer;
 
         var arrxx = {
-          "Minlength" : arrminlength,
+          "Mapwidth":arrwidth,
+		  "Mapheight":arrheight,
+		  "Minlength" : arrminlength,
           "Startorder": arrpathstart,
           "Endorder": arrpathend,
           "Distance": arrpathdis,
@@ -1621,6 +1633,12 @@
           }
           for(let i = 0; i < m.Minlength.length; ++i){
             this.minlength = m.Minlength[i].minlength;
+          }
+		  for(let i = 0; i < m.Mapwidth.length; ++i){
+            this.mapwidth = m.Mapwidth[i].width;
+          }
+		  for(let i = 0; i < m.Mapheight.length; ++i){
+            this.mapheight = m.Mapheight[i].height;
           }
           alert("读取完毕，保存地图即可！");
         };
@@ -1787,8 +1805,8 @@
           this.y = y_real;
           this.indexnode = index_real;
           this.MapChange();
-          this.$store.dispatch('MapwChange',this.mapwidth);
-          this.$store.dispatch('MaphChange',this.mapheight);
+          this.$store.dispatch('MapwChange',this.mapwidth*20);//1m20像素
+          this.$store.dispatch('MaphChange',this.mapheight*20);//1m20像素
           this.$store.dispatch('MinlChange',this.minlength);
           this.$store.dispatch('VChange',this.v);
           this.$router.push({path: '/Job'})
