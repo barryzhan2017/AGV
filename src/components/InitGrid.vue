@@ -1014,38 +1014,63 @@
               if(this.Lineinclude(numxx,numyy)){
                 this.indexnode[this.nodenum-1] = 2;
                 var temp = this.pathstart.length;
+
+                var mind = 9999999;
+                var mini = 0;
+                var f = -1;
                 for(var i = 0 ; i < temp; ++i){
                   if(this.indexpath[i] != 0 &&
                     numxx == this.x[this.pathstart[i]-1] &&
                     ((numyy <= this.y[(this.pathstart[i]-1)] && numyy >= this.y[(this.pathend[i]-1)])
                     || (numyy >= this.y[(this.pathstart[i]-1)] && numyy <= this.y[(this.pathend[i]-1)]))){
-                    this.pathstart[this.pathstart.length] = this.pathstart[i];
-                    this.pathend[this.pathend.length] = this.nodenum;
-                    this.pathdis[this.pathdis.length] = this.abs(this.y[this.pathstart[i]-1] - numyy);
-                    this.indexpath[this.indexpath.length] = 1;
-                    this.pathstart[this.pathstart.length] = this.nodenum;
-                    this.pathend[this.pathend.length] = this.pathend[i];
-                    this.pathdis[this.pathdis.length] = this.abs(this.y[this.pathstart[i]-1] - numyy);
-                    this.indexpath[this.indexpath.length] = 1;
-                    this.Deduplication();
+                    f = 0;
+                    var d = this.Distant(numxx,this.x[this.pathstart[i]-1],numyy,this.y[(this.pathstart[i]-1)])+this.Distant(numxx,x[this.pathend[i]-1],numyy,this.y[(this.pathend[i]-1)]);
+                    if(mind > d){
+                      mind = d;
+                      mini = i;
+                    }
+
+
                   }
 
                   else if(this.indexpath[i] != 0 &&
                     numyy == this.y[(this.pathstart[i]-1)] &&
                     ((numxx <= this.x[(this.pathstart[i]-1)] && numxx >= this.x[(this.pathend[i]-1)])
                     || (numxx >= this.x[(this.pathstart[i]-1)] && numxx <= this.x[(this.pathend[i]-1)]))){
-                    this.pathstart[this.pathstart.length] = this.pathstart[i];
-                    this.pathend[this.pathend.length] = this.nodenum;
-                    this.pathdis[this.pathdis.length] = this.abs(this.x[this.pathstart[i]-1] - numxx);
-                    this.indexpath[this.indexpath.length] = 1;
-                    this.pathstart[this.pathstart.length] = this.nodenum;
-                    this.pathend[this.pathend.length] = this.pathend[i];
-                    this.pathdis[this.pathdis.length] = this.abs(this.x[this.pathstart[i]-1] - numxx);
-                    this.indexpath[this.indexpath.length] = 1;
-                    this.Deduplication();
+                    f = 1;
+                    var d = this.Distant(numxx,this.x[this.pathstart[i]-1],numyy,this.y[(this.pathstart[i]-1)])+this.Distant(numxx,x[this.pathend[i]-1],numyy,this.y[(this.pathend[i]-1)]);
+                    if(mind > d){
+                      mind = d;
+                      mini = i;
+                    }
                   }
 
 
+                }
+                if(f == 0){
+                  this.pathstart[this.pathstart.length] = this.pathstart[mini];
+                  this.pathend[this.pathend.length] = this.nodenum;
+                  this.pathdis[this.pathdis.length] = this.abs(this.y[this.pathstart[mini]-1] - numyy);
+                  this.indexpath[this.indexpath.length] = 1;
+                  this.pathstart[this.pathstart.length] = this.nodenum;
+                  this.pathend[this.pathend.length] = this.pathend[mini];
+                  this.pathdis[this.pathdis.length] = this.abs(this.y[this.pathstart[mini]-1] - numyy);
+                  this.indexpath[this.indexpath.length] = 1;
+
+                }
+                else if(f == 1){
+                  this.pathstart[this.pathstart.length] = this.pathstart[i];
+                  this.pathend[this.pathend.length] = this.nodenum;
+                  this.pathdis[this.pathdis.length] = this.abs(this.x[this.pathstart[i]-1] - numxx);
+                  this.indexpath[this.indexpath.length] = 1;
+                  this.pathstart[this.pathstart.length] = this.nodenum;
+                  this.pathend[this.pathend.length] = this.pathend[i];
+                  this.pathdis[this.pathdis.length] = this.abs(this.x[this.pathstart[i]-1] - numxx);
+                  this.indexpath[this.indexpath.length] = 1;
+
+                }
+                else{
+                  alert("include line error 1068");
                 }
               }
             }
@@ -1536,6 +1561,16 @@
         jsonobj10["v"] = this.v;
         arrv[0] = jsonobj10;
 
+		var arrwidth = [];
+		var jsonobjwidth = {};
+		jsonobjwidth["width"] = this.mapwidth;
+		arrwidth[0]=jsonobjwidth;
+
+		var arrheight = [];
+		var jsonobjheight = {};
+		jsonobjheight["height"] = this.mapheight;
+		arrheight[0]=jsonobjheight;
+
         var arrminlength = [];
         var jsonobj0 = {};
         jsonobj0["minlength"] = this.minlength;
@@ -1547,7 +1582,9 @@
         arrtotalbuffer["total_buffer"]=this.total_buffer;
 
         var arrxx = {
-          "Minlength" : arrminlength,
+          "Mapwidth":arrwidth,
+		  "Mapheight":arrheight,
+		  "Minlength" : arrminlength,
           "Startorder": arrpathstart,
           "Endorder": arrpathend,
           "Distance": arrpathdis,
@@ -1621,6 +1658,12 @@
           }
           for(let i = 0; i < m.Minlength.length; ++i){
             this.minlength = m.Minlength[i].minlength;
+          }
+		  for(let i = 0; i < m.Mapwidth.length; ++i){
+            this.mapwidth = m.Mapwidth[i].width;
+          }
+		  for(let i = 0; i < m.Mapheight.length; ++i){
+            this.mapheight = m.Mapheight[i].height;
           }
           alert("读取完毕，保存地图即可！");
         };
@@ -1788,9 +1831,12 @@
           this.y = y_real;
           this.indexnode = index_real;
           this.MapChange();
-          alert(this.mapwidth);
-          this.$store.dispatch('MapwChange',this.mapwidth);
-          this.$store.dispatch('MaphChange',this.mapheight);
+
+
+
+          this.$store.dispatch('MapwChange',this.mapwidth*20);//1m20像素
+          this.$store.dispatch('MaphChange',this.mapheight*20);//1m20像素
+
           this.$store.dispatch('MinlChange',this.minlength);
           this.$store.dispatch('VChange',this.v);
           this.$router.push({path: '/Job'})
@@ -1902,6 +1948,9 @@
           }
 
         }
+      },
+      Distant:function(x1,x2,y1,y2){
+        return (abs(x1-x2)*abs(x1-x2)+abs(y1-y2)*abs(y1-y2));
       },
       Lineinclude:function(posx,posy){
         //用于点击一个点后的重新最小划分
