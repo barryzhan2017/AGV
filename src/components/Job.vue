@@ -189,6 +189,7 @@
 
   },
     mounted:function(){
+
 	this.carbuff=new Array();
 	for(let i=0;i<this.Total_buffer.length;i++){
 		this.carbuff[i]=1;
@@ -352,7 +353,7 @@
 				datapath[i][j]=this.path[i][j];
 			}
 		}
-		
+
         for(let i=0;i<this.agvnum;i++){
           if(this.T[i]==-1)
             continue;
@@ -361,7 +362,7 @@
             time=Math.abs((this.Y[this.path[i][this.num[i]]-1]-10-this.rects[i].getAbsolutePosition().y))/(this.V*20);
           else
             time=Math.abs((this.X[this.path[i][this.num[i]]-1]-10-this.rects[i].getAbsolutePosition().x))/(this.V*20);
-          
+
 		  //console.log(Math.abs((this.X[this.path[i][this.num[i]]-1]-10-this.rects[i].getAbsolutePosition().x))+"ddd");
 		  this.T[i]=time;//console.log(this.T[i]+"time");
         }
@@ -370,13 +371,13 @@
           if(datapath[i].length==0)//该小车没有指派任务
             continue;
           for(let j=this.num[i],m=0;j<datapath[i].length;j++,m++){
-          
+
             dpath[m]=datapath[i][j];//console.log(dpath[m]+"bbb");
           }
           datapath[i]=new Array();
 		  for(let n=0;n<dpath.length;n++)
 			datapath[i][n]=dpath[n];
-		  
+
         }//console.log(datapath[0][0]+"aaaaa");
 		let arrtasks=[];
 		let jsontask = {};
@@ -391,7 +392,7 @@
 		let arrpath=[];
 		if(this.pathflag==0){
 		    //传datapath
-			
+
 			for(let i=0;i<this.agvnum;i++){
 			 arrpath[i]=new Array();
 				for(let j=0;j<datapath[i].length;j++){
@@ -413,7 +414,7 @@
 					jsonobj7["paths"] = newpath[i][j];
 					arrpath[i][j] = jsonobj7;
 				}
-			
+
 			}
 		}
 		this.Send(this.arrpathstart,this.arrpathend,this.arrpathdis,arrpath,arrtasks,this.arrspeed,this.arrpre,this.arrnodenum,this.arrbufferset,this.arrcarset,arrtime);
@@ -490,7 +491,7 @@
 						else
 							this.tasksflag[i]=-1;//前往执行下一个任务
 					}
-			}			
+			}
 		  }
 		  else{//开始执行下一个任务
 		  //console.log(xpos+"  "+ypos);
@@ -514,6 +515,7 @@
     });
     },
     start:function(){
+      alert(this.Mapwidth);
 	  for(let i=0;i<this.agvnum;i++){
 		this.back[i]=0;
 		this.tasksassign[i]=new Array();
@@ -667,8 +669,8 @@
 								"tasksNum":response.data.record[i][j].record.taskNum,
 								"times":response.data.record[i][j].record.times
 							};
-								this.tasksassign[i][this.tasksassign[i].length]=obj;							
-							
+								this.tasksassign[i][this.tasksassign[i].length]=obj;
+
 						}
 					}
              		this.pathflag=1;
@@ -676,24 +678,24 @@
 					for(let i=0;i<response.data.record.length;i++){
 						if(response.data.record[i].length!=0){//表示这辆小车有新增路径
 							this.T[i]=0;
-							
+
 							this.flag[i]=1;//改变路径的小车的flag变为1
 						}
 					}
 				}
 					else{
-						
+
 						for(let i=0;i<this.tasksassign.length;i++){
 							if(this.tasksassign[i].length!=0){
 								let item=this.data[this.tasksassign[i][0].tasksNum];
 								item.car+=" "+i;
-								this.data.splice(this.tasksassign[i][0].tasksNum,1,item);							
+								this.data.splice(this.tasksassign[i][0].tasksNum,1,item);
 						}
 					}
 					}
-             		
+
 					this.Isbegin=true;
-             		
+
              		for(let i=0;i<this.rects.length;i++)
                         this.move(i,1);
 
