@@ -92,11 +92,11 @@
     name: 'Agv',
     data () {
       return {
-        mapwidth:null,  //地图总宽度
-        mapheight:null,  //地图总高度
+
+        mapwidth:null,  //地图宽度
+        mapheight:null, //地图高度
         minlength:null, //精度即一个网格的边长
         v:null,  //AGV小车的速度
-
         allx:[], //网格每个点的横坐标
         ally:[], //网格每个点的纵坐标
         pxv:null,
@@ -1740,6 +1740,7 @@
               this.nodenum_real++;
 
           }
+
           for(var i = 0,j = 0 ; i < this.nodenum_real;){
             if(this.indexnode[j] == 0){
               j++;
@@ -1787,6 +1788,7 @@
           this.y = y_real;
           this.indexnode = index_real;
           this.MapChange();
+          alert(this.mapwidth);
           this.$store.dispatch('MapwChange',this.mapwidth);
           this.$store.dispatch('MaphChange',this.mapheight);
           this.$store.dispatch('MinlChange',this.minlength);

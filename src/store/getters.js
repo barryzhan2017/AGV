@@ -4,7 +4,7 @@
 export default{
   Minlength: state => state.Minlength,
   Mapwidth: state => state.Mapwidth,
-  Maphight: state => state.Mapheight,
+  Mapheight: state => state.Mapheight,
   V: state => state.V,
   Nodenum_real: state => state.Nodenum_real,
   X: state => state.X,
