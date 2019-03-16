@@ -119,7 +119,7 @@
         stage:null,
         layer:null,
         rects:[],//指代小车的矩形集合
-        path:[],//小车路径集合，-1代表结束
+        path:[],//小车路径集合，-1代表结束  [[{"startNode":1,"endNode":2,"time":2,"isLoop":0},{}],[{},{}]]
         jobStart:null,
         jobEnd:null,
         jobStartset:[],
@@ -302,8 +302,12 @@
 
 	  //this.path=new Array();
 	  this.path[this.agvnum-1]=new Array();
-	  this.path[this.agvnum-1][0]=this.Total_buffer[i-1][3][this.Total_buffer[i-1][2].length+1-this.carbuff[i-1]];
-
+	  //this.path[this.agvnum-1][0]=this.Total_buffer[i-1][3][this.Total_buffer[i-1][2].length+1-this.carbuff[i-1]];
+      this.path[this.agvnum-1][0]={};
+      this.path[this.agvnum-1][0].startNode=this.Total_buffer[i-1][3][this.Total_buffer[i-1][2].length+1-this.carbuff[i-1]];
+      this.path[this.agvnum-1][0].endNode=this.Total_buffer[i-1][3][this.Total_buffer[i-1][2].length+1-this.carbuff[i-1]];
+      this.path[this.agvnum-1][0].time=0;
+      this.path[this.agvnum-1][0].isLoop=0;
 	  var rectnumber = new Konva.Text({
       x: 0,
       y: -20,
@@ -350,7 +354,11 @@
         for(let i=0;i<this.path.length;i++){
 			datapath[i]=new Array();
 			for(let j=0;j<this.path[i].length;j++){
-				datapath[i][j]=this.path[i][j];
+				datapath[i][j]={};
+				datapath[i][j].startNode=this.path[i][j].startNode;
+				datapath[i][j].endNode=this.path[i][j].endNode;
+				datapath[i][j].time=this.path[i][j].time;
+				datapath[i][j].isLoop=this.path[i][j].isLoop;
 			}
 		}
 
@@ -359,9 +367,11 @@
             continue;
           let time=0.0;
           if(this.rects[i].getAbsolutePosition().x==this.X[this.path[i][this.num[i]]-1]-10)
-            time=Math.abs((this.Y[this.path[i][this.num[i]]-1]-10-this.rects[i].getAbsolutePosition().y))/(this.V*20);
+            time=Math.abs((this.Y[this.path[i][this.num[i]].startNode]-10-this.rects[i].getAbsolutePosition().y)/(this.Y[this.path[i][this.num[i]].endNode]-this.Y[this.path[i][this.num[i]].startNode]))*this.path[i][this.num[i]].time;
+            //time=Math.abs((this.Y[this.path[i][this.num[i]]-1]-10-this.rects[i].getAbsolutePosition().y))/(this.V*20);
           else
-            time=Math.abs((this.X[this.path[i][this.num[i]]-1]-10-this.rects[i].getAbsolutePosition().x))/(this.V*20);
+            time=Math.abs((this.X[this.path[i][this.num[i]].startNode]-10-this.rects[i].getAbsolutePosition().x)/(this.X[this.path[i][this.num[i]].endNode]-this.X[this.path[i][this.num[i]].startNode]))*this.path[i][this.num[i]].time;
+            //time=Math.abs((this.X[this.path[i][this.num[i]]-1]-10-this.rects[i].getAbsolutePosition().x))/(this.V*20);
 
 		  //console.log(Math.abs((this.X[this.path[i][this.num[i]]-1]-10-this.rects[i].getAbsolutePosition().x))+"ddd");
 		  this.T[i]=time;//console.log(this.T[i]+"time");
@@ -371,12 +381,16 @@
           if(datapath[i].length==0)//该小车没有指派任务
             continue;
           for(let j=this.num[i],m=0;j<datapath[i].length;j++,m++){
-
-            dpath[m]=datapath[i][j];//console.log(dpath[m]+"bbb");
+            dpath[m]={};
+            dpath[m].startNode=datapath[i][j].startNode;
+            dpath[m].endNode=datapath[i][j].endNode;
+            dpath[m].time=datapath[i][j].time;
+            dpath[m].isLoop=datapath[i][j].isLoop;
+            //dpath[m]=datapath[i][j];//console.log(dpath[m]+"bbb");
           }
           datapath[i]=new Array();
 		  for(let n=0;n<dpath.length;n++)
-			datapath[i][n]=dpath[n];
+			  datapath[i][n]=dpath[n];
 
         }//console.log(datapath[0][0]+"aaaaa");
 		let arrtasks=[];
@@ -396,11 +410,7 @@
 			for(let i=0;i<this.agvnum;i++){
 			 arrpath[i]=new Array();
 				for(let j=0;j<datapath[i].length;j++){
-					let jsonobj7 = {};//console.log(datapath[0][0]+"cccc");
-					//datapath[i][j]=parseFloat(datapath[i][j]);
-					//console.log(datapath[i][j]);
-					jsonobj7["paths"] = datapath[i][j];
-					arrpath[i][j] = jsonobj7;
+					arrpath[i][j] = datapath[i][j];
 				}
 	  }
 		}
@@ -409,10 +419,7 @@
 			for(let i=0;i<this.agvnum;i++){
 			 arrpath[i]=new Array();
 				for(let j=0;j<this.newpath[i].length;j++){
-					let jsonobj7 = {};
-					newpath[i][j]=parseFloat(newpath[i][j]);
-					jsonobj7["paths"] = newpath[i][j];
-					arrpath[i][j] = jsonobj7;
+					arrpath[i][j] = newpath[i][j];
 				}
 
 			}
@@ -433,89 +440,132 @@
 		this.pathflag=0;
 		this.path=this.newpath;
 	  }
-	  if(this.path[i][1]!=-1)
+	  if(this.path[i][1].startNode!=-1)
 		this.T[i]=0;//表示小车不为闲置，只要不是-1就行，这里取0
-	  if(this.path[i][j]==-1){
+	  if(this.path[i][j].startNode==-1){
         this.T[i]=-1;
         return;
       }
-      let time=0;//小车从当前位置运行到下个点所需时间
       let ypos=0;
 	  let xpos=0;
 	  if(this.path[i][j]<100)
 		{
-			ypos=this.Y[this.path[i][j]-1]-10;
-			xpos=this.X[this.path[i][j]-1]-10;
+			ypos=this.Y[this.path[i][j].endNode-1]-10;
+			xpos=this.X[this.path[i][j].endNode-1]-10;
 			if(this.back[i]==-1)
 				this.back[i]=0;//此次终点为普通区的点，说明开始触发，置为0
 		}
 	  else
 		{
-			let k=parseInt(this.path[i][j]/100);
-			ypos=this.Total_buffer[k-1][1][this.path[i][j]-100*k]-10;
-			xpos=this.Total_buffer[k-1][0][this.path[i][j]-100*k]-10;
+			let k=parseInt(this.path[i][j].endNode/100);
+			ypos=this.Total_buffer[k-1][1][this.path[i][j].endNode-100*k]-10;
+			xpos=this.Total_buffer[k-1][0][this.path[i][j].endNode-100*k]-10;
 			this.back[i]=-1;//此次终点为缓冲区的点，说明已经回到缓冲区置为-1
 		}
-	  if(this.rects[i].getAbsolutePosition().x==xpos)
-        time=Math.abs((ypos-10-this.rects[i].getAbsolutePosition().y))/(this.V*20);//地图1m20像素
+    if(this.path[i][j].isLoop==1) {
+      let startx=this.X[this.path[i][j].startNode - 1] - 10;
+      let starty=this.Y[this.path[i][j].startNode - 1] - 10;
+      let endx=xpos;
+      let endy=ypos;
+      if(startx==endx)
+        endy=endy > starty ? starty+this.Minlength*20 : starty-this.Minlength*20;
       else
-        time=Math.abs((xpos-10-this.rects[i].getAbsolutePosition().x))/(this.V*20);
-      //console.log(i+" "+this.path[i][j]);
-      this.rectgroup[i].to({
-          x:xpos,
-          y:ypos,
-          duration:time,
-          onFinish:()=> {
-          if(this.back[i]==0){
-		  if(this.tasksflag[i]==0){//判断是否到达任务终点
-			console.log(xpos+"  "+ypos);
-			console.log(this.X[this.jobEndset[this.tasksassign[i][this.taskindex[i]].tasksNum]-1]+"   "+this.Y[this.jobEndset[this.tasksassign[i][this.taskindex[i]].tasksNum]-1]);
-			if(xpos+10==this.X[this.jobEndset[this.tasksassign[i][this.taskindex[i]].tasksNum]-1]&&ypos+10==this.Y[this.jobEndset[this.tasksassign[i][this.taskindex[i]].tasksNum]-1]){
-				this.tasksassign[i][this.taskindex[i]].times--;
-				let item=this.data[this.tasksassign[i][this.taskindex[i]].tasksNum];
-				item.remain--;
-				this.data.splice(this.tasksassign[i][this.taskindex[i]].tasksNum,1,item);//更新列表，剩余任务次数减一
-			  if(this.tasksassign[i][this.taskindex[i]].times==0){//此类型任务全部执行完毕，开始执行下一类型任务
-					this.taskindex[i]++;
-					if(this.tasksassign[i].length>this.taskindex[i]){
-					item=this.data[this.tasksassign[i][this.taskindex[i]].tasksNum];
-					item.car+=" "+i;
-					this.data.splice(this.tasksassign[i][this.taskindex[i]].tasksNum,1,item);//更新列表
-					}
-					else
-						this.back[i]=1;
-				}
-					if(this.back[i]==0){
-						if(xpos+10==this.X[this.jobStartset[this.tasksassign[i][this.taskindex[i]].tasksNum]-1]&&ypos+10==this.Y[this.jobStartset[this.tasksassign[i][this.taskindex[i]].tasksNum]-1])
-							this.tasksflag[i]=0;//执行下一个任务
-						else
-							this.tasksflag[i]=-1;//前往执行下一个任务
-					}
-			}
-		  }
-		  else{//开始执行下一个任务
-		  //console.log(xpos+"  "+ypos);
-		  //console.log(this.X[this.jobStartset[this.tasksassign[i][this.taskindex[i]].tasksNum]-1]);
-			if(xpos+10==this.X[this.jobStartset[this.tasksassign[i][this.taskindex[i]].tasksNum]-1]&&ypos+10==this.Y[this.jobStartset[this.tasksassign[i][this.taskindex[i]].tasksNum]-1]){
-				this.tasksflag[i]=0;
-			}
-		  }
-		  }
-		  if(j<this.path[i].length-1){//this.pathflag=1;this.newpath=this.path;this.newpath[1][2]=3;
-        this.num[i]=j;
-        if(this.flag[i]==1){console.log("asdsadaasddas");
-          this.flag[i]=0;
-          this.move(i,1);
+        endx=endx > startx ? startx+this.Minlength*20 : startx-this.Minlength*20;
+	    this.moveLittle(i, this.path[i][j].time,startx,starty,endx,endy);
+      if (j < this.path[i].length - 1) {//this.pathflag=1;this.newpath=this.path;this.newpath[1][2]=3;
+        this.num[i] = j;
+        if (this.flag[i] == 1) {
+          console.log("asdsadaasddas");
+          this.flag[i] = 0;
+          this.move(i, 1);
         }
         else
-			this.move(i,j+1);
+          this.move(i, j + 1);
       }
     }
+    else {
+      this.rectgroup[i].to({
+        x: xpos,
+        y: ypos,
+        duration: this.path[i][j].time,
+        onFinish: () => {
+          if (this.path[i][j].startNode != this.path[i][j].endNode)
+            this.stop(i, xpos, ypos);
+          if (this.back[i] == 0) {
+            if (this.tasksflag[i] == 0) {//判断是否到达任务终点
+              console.log(xpos + "  " + ypos);
+              console.log(this.X[this.jobEndset[this.tasksassign[i][this.taskindex[i]].tasksNum] - 1] + "   " + this.Y[this.jobEndset[this.tasksassign[i][this.taskindex[i]].tasksNum] - 1]);
+              if (xpos + 10 == this.X[this.jobEndset[this.tasksassign[i][this.taskindex[i]].tasksNum] - 1] && ypos + 10 == this.Y[this.jobEndset[this.tasksassign[i][this.taskindex[i]].tasksNum] - 1]) {
+                this.tasksassign[i][this.taskindex[i]].times--;
+                let item = this.data[this.tasksassign[i][this.taskindex[i]].tasksNum];
+                item.remain--;
+                this.data.splice(this.tasksassign[i][this.taskindex[i]].tasksNum, 1, item);//更新列表，剩余任务次数减一
+                if (this.tasksassign[i][this.taskindex[i]].times == 0) {//此类型任务全部执行完毕，开始执行下一类型任务
+                  this.taskindex[i]++;
+                  if (this.tasksassign[i].length > this.taskindex[i]) {
+                    item = this.data[this.tasksassign[i][this.taskindex[i]].tasksNum];
+                    item.car += " " + i;
+                    this.data.splice(this.tasksassign[i][this.taskindex[i]].tasksNum, 1, item);//更新列表
+                  }
+                  else
+                    this.back[i] = 1;
+                }
+                if (this.back[i] == 0) {
+                  if (xpos + 10 == this.X[this.jobStartset[this.tasksassign[i][this.taskindex[i]].tasksNum] - 1] && ypos + 10 == this.Y[this.jobStartset[this.tasksassign[i][this.taskindex[i]].tasksNum] - 1])
+                    this.tasksflag[i] = 0;//执行下一个任务
+                  else
+                    this.tasksflag[i] = -1;//前往执行下一个任务
+                }
+              }
+            }
+            else {//开始执行下一个任务
+              //console.log(xpos+"  "+ypos);
+              //console.log(this.X[this.jobStartset[this.tasksassign[i][this.taskindex[i]].tasksNum]-1]);
+              if (xpos + 10 == this.X[this.jobStartset[this.tasksassign[i][this.taskindex[i]].tasksNum] - 1] && ypos + 10 == this.Y[this.jobStartset[this.tasksassign[i][this.taskindex[i]].tasksNum] - 1]) {
+                this.tasksflag[i] = 0;
+              }
+            }
+          }
+          if (j < this.path[i].length - 1) {//this.pathflag=1;this.newpath=this.path;this.newpath[1][2]=3;
+            this.num[i] = j;
+            if (this.flag[i] == 1) {
+              console.log("asdsadaasddas");
+              this.flag[i] = 0;
+              this.move(i, 1);
+            }
+            else
+              this.move(i, j + 1);
+          }
+        }
 
-    });
+      });
+    }
+    },
+    moveLittle:function (i,time,startx,starty,endx,endy) {
+      this.rectgroup[i].to({
+        x:endx,
+        y:endy,
+        duration:time,
+        onFinish:()=> {
+          this.rectgroup[i].to({
+            x:startx,
+            y:starty,
+            duration:time,
+            onFinish:()=> {
+              this.stop(i,startx,starty);
+            }
+          });
+        }
+      });
+    },
+    stop:function(car,x,y){
+      this.rectgroup[car].to({
+        x:x,
+        y:y,
+        duration:4/this.V,
+      });
     },
     start:function(){
-      alert(this.Mapwidth);
 	  for(let i=0;i<this.agvnum;i++){
 		this.back[i]=0;
 		this.tasksassign[i]=new Array();
@@ -525,67 +575,66 @@
 	  let sstart=new Array();
 	  let eend=new Array();
 	  let ddistance=new Array();
-      for (var i = 0; i < this.Indexpath.length; i++) {
+	  for (var i = 0; i < this.Indexpath.length; i++) {
        if(this.Indexpath[i]==0){
-		sstart[i]=0;
-		eend[i]=0;
-		ddistance[i]=0;
-		continue;
+		      sstart[i]=0;
+		      eend[i]=0;
+		      ddistance[i]=0;
+		      continue;
 		}
-		sstart[i]=this.Pathstart[i];
-		eend[i]=this.Pathend[i];
-		ddistance[i]=this.Pathdis[i];
+		    sstart[i]=this.Pathstart[i];
+		    eend[i]=this.Pathend[i];
+		    ddistance[i]=this.Pathdis[i];
       }
-
       for (var i = 0,j=0; i < sstart.length; i++,j++) {
         var jsonobj1 = {};
-		if(sstart[i]==0){
-			j--;
-			continue;
-		}
+		    if(sstart[i]==0){
+			    j--;
+			    continue;
+		    }
         jsonobj1["startNode"] = sstart[i];
         this.arrpathstart[j] = jsonobj1;
       }
 
       for (var i = 0,j=0; i < eend.length; i++,j++) {
         let jsonobj2 = {};
-		if(eend[i]==0){
-			j--;
-			continue;
-		}
+		    if(eend[i]==0){
+			    j--;
+			    continue;
+		  }
         jsonobj2["endNode"] = eend[i];
         this.arrpathend[j] = jsonobj2;
       }
 
       for (var i = 0,j=0; i < ddistance.length; i++,j++) {
         var jsonobj3 = {};
-		if(ddistance[i]==0){
-			j--;
-			continue;
+		    if(ddistance[i]==0){
+			    j--;
+			    continue;
 		}
 		jsonobj3["nodeDistance"] = ddistance[i]/20;
         this.arrpathdis[j] = jsonobj3;
 
       }
-
       let arrpath=[];
 	  for(let i=0;i<this.agvnum;i++){
-		let jsonobj7 = {};
         arrpath[i]=new Array();
-		this.path[i][0]=parseFloat(this.path[i][0]);
-		jsonobj7["paths"] = this.path[i][0];
-        arrpath[i][0] = jsonobj7;
+		    arrpath[i][0]={};
+		    arrpath[i][0].startNode=this.path[i][0].startNode;
+		    arrpath[i][0].endNode=this.path[i][0].endNode;
+		    arrpath[i][0].time=this.path[i][0].time;
+		    arrpath[i][0].isLoop=this.path[i][0].isLoop;
 	  }
 	  let tasks=[];
 	  for(let i=0;i<this.jobnum;i++){
-		tasks[i]=new Array();
-		tasks[i][0]=this.jobStartset[i];
-		tasks[i][1]=this.jobEndset[i];
-		tasks[i][2]=this.jobnumberset[i];
+		  tasks[i]=new Array();
+		  tasks[i][0]=this.jobStartset[i];
+		  tasks[i][1]=this.jobEndset[i];
+		  tasks[i][2]=this.jobnumberset[i];
 	  }
 	  let arrtasks=[];
 	  for(let i=0;i<tasks.length;i++){
-		let jsonobj8 = {};
+		    let jsonobj8 = {};
         jsonobj8["tasks"] = tasks[i][0].toString()+","+tasks[i][1].toString()+","+tasks[i][2].toString();
         arrtasks[i] = jsonobj8;
 	  }
@@ -600,26 +649,26 @@
 	}
 
 	  for(let i=0;i<this.Total_buffer.length;i++){
-		this.arrbufferset[i]=new Array();
-		for(let j=0,k=0;j<this.Total_buffer[i][3].length;j++,k++){
-			if(j==1){
-				k--;
-				continue;
-			}
-			let jsonobj={};
-			jsonobj["paths"]=this.Total_buffer[i][3][j];
-			this.arrbufferset[i][k]=jsonobj;
-			if(j==this.Total_buffer[i][3].length-1){
-				let jsonobjj={};
-				jsonobjj["paths"]=this.Total_buffer[i][3][1];
-				this.arrbufferset[i][k+1]=jsonobjj;
-			}
-		}
+		  this.arrbufferset[i]=new Array();
+		  for(let j=0,k=0;j<this.Total_buffer[i][3].length;j++,k++){
+			  if(j==1){
+				  k--;
+				  continue;
+			  }
+			  let jsonobj={};
+			  jsonobj["paths"]=this.Total_buffer[i][3][j];
+			  this.arrbufferset[i][k]=jsonobj;
+			  if(j==this.Total_buffer[i][3].length-1){
+				  let jsonobjj={};
+				  jsonobjj["paths"]=this.Total_buffer[i][3][1];
+				  this.arrbufferset[i][k+1]=jsonobjj;
+			  }
+		  }
 	  }
 
 	  let arrtime=[];
 	  for(let i=0;i<this.T.length;i++){
-		let jsonobj14 = {};
+		    let jsonobj14 = {};
         jsonobj14["time"] = this.T[i];
         arrtime[i] = jsonobj14;
 	  }
@@ -657,10 +706,14 @@
               }).then(response => {
              		btn.textContent = JSON.stringify(response.data, null, '  ');
 
-             		for(let i=0;i<response.data.path.length;i++){
+             		for(let i=0;i<response.data.paths.length;i++){
              			this.newpath[i]=new Array();
-             			for(let j=0;j<response.data.path[i].length;j++){
-             				this.newpath[i][j]=response.data.path[i][j].path;
+             			for(let j=0;j<response.data.paths[i].length;j++){
+             				this.newpath[i][j]={};
+                    this.newpath[i][j].startNode=response.data.paths[i][j].startNode;
+                    this.newpath[i][j].endNode=response.data.paths[i][j].endNode;
+                    this.newpath[i][j].time=response.data.paths[i][j].time;
+                    this.newpath[i][j].isLoop=response.data.paths[i][j].isLoop;
              			}
              		}
 					for(let i=0;i<response.data.record.length;i++){
