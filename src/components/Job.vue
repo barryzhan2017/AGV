@@ -306,7 +306,7 @@
       this.path[this.agvnum-1][0]={};
       this.path[this.agvnum-1][0].startNode=this.Total_buffer[i-1][3][this.Total_buffer[i-1][2].length+1-this.carbuff[i-1]];
       this.path[this.agvnum-1][0].endNode=this.Total_buffer[i-1][3][this.Total_buffer[i-1][2].length+1-this.carbuff[i-1]];
-      this.path[this.agvnum-1][0].time=0;
+      this.path[this.agvnum-1][0].time=0.0;
       this.path[this.agvnum-1][0].isLoop=0;
 	  var rectnumber = new Konva.Text({
       x: 0,
@@ -376,21 +376,30 @@
 		  //console.log(Math.abs((this.X[this.path[i][this.num[i]]-1]-10-this.rects[i].getAbsolutePosition().x))+"ddd");
 		  this.T[i]=time;//console.log(this.T[i]+"time");
         }
-        for(let i=0;i<this.agvnum;i++){
+        for(let q=0;q<this.agvnum;q++){
           let dpath=new Array();
-          if(datapath[i].length==0)//该小车没有指派任务
+          if(datapath[q].length==0)//该小车没有指派任务
             continue;
-          for(let j=this.num[i],m=0;j<datapath[i].length;j++,m++){
-            dpath[m]={};
-            dpath[m].startNode=datapath[i][j].startNode;
-            dpath[m].endNode=datapath[i][j].endNode;
-            dpath[m].time=datapath[i][j].time;
-            dpath[m].isLoop=datapath[i][j].isLoop;
-            //dpath[m]=datapath[i][j];//console.log(dpath[m]+"bbb");
+          if(this.T[q]==-1){
+            dpath[0]={};
+            dpath[0].startNode=datapath[q][datapath[q].length-2].startNode;
+            dpath[0].endNode=dpath[m].startNode;
+            dpath[0].time=0.0;
+            dpath[0].isLoop=0;
           }
-          datapath[i]=new Array();
+          else {
+            for (let j = this.num[q], m = 0; j < datapath[q].length; j++, m++) {
+              dpath[m] = {};
+              dpath[m].startNode = datapath[q][j].startNode;
+              dpath[m].endNode = datapath[q][j].endNode;
+              dpath[m].time = datapath[q][j].time;
+              dpath[m].isLoop = datapath[q][j].isLoop;
+              //dpath[m]=datapath[q][j];//console.log(dpath[m]+"bbb");
+            }
+          }
+          datapath[q]=new Array();
 		  for(let n=0;n<dpath.length;n++)
-			  datapath[i][n]=dpath[n];
+			  datapath[q][n]=dpath[n];
 
         }//console.log(datapath[0][0]+"aaaaa");
 		let arrtasks=[];
@@ -425,11 +434,11 @@
 			}
 		}
 		this.Send(this.arrpathstart,this.arrpathend,this.arrpathdis,arrpath,arrtasks,this.arrspeed,this.arrpre,this.arrnodenum,this.arrbufferset,this.arrcarset,arrtime);
-
-        for(let i=0;i<this.agvnum;i++){
+    console.log("qqqqqqqqqqqqqqqqqqqqqqq");
+       /* for(let i=0;i<this.agvnum;i++){
           if(this.T[i]==-1)
             this.move(i,0);
-        }
+        }*/
       }
 	  this.jobnumber=null;
 	  this.jobStart=null;
@@ -440,7 +449,7 @@
 		this.pathflag=0;
 		this.path=this.newpath;
 	  }
-	  if(this.path[i][1].startNode!=-1)
+	  if(this.path[i][0].time!=0)
 		this.T[i]=0;//表示小车不为闲置，只要不是-1就行，这里取0
 	  if(this.path[i][j].startNode==-1){
         this.T[i]=-1;
@@ -448,7 +457,7 @@
       }
       let ypos=0;
 	  let xpos=0;
-	  if(this.path[i][j]<100)
+	  if(this.path[i][j].endNode<100)
 		{
 			ypos=this.Y[this.path[i][j].endNode-1]-10;
 			xpos=this.X[this.path[i][j].endNode-1]-10;
@@ -484,7 +493,8 @@
       }
     }
     else {
-      this.rectgroup[i].to({
+      //console.log("")
+	    this.rectgroup[i].to({
         x: xpos,
         y: ypos,
         duration: this.path[i][j].time,
@@ -531,7 +541,7 @@
             if (this.flag[i] == 1) {
               console.log("asdsadaasddas");
               this.flag[i] = 0;
-              this.move(i, 1);
+              this.move(i, 0);
             }
             else
               this.move(i, j + 1);
@@ -749,9 +759,12 @@
 
 					this.Isbegin=true;
 
-             		for(let i=0;i<this.rects.length;i++)
-                        this.move(i,1);
-
+             		for(let i=0;i<this.rects.length;i++){
+                    if(this.T[i]!=-1)
+             		      this.move(i,1);
+                    else
+                      this.move(i,0)
+                }
               })
 	},
 	pageChange:function(pageIndex){console.log(pageIndex);
