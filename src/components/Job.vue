@@ -480,17 +480,7 @@
         endy=endy > starty ? starty+this.Minlength*20 : starty-this.Minlength*20;
       else
         endx=endx > startx ? startx+this.Minlength*20 : startx-this.Minlength*20;
-	    this.moveLittle(i, this.path[i][j].time,startx,starty,endx,endy);
-      if (j < this.path[i].length - 1) {//this.pathflag=1;this.newpath=this.path;this.newpath[1][2]=3;
-        this.num[i] = j;
-        if (this.flag[i] == 1) {
-          console.log("asdsadaasddas");
-          this.flag[i] = 0;
-          this.move(i, 1);
-        }
-        else
-          this.move(i, j + 1);
-      }
+	    this.moveLittle(i,j,this.path[i][j].time,startx,starty,endx,endy);
     }
     else {
       //console.log("")
@@ -499,59 +489,69 @@
         y: ypos,
         duration: this.path[i][j].time,
         onFinish: () => {
-          if (this.path[i][j].startNode != this.path[i][j].endNode)
-            this.stop(i, xpos, ypos);
-          if (this.back[i] == 0) {
-            if (this.tasksflag[i] == 0) {//判断是否到达任务终点
-              console.log(xpos + "  " + ypos);
-              console.log(this.X[this.jobEndset[this.tasksassign[i][this.taskindex[i]].tasksNum] - 1] + "   " + this.Y[this.jobEndset[this.tasksassign[i][this.taskindex[i]].tasksNum] - 1]);
-              if (xpos + 10 == this.X[this.jobEndset[this.tasksassign[i][this.taskindex[i]].tasksNum] - 1] && ypos + 10 == this.Y[this.jobEndset[this.tasksassign[i][this.taskindex[i]].tasksNum] - 1]) {
-                this.tasksassign[i][this.taskindex[i]].times--;
-                let item = this.data[this.tasksassign[i][this.taskindex[i]].tasksNum];
-                item.remain--;
-                this.data.splice(this.tasksassign[i][this.taskindex[i]].tasksNum, 1, item);//更新列表，剩余任务次数减一
-                if (this.tasksassign[i][this.taskindex[i]].times == 0) {//此类型任务全部执行完毕，开始执行下一类型任务
-                  this.taskindex[i]++;
-                  if (this.tasksassign[i].length > this.taskindex[i]) {
-                    item = this.data[this.tasksassign[i][this.taskindex[i]].tasksNum];
-                    item.car += " " + i;
-                    this.data.splice(this.tasksassign[i][this.taskindex[i]].tasksNum, 1, item);//更新列表
-                  }
-                  else
-                    this.back[i] = 1;
-                }
-                if (this.back[i] == 0) {
-                  if (xpos + 10 == this.X[this.jobStartset[this.tasksassign[i][this.taskindex[i]].tasksNum] - 1] && ypos + 10 == this.Y[this.jobStartset[this.tasksassign[i][this.taskindex[i]].tasksNum] - 1])
-                    this.tasksflag[i] = 0;//执行下一个任务
-                  else
-                    this.tasksflag[i] = -1;//前往执行下一个任务
-                }
-              }
-            }
-            else {//开始执行下一个任务
-              //console.log(xpos+"  "+ypos);
-              //console.log(this.X[this.jobStartset[this.tasksassign[i][this.taskindex[i]].tasksNum]-1]);
-              if (xpos + 10 == this.X[this.jobStartset[this.tasksassign[i][this.taskindex[i]].tasksNum] - 1] && ypos + 10 == this.Y[this.jobStartset[this.tasksassign[i][this.taskindex[i]].tasksNum] - 1]) {
-                this.tasksflag[i] = 0;
-              }
-            }
+          //alert("aaa");
+          if (this.path[i][j].startNode != this.path[i][j].endNode) {
+            this.checkwork(i,xpos,ypos);
+            this.stop(i, j, xpos, ypos);
           }
-          if (j < this.path[i].length - 1) {//this.pathflag=1;this.newpath=this.path;this.newpath[1][2]=3;
-            this.num[i] = j;
-            if (this.flag[i] == 1) {
-              console.log("asdsadaasddas");
-              this.flag[i] = 0;
-              this.move(i, 0);
-            }
-            else
-              this.move(i, j + 1);
-          }
+          else
+            this.movenext(i,j);
         }
 
       });
     }
     },
-    moveLittle:function (i,time,startx,starty,endx,endy) {
+    checkwork:function(i,xpos,ypos){  //小车到达一个点判断任务进展情况,更新任务表格
+      if (this.back[i] == 0) {
+        if (this.tasksflag[i] == 0) {//判断是否到达任务终点
+          console.log(xpos + "  " + ypos);
+          console.log(this.X[this.jobEndset[this.tasksassign[i][this.taskindex[i]].tasksNum] - 1] + "   " + this.Y[this.jobEndset[this.tasksassign[i][this.taskindex[i]].tasksNum] - 1]);
+          if (xpos + 10 == this.X[this.jobEndset[this.tasksassign[i][this.taskindex[i]].tasksNum] - 1] && ypos + 10 == this.Y[this.jobEndset[this.tasksassign[i][this.taskindex[i]].tasksNum] - 1]) {
+            this.tasksassign[i][this.taskindex[i]].times--;
+            let item = this.data[this.tasksassign[i][this.taskindex[i]].tasksNum];
+            item.remain--;
+            this.data.splice(this.tasksassign[i][this.taskindex[i]].tasksNum, 1, item);//更新列表，剩余任务次数减一
+            if (this.tasksassign[i][this.taskindex[i]].times == 0) {//此类型任务全部执行完毕，开始执行下一类型任务
+              this.taskindex[i]++;
+              if (this.tasksassign[i].length > this.taskindex[i]) {
+                item = this.data[this.tasksassign[i][this.taskindex[i]].tasksNum];
+                item.car += " " + i;
+                this.data.splice(this.tasksassign[i][this.taskindex[i]].tasksNum, 1, item);//更新列表
+              }
+              else
+                this.back[i] = 1;
+            }
+            if (this.back[i] == 0) {
+              if (xpos + 10 == this.X[this.jobStartset[this.tasksassign[i][this.taskindex[i]].tasksNum] - 1] && ypos + 10 == this.Y[this.jobStartset[this.tasksassign[i][this.taskindex[i]].tasksNum] - 1])
+                this.tasksflag[i] = 0;//执行下一个任务
+              else
+                this.tasksflag[i] = -1;//前往执行下一个任务
+            }
+          }
+        }
+        else {//开始执行下一个任务
+          //console.log(xpos+"  "+ypos);
+          //console.log(this.X[this.jobStartset[this.tasksassign[i][this.taskindex[i]].tasksNum]-1]);
+          if (xpos + 10 == this.X[this.jobStartset[this.tasksassign[i][this.taskindex[i]].tasksNum] - 1] && ypos + 10 == this.Y[this.jobStartset[this.tasksassign[i][this.taskindex[i]].tasksNum] - 1]) {
+            this.tasksflag[i] = 0;
+          }
+        }
+      }
+    },
+    movenext:function(i,j){ //小车运行到下一个点
+
+      if (j < this.path[i].length - 1) {//this.pathflag=1;this.newpath=this.path;this.newpath[1][2]=3;
+        this.num[i] = j;
+        if (this.flag[i] == 1) {
+         // console.log("asdsadaasddas");
+          this.flag[i] = 0;
+          this.move(i, 0);
+        }
+        else
+          this.move(i, j + 1);
+      }
+    },
+    moveLittle:function (i,j,time,startx,starty,endx,endy) {
       this.rectgroup[i].to({
         x:endx,
         y:endy,
@@ -562,17 +562,20 @@
             y:starty,
             duration:time,
             onFinish:()=> {
-              this.stop(i,startx,starty);
+              this.stop(i,j,startx,starty);
             }
           });
         }
       });
     },
-    stop:function(car,x,y){
-      this.rectgroup[car].to({
+    stop:function(i,j,x,y){ //小车在点停顿
+      this.rectgroup[i].to({
         x:x,
         y:y,
         duration:4/this.V,
+        onFinish:()=> {
+          this.movenext(i,j);
+        }
       });
     },
     start:function(){
